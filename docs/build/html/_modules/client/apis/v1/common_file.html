@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.common_file &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.common_file</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.common_file 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : currency.py</span>
+<span class="sd">@Author      : duanluhui</span>
+<span class="sd">@Time        : 3/3/22 10:38</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">shortuuid</span>
+<span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">get_object_or_404</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">RetrieveAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span> <span class="nn">client.models</span> <span class="kn">import</span> <span class="n">company</span><span class="p">,</span> <span class="n">config</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">FILE_MAX_SIZE</span>
+<span class="kn">from</span> <span class="nn">utils.oss_util</span> <span class="kn">import</span> <span class="n">upload_oss_file</span>
+
+
+<div class="viewcode-block" id="FileCheck"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.FileCheck">[文档]</a><span class="k">class</span> <span class="nc">FileCheck</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;文件参数校验类&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FileCheck.arg_check"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.FileCheck.arg_check">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">arg_check</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="n">get_file_size</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file_size&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># 获取原型上 文件大小的上限,单位MB</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">FILES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">get_file_size</span><span class="p">,</span> <span class="n">file</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;请检查输入的参数!&#39;</span><span class="p">)</span>
+
+        <span class="n">file_size</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="mi">1024</span>  <span class="c1"># 单位KB</span>
+        <span class="k">if</span> <span class="n">file_size</span> <span class="o">&gt;</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_file_size</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;文件大小不能超过</span><span class="si">{</span><span class="n">get_file_size</span><span class="si">}</span><span class="s2">MB!&quot;</span><span class="p">)</span>  <span class="c1"># 文件大小不能超过原型文件上传的上限</span>
+
+        <span class="k">if</span> <span class="n">file_size</span> <span class="o">&gt;</span> <span class="n">FILE_MAX_SIZE</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;文件大小不能超过</span><span class="si">{</span><span class="n">FILE_MAX_SIZE</span><span class="si">}</span><span class="s2">MB(平台设置最大上传大小)!&quot;</span><span class="p">)</span>  <span class="c1"># 文件大小不能超过平台限制的最大上传上限</span>
+        <span class="k">return</span> <span class="n">file</span></div></div>
+
+
+<div class="viewcode-block" id="UploadFileAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.UploadFileAPIView">[文档]</a><span class="k">class</span> <span class="nc">UploadFileAPIView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;文件上传类&quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="UploadFileAPIView.post"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.UploadFileAPIView.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        上传文件</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="n">FileCheck</span><span class="o">.</span><span class="n">arg_check</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="n">file_size</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2">MB&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">))</span>  <span class="c1"># 单位MB</span>
+        <span class="n">file_type</span> <span class="o">=</span> <span class="s2">&quot;png&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">tmp_list</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="n">file_type</span> <span class="o">=</span> <span class="n">tmp_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">upload_file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">shortuuid</span><span class="o">.</span><span class="n">uuid</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upload_file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">shortuuid</span><span class="o">.</span><span class="n">uuid</span><span class="p">())</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_type</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">icon_url</span> <span class="o">=</span> <span class="n">upload_oss_file</span><span class="p">(</span><span class="n">upload_file_name</span><span class="p">,</span> <span class="s2">&quot;files&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="c1"># 生成md5值</span>
+        <span class="n">md5_code</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>  <span class="c1"># md5</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">file_name</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">icon_url</span><span class="p">,</span> <span class="s2">&quot;md5_code&quot;</span><span class="p">:</span> <span class="n">md5_code</span><span class="p">,</span> <span class="s2">&quot;file_size&quot;</span><span class="p">:</span> <span class="n">file_size</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="GetAddressAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.GetAddressAPIView">[文档]</a><span class="k">class</span> <span class="nc">GetAddressAPIView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取省市县接口&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="GetAddressAPIView.get"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.GetAddressAPIView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="n">addr_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="nb">id</span><span class="p">,</span> <span class="n">addr_type</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;请检查输入参数!&#39;</span><span class="p">)</span>
+
+        <span class="c1"># type=province,获取省份;type=city,获取市;type=county,获取县;</span>
+        <span class="k">if</span> <span class="n">addr_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;province&#39;</span><span class="p">,</span> <span class="s1">&#39;city&#39;</span><span class="p">,</span> <span class="s1">&#39;county&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;请检查type的入参!&#39;</span><span class="p">)</span>
+
+        <span class="n">addr_objs</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">if</span> <span class="n">addr_type</span> <span class="o">==</span> <span class="s1">&#39;province&#39;</span><span class="p">:</span>
+            <span class="n">addr_objs</span> <span class="o">=</span> <span class="n">company</span><span class="o">.</span><span class="n">Province</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">addr_type</span> <span class="o">==</span> <span class="s1">&#39;city&#39;</span><span class="p">:</span>
+            <span class="n">addr_objs</span> <span class="o">=</span> <span class="n">company</span><span class="o">.</span><span class="n">City</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">province_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">addr_type</span> <span class="o">==</span> <span class="s1">&#39;county&#39;</span><span class="p">:</span>
+            <span class="n">addr_objs</span> <span class="o">=</span> <span class="n">company</span><span class="o">.</span><span class="n">County</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">city</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;code&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">addr_objs</span><span class="p">)})</span></div></div>
+
+
+<div class="viewcode-block" id="RetriveTemplatesAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.RetriveTemplatesAPIView">[文档]</a><span class="k">class</span> <span class="nc">RetriveTemplatesAPIView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取文件模板&quot;&quot;&quot;</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="RetriveTemplatesAPIView.retrieve"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.common_file.RetriveTemplatesAPIView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">)</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">Config</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="s2">&quot;filename&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

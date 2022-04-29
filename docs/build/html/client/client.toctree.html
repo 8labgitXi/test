@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. 子模块 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">7. </span><em>子模块</em></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/client/client.toctree.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">7. </span><em>子模块</em><a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="module-client.admin">
+<span id="admin-py"></span><h2><span class="section-number">7.1. </span>admin.py<a class="headerlink" href="#module-client.admin" title="永久链接至标题"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.AppMenusAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">AppMenusAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#AppMenusAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.AppMenusAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.AppMenusAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'title',</span> <span class="pre">'code',</span> <span class="pre">'icon',</span> <span class="pre">'sort_num',</span> <span class="pre">'path',</span> <span class="pre">'url',</span> <span class="pre">'is_deleted',</span> <span class="pre">'platform']</span></em><a class="headerlink" href="#client.admin.AppMenusAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.AppMenusAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.AppMenusAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.BusinessAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">BusinessAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#BusinessAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.BusinessAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.BusinessAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.BusinessAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.BusinessAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.BusinessAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CompanyAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CompanyAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CompanyAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CompanyAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CompanyAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'credit_code',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'uid']</span></em><a class="headerlink" href="#client.admin.CompanyAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CompanyAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CompanyAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CompanyReviewLogAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CompanyReviewLogAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CompanyReviewLogAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CompanyReviewLogAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CompanyReviewLogAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company',</span> <span class="pre">'status',</span> <span class="pre">'s1_user_id']</span></em><a class="headerlink" href="#client.admin.CompanyReviewLogAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CompanyReviewLogAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CompanyReviewLogAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CompanySupplyChainAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CompanySupplyChainAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CompanySupplyChainAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CompanySupplyChainAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CompanySupplyChainAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company',</span> <span class="pre">'chain_company',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'is_deleted']</span></em><a class="headerlink" href="#client.admin.CompanySupplyChainAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CompanySupplyChainAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CompanySupplyChainAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CompanyTypeAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CompanyTypeAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CompanyTypeAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CompanyTypeAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CompanyTypeAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.CompanyTypeAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CompanyTypeAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CompanyTypeAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.ConfigAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">ConfigAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#ConfigAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.ConfigAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ConfigAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'code',</span> <span class="pre">'value',</span> <span class="pre">'value_type',</span> <span class="pre">'is_deleted']</span></em><a class="headerlink" href="#client.admin.ConfigAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.ConfigAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.ConfigAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.ContractAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">ContractAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#ContractAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.ContractAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ContractAdmin.actions">
+<span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;function</span> <span class="pre">make_download_data&gt;]</span></em><a class="headerlink" href="#client.admin.ContractAdmin.actions" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ContractAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'number',</span> <span class="pre">'contract_type',</span> <span class="pre">'credit_certificate']</span></em><a class="headerlink" href="#client.admin.ContractAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ContractAdmin.list_filter">
+<span class="sig-name descname"><span class="pre">list_filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['contract_type']</span></em><a class="headerlink" href="#client.admin.ContractAdmin.list_filter" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.ContractAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.ContractAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">ContractTemplateAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#ContractTemplateAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.ContractTemplateAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'contract_template_type']</span></em><a class="headerlink" href="#client.admin.ContractTemplateAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.ContractTemplateAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateTypeAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">ContractTemplateTypeAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#ContractTemplateTypeAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.ContractTemplateTypeAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateTypeAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.ContractTemplateTypeAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.ContractTemplateTypeAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.ContractTemplateTypeAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_number',</span> <span class="pre">'receive_company',</span> <span class="pre">'credit_type',</span> <span class="pre">'status']</span></em><a class="headerlink" href="#client.admin.CreditAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditCertificateAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditCertificateAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company',</span> <span class="pre">'from_company',</span> <span class="pre">'number',</span> <span class="pre">'review_status',</span> <span class="pre">'business',</span> <span class="pre">'is_valid',</span> <span class="pre">'creditcurrentnode']</span></em><a class="headerlink" href="#client.admin.CreditCertificateAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateAdmin.list_filter">
+<span class="sig-name descname"><span class="pre">list_filter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['review_status',</span> <span class="pre">'is_valid',</span> <span class="pre">'business']</span></em><a class="headerlink" href="#client.admin.CreditCertificateAdmin.list_filter" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditCertificateAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateEnclosureAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateEnclosureAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditCertificateEnclosureAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditCertificateEnclosureAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateEnclosureAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'contract_no',</span> <span class="pre">'contract_amount',</span> <span class="pre">'contract_sign_at',</span> <span class="pre">'credit_certificate']</span></em><a class="headerlink" href="#client.admin.CreditCertificateEnclosureAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateEnclosureAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditCertificateEnclosureAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateReceiveTimeLimitAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateReceiveTimeLimitAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditCertificateReceiveTimeLimitAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditCertificateReceiveTimeLimitAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateReceiveTimeLimitAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'value']</span></em><a class="headerlink" href="#client.admin.CreditCertificateReceiveTimeLimitAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditCertificateReceiveTimeLimitAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditCertificateReceiveTimeLimitAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditClearAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditClearAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditClearAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditClearAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditClearAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_certificate',</span> <span class="pre">'is_clear',</span> <span class="pre">'pay_amount']</span></em><a class="headerlink" href="#client.admin.CreditClearAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditClearAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditClearAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditClearDetailAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditClearDetailAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditClearDetailAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditClearDetailAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditClearDetailAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_certificate',</span> <span class="pre">'status',</span> <span class="pre">'clear_principal']</span></em><a class="headerlink" href="#client.admin.CreditClearDetailAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditClearDetailAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditClearDetailAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditClearTypeAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditClearTypeAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditClearTypeAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditClearTypeAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditClearTypeAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.CreditClearTypeAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditClearTypeAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditClearTypeAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditCurrentNodeAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditCurrentNodeAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditCurrentNodeAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditCurrentNodeAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditCurrentNodeAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_certificate',</span> <span class="pre">'work_flow']</span></em><a class="headerlink" href="#client.admin.CreditCurrentNodeAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditCurrentNodeAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditCurrentNodeAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.CreditTypeAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">CreditTypeAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#CreditTypeAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.CreditTypeAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.CreditTypeAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.CreditTypeAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.CreditTypeAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.CreditTypeAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.FinanceProjectAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">FinanceProjectAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#FinanceProjectAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.FinanceProjectAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.FinanceProjectAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_certificate',</span> <span class="pre">'finance_number']</span></em><a class="headerlink" href="#client.admin.FinanceProjectAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.FinanceProjectAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.FinanceProjectAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.PermissionAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">PermissionAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#PermissionAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.PermissionAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.PermissionAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'code',</span> <span class="pre">'path',</span> <span class="pre">'is_deleted',</span> <span class="pre">'platform',</span> <span class="pre">'permission_category']</span></em><a class="headerlink" href="#client.admin.PermissionAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.PermissionAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.PermissionAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.PermissionCategoryAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">PermissionCategoryAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#PermissionCategoryAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.PermissionCategoryAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.PermissionCategoryAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.PermissionCategoryAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.PermissionCategoryAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.PermissionCategoryAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.PlatformAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">PlatformAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#PlatformAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.PlatformAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.PlatformAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'desc_name',</span> <span class="pre">'name']</span></em><a class="headerlink" href="#client.admin.PlatformAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.PlatformAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.PlatformAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.ReviewLogAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">ReviewLogAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#ReviewLogAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.ReviewLogAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.ReviewLogAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'handle_status',</span> <span class="pre">'result',</span> <span class="pre">'handle_status',</span> <span class="pre">'data_table',</span> <span class="pre">'data_id',</span> <span class="pre">'node',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'created_at']</span></em><a class="headerlink" href="#client.admin.ReviewLogAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.ReviewLogAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.ReviewLogAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.RoleAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">RoleAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#RoleAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.RoleAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.RoleAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'desc',</span> <span class="pre">'is_deleted',</span> <span class="pre">'platform']</span></em><a class="headerlink" href="#client.admin.RoleAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.RoleAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.RoleAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.RolePermissionAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">RolePermissionAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#RolePermissionAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.RolePermissionAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.RolePermissionAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'permission',</span> <span class="pre">'role']</span></em><a class="headerlink" href="#client.admin.RolePermissionAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.RolePermissionAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.RolePermissionAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.S1UserAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">S1UserAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#S1UserAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.S1UserAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.S1UserAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'username',</span> <span class="pre">'phone',</span> <span class="pre">'root_s1_user_id',</span> <span class="pre">'nick_name']</span></em><a class="headerlink" href="#client.admin.S1UserAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.S1UserAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.S1UserAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.S1UserCompanyMapAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">S1UserCompanyMapAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#S1UserCompanyMapAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.S1UserCompanyMapAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.S1UserCompanyMapAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'is_deleted']</span></em><a class="headerlink" href="#client.admin.S1UserCompanyMapAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.S1UserCompanyMapAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.S1UserCompanyMapAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.UserRoleAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">UserRoleAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#UserRoleAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.UserRoleAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.UserRoleAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'role']</span></em><a class="headerlink" href="#client.admin.UserRoleAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.UserRoleAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.UserRoleAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.WorkFlowAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">WorkFlowAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#WorkFlowAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.WorkFlowAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.WorkFlowAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'title',</span> <span class="pre">'code',</span> <span class="pre">'path']</span></em><a class="headerlink" href="#client.admin.WorkFlowAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.WorkFlowAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.WorkFlowAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.admin.WorkFlowBusinessMapAdmin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">WorkFlowBusinessMapAdmin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admin_site</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#WorkFlowBusinessMapAdmin"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.WorkFlowBusinessMapAdmin" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.contrib.admin.options.ModelAdmin</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.admin.WorkFlowBusinessMapAdmin.list_display">
+<span class="sig-name descname"><span class="pre">list_display</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'start_work_flow',</span> <span class="pre">'business']</span></em><a class="headerlink" href="#client.admin.WorkFlowBusinessMapAdmin.list_display" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="client.admin.WorkFlowBusinessMapAdmin.media">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">media</span></span><a class="headerlink" href="#client.admin.WorkFlowBusinessMapAdmin.media" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="client.admin.make_download_data">
+<span class="sig-prename descclassname"><span class="pre">client.admin.</span></span><span class="sig-name descname"><span class="pre">make_download_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modeladmin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/admin.html#make_download_data"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.admin.make_download_data" title="永久链接至目标"></a></dt>
+<dd><dl class="simple">
+<dt>手动生成或打包文件至阿里云：</dt><dd><ul class="simple">
+<li><p>在django admin 增加的一个动作</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-client.apps">
+<span id="app"></span><h2><span class="section-number">7.2. </span>App注册<a class="headerlink" href="#module-client.apps" title="永久链接至标题"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="client.apps.ClientConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.apps.</span></span><span class="sig-name descname"><span class="pre">ClientConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/apps.html#ClientConfig"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.apps.ClientConfig" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.apps.config.AppConfig</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.apps.ClientConfig.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'client'</span></em><a class="headerlink" href="#client.apps.ClientConfig.name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-client.client_permissions">
+<span id="id2"></span><h2><span class="section-number">7.3. </span>客户端菜单权限<a class="headerlink" href="#module-client.client_permissions" title="永久链接至标题"></a></h2>
+<p>&#64;File:client_permissions.py
+&#64;DateTime:2022/3/22 4:24 下午
+&#64;Author:xixiaoyu
+&#64;Desc:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.ClientMenuBasePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">ClientMenuBasePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#ClientMenuBasePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.ClientMenuBasePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.permissions.BasePermission</span></code></p>
+<p>权限基类</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="client.client_permissions.ClientMenuBasePermission.has_permission">
+<span class="sig-name descname"><span class="pre">has_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/client_permissions.html#ClientMenuBasePermission.has_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.ClientMenuBasePermission.has_permission" title="永久链接至目标"></a></dt>
+<dd><p>Return <cite>True</cite> if permission is granted, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.ClientMenuBasePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_admin'</span></em><a class="headerlink" href="#client.client_permissions.ClientMenuBasePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.SystemManageSupplyCompanyPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">SystemManageSupplyCompanyPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#SystemManageSupplyCompanyPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.SystemManageSupplyCompanyPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>系统管理 - 供应链企业 - 供应链企业</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.SystemManageSupplyCompanyPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'company_list'</span></em><a class="headerlink" href="#client.client_permissions.SystemManageSupplyCompanyPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.SystemManageUserManagePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">SystemManageUserManagePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#SystemManageUserManagePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.SystemManageUserManagePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>系统管理 - 用户管理 - 用户管理</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.SystemManageUserManagePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user_manage'</span></em><a class="headerlink" href="#client.client_permissions.SystemManageUserManagePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterAccountListPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterAccountListPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterAccountListPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterAccountListPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 对账单 - 对账单</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterAccountListPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'account_list'</span></em><a class="headerlink" href="#client.client_permissions.XLetterAccountListPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterChainListPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterChainListPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterChainListPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterChainListPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 区块链存证 - 区块链存证</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterChainListPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'chain_list'</span></em><a class="headerlink" href="#client.client_permissions.XLetterChainListPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterClearPaymentPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterClearPaymentPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterClearPaymentPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterClearPaymentPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 清分管理 - 清分付款</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterClearPaymentPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'clearing_pay'</span></em><a class="headerlink" href="#client.client_permissions.XLetterClearPaymentPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterClearingProceedsPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterClearingProceedsPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterClearingProceedsPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterClearingProceedsPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 清分管理 - 清分收款</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterClearingProceedsPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'clearing_proceeds'</span></em><a class="headerlink" href="#client.client_permissions.XLetterClearingProceedsPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterContractAgreementPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterContractAgreementPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterContractAgreementPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterContractAgreementPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 合同协议 - 合同协议</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterContractAgreementPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'contract_agreement'</span></em><a class="headerlink" href="#client.client_permissions.XLetterContractAgreementPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterCreditManagePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterCreditManagePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterCreditManagePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterCreditManagePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 授信管理 - 授信管理</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterCreditManagePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'credit_manage'</span></em><a class="headerlink" href="#client.client_permissions.XLetterCreditManagePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterFinancingManageApprovePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterFinancingManageApprovePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterFinancingManageApprovePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterFinancingManageApprovePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 融资管理 - 融资审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterFinancingManageApprovePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'financing_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterFinancingManageApprovePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterFinancingManageProjectPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterFinancingManageProjectPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterFinancingManageProjectPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterFinancingManageProjectPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - 融资管理 - 融资项目</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterFinancingManageProjectPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'financing_project'</span></em><a class="headerlink" href="#client.client_permissions.XLetterFinancingManageProjectPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApprovePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageOpenApprovePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenApprovePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApprovePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - 开立审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApprovePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'open_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApprovePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageOpenApproveReceivedTransferApprovePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenApproveReceivedTransferApprovePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - 开立 转让 融资开立审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.approve_menu_code_name">
+<span class="sig-name descname"><span class="pre">approve_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'financing_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.approve_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.has_permission">
+<span class="sig-name descname"><span class="pre">has_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenApproveReceivedTransferApprovePermission.has_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.has_permission" title="永久链接至目标"></a></dt>
+<dd><p>Return <cite>True</cite> if permission is granted, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.open_approve_menu_code_name">
+<span class="sig-name descname"><span class="pre">open_approve_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'open_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.open_approve_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.received_menu_code_name">
+<span class="sig-name descname"><span class="pre">received_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'receive_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.received_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.transfer_menu_code_name">
+<span class="sig-name descname"><span class="pre">transfer_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transfer_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferApprovePermission.transfer_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageOpenApproveReceivedTransferFinancingPermission111</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenApproveReceivedTransferFinancingPermission111"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - 开立 转让 融资开立审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.financing_menu_code_name">
+<span class="sig-name descname"><span class="pre">financing_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'financing_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.financing_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.has_permission">
+<span class="sig-name descname"><span class="pre">has_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenApproveReceivedTransferFinancingPermission111.has_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.has_permission" title="永久链接至目标"></a></dt>
+<dd><p>Return <cite>True</cite> if permission is granted, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.open_approve_menu_code_name">
+<span class="sig-name descname"><span class="pre">open_approve_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'open_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.open_approve_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.received_menu_code_name">
+<span class="sig-name descname"><span class="pre">received_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'receive_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.received_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.transfer_menu_code_name">
+<span class="sig-name descname"><span class="pre">transfer_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transfer_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenApproveReceivedTransferFinancingPermission111.transfer_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageOpenPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageOpenPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageOpenPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - X信开立</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageOpenPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'some_open'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageOpenPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManagePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManagePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManagePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManagePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - X信管理</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManagePermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'some_manage'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManagePermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedOpenApprovePermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageReceivedOpenApprovePermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageReceivedOpenApprovePermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedOpenApprovePermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - 开立审批 | X信接收审批</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedOpenApprovePermission.has_permission">
+<span class="sig-name descname"><span class="pre">has_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageReceivedOpenApprovePermission.has_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedOpenApprovePermission.has_permission" title="永久链接至目标"></a></dt>
+<dd><p>Return <cite>True</cite> if permission is granted, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedOpenApprovePermission.open_approve_menu_code_name">
+<span class="sig-name descname"><span class="pre">open_approve_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'open_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedOpenApprovePermission.open_approve_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedOpenApprovePermission.received_menu_code_name">
+<span class="sig-name descname"><span class="pre">received_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'receive_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedOpenApprovePermission.received_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageReceivedPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageReceivedPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - X信接收审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'receive_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedTransferPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageReceivedTransferPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageReceivedTransferPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedTransferPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - X信接收审批 | X信转让审批</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedTransferPermission.has_permission">
+<span class="sig-name descname"><span class="pre">has_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">view</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageReceivedTransferPermission.has_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedTransferPermission.has_permission" title="永久链接至目标"></a></dt>
+<dd><p>Return <cite>True</cite> if permission is granted, <cite>False</cite> otherwise.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedTransferPermission.received_menu_code_name">
+<span class="sig-name descname"><span class="pre">received_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'receive_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedTransferPermission.received_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageReceivedTransferPermission.transfer_menu_code_name">
+<span class="sig-name descname"><span class="pre">transfer_menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transfer_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageReceivedTransferPermission.transfer_menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageTransferPermission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.client_permissions.</span></span><span class="sig-name descname"><span class="pre">XLetterManageTransferPermission</span></span><a class="reference internal" href="../_modules/client/client_permissions.html#XLetterManageTransferPermission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.client_permissions.XLetterManageTransferPermission" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="#client.client_permissions.ClientMenuBasePermission" title="client.client_permissions.ClientMenuBasePermission"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.client_permissions.ClientMenuBasePermission</span></code></a></p>
+<p>X信 - X信管理 - X信转让审批</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="client.client_permissions.XLetterManageTransferPermission.menu_code_name">
+<span class="sig-name descname"><span class="pre">menu_code_name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'transfer_approval'</span></em><a class="headerlink" href="#client.client_permissions.XLetterManageTransferPermission.menu_code_name" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-client.tasks">
+<span id="id3"></span><h2><span class="section-number">7.4. </span>定时任务<a class="headerlink" href="#module-client.tasks" title="永久链接至标题"></a></h2>
+<p>&#64;File        : tasks.py
+&#64;Author      : niuxingjie
+&#64;Time        : 2022/3/15 17:37
+&#64;Description :</p>
+<dl>
+<dt>样例：</dt><dd><p>import datetime
+from client.tasks import unconfirmed_open_accept_job, unconfirmed_transfer_accept_job
+from client.models.credit_certificate import CreditCertificate
+from utils.date_and_time import n_minutes_later</p>
+<p>cc_id = 23
+cc=CreditCertificate.objects.get(pk=cc_id)
+now=datetime.datetime.now()</p>
+<p>res=unconfirmed_open_accept_job.apply_async(args=(cc_id, str(cc.expire_at)), eta=n_minutes_later(now, 1))
+res.get()
+res.status</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

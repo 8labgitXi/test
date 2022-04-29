@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.models.sms &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.models.sms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.models.sms 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : sms.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/2/24 20:09</span>
+<span class="sd">@Description : 短信验证码</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="kn">from</span> <span class="nn">client.models.base</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">consts.sms</span> <span class="kn">import</span> <span class="n">MAX_ERROR_TIMES</span><span class="p">,</span> <span class="n">ONE_DAY_MAX_TIME</span><span class="p">,</span> <span class="n">CODE_SOURCE</span><span class="p">,</span> <span class="n">CODE_LENGTH</span><span class="p">,</span> <span class="n">EXPIRE_TIMES</span>
+
+
+<div class="viewcode-block" id="PhoneVerifyCode"><a class="viewcode-back" href="../../../client/client.models.html#client.models.sms.PhoneVerifyCode">[文档]</a><span class="k">class</span> <span class="nc">PhoneVerifyCode</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
+        <span class="n">db_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;手机号&quot;</span>
+    <span class="p">)</span>
+    <span class="n">expire_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;过期时间&quot;</span>
+    <span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;验证码&quot;</span>
+    <span class="p">)</span>
+    <span class="n">error_times</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;错误次数&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;phone_verify_code&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;手机验证码&quot;</span>
+        <span class="n">verbose_name_plural</span> <span class="o">=</span> <span class="n">verbose_name</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PhoneVerifyCode.phone_code_is_valid"><a class="viewcode-back" href="../../../client/client.models.html#client.models.sms.PhoneVerifyCode.phone_code_is_valid">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">phone_code_is_valid</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        检查手机号的验证码是否有效</span>
+<span class="sd">        @param phone: 手机号</span>
+<span class="sd">        @param code: 验证码</span>
+<span class="sd">        @return: 是否有效</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 按照手机号查询，根据ID降序排列，获取最新的</span>
+        <span class="n">verify_code</span> <span class="o">=</span> <span class="n">PhoneVerifyCode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;expire_at&#39;</span><span class="p">,</span> <span class="s1">&#39;error_times&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">verify_code</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># 判断是否过期</span>
+        <span class="n">is_expired</span> <span class="o">=</span> <span class="n">verify_code</span><span class="o">.</span><span class="n">expire_at</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="c1"># 大于最大试错次数 或者 验证码不匹配</span>
+        <span class="k">if</span> <span class="n">verify_code</span><span class="o">.</span><span class="n">error_times</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_TIMES</span> <span class="ow">or</span> <span class="n">verify_code</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="n">code</span> <span class="ow">or</span> <span class="n">is_expired</span><span class="p">:</span>
+            <span class="n">verify_code</span><span class="o">.</span><span class="n">error_times</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">verify_code</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;updated_at&#39;</span><span class="p">,</span> <span class="s1">&#39;error_times&#39;</span><span class="p">])</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="PhoneVerifyCode.create_phone_code"><a class="viewcode-back" href="../../../client/client.models.html#client.models.sms.PhoneVerifyCode.create_phone_code">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_phone_code</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        创建短信验证码</span>
+<span class="sd">        @param phone: 手机号</span>
+<span class="sd">        @return: 验证码</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 统计今日发送次数</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="n">PhoneVerifyCode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">created_at__year</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">year</span><span class="p">,</span>
+            <span class="n">created_at__month</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">month</span><span class="p">,</span>
+            <span class="n">created_at__day</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+        <span class="c1"># 判断今日发送次数是不是超过了限制</span>
+        <span class="k">if</span> <span class="n">total</span> <span class="o">&gt;</span> <span class="n">ONE_DAY_MAX_TIME</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;今日发送次数超过了限制,明日再试&quot;</span>
+        <span class="n">code_item</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">CODE_SOURCE</span><span class="p">,</span> <span class="n">CODE_LENGTH</span><span class="p">)</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">code_item</span><span class="p">)</span>
+        <span class="n">expire_at</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">EXPIRE_TIMES</span><span class="p">)</span>
+        <span class="n">PhoneVerifyCode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+            <span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">,</span>
+            <span class="n">expire_at</span><span class="o">=</span><span class="n">expire_at</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="n">code</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

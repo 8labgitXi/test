@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1_1_0.cc_transfer_log &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1_1_0.cc_transfer_log</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1_1_0.cc_transfer_log 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : cc_transfer_log.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/4/6 13:44</span>
+<span class="sd">@Description : 智信流转日志-树状结构</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">RetrieveAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">DATE_FORMAT</span>
+<span class="kn">from</span> <span class="nn">utils.fen_and_yuan</span> <span class="kn">import</span> <span class="n">fen_to_yuan</span>
+
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateTransferLogAPIView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        查询用户信用凭证</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">Q</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">)),</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;credit&quot;</span><span class="p">,</span> <span class="s2">&quot;credit__receive_company&quot;</span><span class="p">,</span> <span class="s2">&quot;from_company&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;credit__receive_company__name&quot;</span><span class="p">,</span> <span class="s2">&quot;from_company__name&quot;</span><span class="p">,</span> <span class="s2">&quot;company__name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;amount&quot;</span><span class="p">,</span> <span class="s2">&quot;confirm_at&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.get_object"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写获取单个对象</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_queryset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">())</span>
+
+        <span class="c1"># Perform the lookup filtering.</span>
+        <span class="n">lookup_url_kwarg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_url_kwarg</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_field</span>
+
+        <span class="k">assert</span> <span class="n">lookup_url_kwarg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s1">&#39;Expected view </span><span class="si">%s</span><span class="s1"> to be called with a URL keyword argument &#39;</span>
+            <span class="s1">&#39;named &quot;</span><span class="si">%s</span><span class="s1">&quot;. Fix your URL conf, or set the `.lookup_field` &#39;</span>
+            <span class="s1">&#39;attribute on the view correctly.&#39;</span> <span class="o">%</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">lookup_url_kwarg</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">filter_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_field</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">lookup_url_kwarg</span><span class="p">]}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">**</span><span class="n">filter_kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># May raise a permission denied</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_object_permissions</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.get_children"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.get_children">[文档]</a>    <span class="k">def</span> <span class="nf">get_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+
+        <span class="n">children</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;children&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">children</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+            <span class="c1"># 获取path</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;number&quot;</span><span class="p">))</span>
+            <span class="n">path_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="c1"># 查询是否有子节点</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">child_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">child</span><span class="p">:</span>
+                <span class="n">i</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">child</span>
+                <span class="c1"># 存在子节点 继续递归调用</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">get_children</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span><span class="p">[</span><span class="s2">&quot;children&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.tree"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.tree">[文档]</a>    <span class="k">def</span> <span class="nf">tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">credit_certificate</span><span class="p">:</span> <span class="n">CreditCertificate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取树状结构</span>
+<span class="sd">        @param credit_certificate:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path__0</span><span class="o">=</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+        <span class="n">child_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># 保存每个节点数据的 一级子节点</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">child</span><span class="p">:</span>
+            <span class="n">path_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">i_dict</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="s2">&quot;智信编号: &quot;</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="s2">&quot;originalOpenCompany&quot;</span><span class="p">:</span> <span class="s2">&quot;原始开立企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;originalOpenCompanyValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">receive_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;fromCompanyName&quot;</span><span class="p">:</span> <span class="s2">&quot;转让企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fromCompanyNameValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">from_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;companyName&quot;</span><span class="p">:</span> <span class="s2">&quot;接收企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;companyNameValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="s2">&quot;智信金额（元）: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;amountValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+                <span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="s2">&quot;智信余额（元）: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;balanceValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">balance</span><span class="p">),</span>
+                <span class="s2">&quot;confirmAt&quot;</span><span class="p">:</span> <span class="s2">&quot;确权日期: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;confirmAtValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">confirm_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">confirm_at</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">path</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">path_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">child_map</span><span class="p">:</span>
+                <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i_dict</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_dict</span><span class="p">)</span>
+                <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="c1"># 准备第一层数据</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+            <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="s2">&quot;智信编号: &quot;</span> <span class="o">+</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="s2">&quot;originalOpenCompany&quot;</span><span class="p">:</span> <span class="s2">&quot;原始开立企业: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;originalOpenCompanyValue&quot;</span><span class="p">:</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">receive_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;fromCompanyName&quot;</span><span class="p">:</span> <span class="s2">&quot;转让企业: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;fromCompanyNameValue&quot;</span><span class="p">:</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">from_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;companyName&quot;</span><span class="p">:</span> <span class="s2">&quot;接收企业: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;companyNameValue&quot;</span><span class="p">:</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="s2">&quot;智信金额（元）: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;amountValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+            <span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="s2">&quot;智信余额（元）: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;balanceValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">balance</span><span class="p">),</span>
+            <span class="s2">&quot;confirmAt&quot;</span><span class="p">:</span> <span class="s2">&quot;确权日期: &quot;</span><span class="p">,</span>
+            <span class="s2">&quot;confirmAtValue&quot;</span><span class="p">:</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">confirm_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">if</span> <span class="n">credit_certificate</span><span class="o">.</span><span class="n">confirm_at</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="n">child_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">number</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">child_map</span> <span class="o">=</span> <span class="n">child_map</span>
+        <span class="c1"># 递归调用</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_children</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.get_transfer_log"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.get_transfer_log">[文档]</a>    <span class="k">def</span> <span class="nf">get_transfer_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取流转日志</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">instance</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+        <span class="c1"># 判断可见范围</span>
+        <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">is_show_all_proccess</span> <span class="ow">and</span> <span class="n">instance</span><span class="o">.</span><span class="n">business</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;open&quot;</span>\
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">company_type</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;core&quot;</span><span class="p">:</span>
+            <span class="c1"># 如果是核心企业显示全部</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 获取当前信用凭证的下一级 儿子节点</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">path</span> <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="p">[]</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+            <span class="n">ccs</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+            <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># 遍历构造一级节点数据</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ccs</span><span class="p">:</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                        <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                        <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="s2">&quot;智信编号: &quot;</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                        <span class="s2">&quot;originalOpenCompany&quot;</span><span class="p">:</span> <span class="s2">&quot;原始开立企业: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;originalOpenCompanyValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">receive_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;fromCompanyName&quot;</span><span class="p">:</span> <span class="s2">&quot;转让企业: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;fromCompanyNameValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">from_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;companyName&quot;</span><span class="p">:</span> <span class="s2">&quot;接收企业: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;companyNameValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                        <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="s2">&quot;智信金额（元）: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;amountValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+                        <span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="s2">&quot;智信余额（元）: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;balanceValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">balance</span><span class="p">),</span>
+                        <span class="s2">&quot;confirmAt&quot;</span><span class="p">:</span> <span class="s2">&quot;确权日期: &quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;confirmAtValue&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">confirm_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">confirm_at</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                        <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="p">[]</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+            <span class="c1"># 只显示当前和下一级</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                <span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="s2">&quot;No&quot;</span><span class="p">:</span> <span class="s2">&quot;智信编号: &quot;</span> <span class="o">+</span> <span class="n">instance</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+                <span class="s2">&quot;originalOpenCompany&quot;</span><span class="p">:</span> <span class="s2">&quot;原始开立企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;originalOpenCompanyValue&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">receive_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;fromCompanyName&quot;</span><span class="p">:</span> <span class="s2">&quot;转让企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;fromCompanyNameValue&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">from_company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;companyName&quot;</span><span class="p">:</span> <span class="s2">&quot;接收企业: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;companyNameValue&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="s2">&quot;智信金额（元）: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;amountValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">amount</span><span class="p">),</span>
+                <span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="s2">&quot;智信余额（元）: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;balanceValue&quot;</span><span class="p">:</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">balance</span><span class="p">),</span>
+                <span class="s2">&quot;confirmAt&quot;</span><span class="p">:</span> <span class="s2">&quot;确权日期: &quot;</span><span class="p">,</span>
+                <span class="s2">&quot;confirmAtValue&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">confirm_at</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">DATE_FORMAT</span><span class="p">)</span> <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">confirm_at</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;children&quot;</span><span class="p">:</span> <span class="n">children</span>
+
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CreditCertificateTransferLogAPIView.retrieve"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cc_transfer_log.CreditCertificateTransferLogAPIView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @param args:</span>
+<span class="sd">        @param kwargs:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transfer_log</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">res</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

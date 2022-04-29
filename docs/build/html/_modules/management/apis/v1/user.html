@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>management.apis.v1.user &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>management.apis.v1.user</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>management.apis.v1.user 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : user.py</span>
+<span class="sd">@Author      : yu wen yang</span>
+<span class="sd">@Time        : 2022/3/4 9:42 上午</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span><span class="p">,</span> <span class="n">AuthenticationFailed</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">ListCreateAPIView</span><span class="p">,</span> <span class="n">RetrieveUpdateAPIView</span><span class="p">,</span> <span class="n">UpdateAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span>
+<span class="kn">from</span> <span class="nn">client.models.menus</span> <span class="kn">import</span> <span class="n">AppMenus</span><span class="p">,</span> <span class="n">RoleAppMenus</span>
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">Platform</span><span class="p">,</span> <span class="n">UserRole</span>
+<span class="kn">from</span> <span class="nn">client.models.user</span> <span class="kn">import</span> <span class="n">S1User</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">SECRET_KEY</span>
+<span class="kn">from</span> <span class="nn">consts.user</span> <span class="kn">import</span> <span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">,</span> <span class="n">ACCESS_TOKEN_EXPIRE_DAYS</span><span class="p">,</span> <span class="n">FOUNDER_NAME</span>
+<span class="kn">from</span> <span class="nn">management.filters.user_filter</span> <span class="kn">import</span> <span class="n">S1UserFilter</span>
+<span class="kn">from</span> <span class="nn">management.management_permissions</span> <span class="kn">import</span> <span class="n">UserManageListPermission</span>
+<span class="kn">from</span> <span class="nn">management.serializers.roles</span> <span class="kn">import</span> <span class="n">PermissionSerializer</span><span class="p">,</span> <span class="n">RolesIdListSerializer</span>
+<span class="kn">from</span> <span class="nn">management.serializers.user</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">UserListCreateSerializer</span><span class="p">,</span>
+    <span class="n">UserDetailSerializer</span><span class="p">,</span>
+    <span class="n">UserDetailUpdateSerializer</span><span class="p">,</span> <span class="n">AccountLoginSerializer</span><span class="p">,</span> <span class="n">UserSimpleDetailSerializer</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">scf_project.settings</span> <span class="kn">import</span> <span class="n">scf_config</span>
+<span class="kn">from</span> <span class="nn">utils</span> <span class="kn">import</span> <span class="n">captcha_utils</span>
+<span class="kn">from</span> <span class="nn">utils.captcha_utils</span> <span class="kn">import</span> <span class="n">get_captcha</span>
+<span class="kn">from</span> <span class="nn">utils.decrypted</span> <span class="kn">import</span> <span class="n">des_decrypt</span>
+<span class="kn">from</span> <span class="nn">utils.drf.paginations</span> <span class="kn">import</span> <span class="n">MyPageNumberPagination</span>
+<span class="kn">from</span> <span class="nn">utils.get_s1_application_open</span> <span class="kn">import</span> <span class="n">s1_application_open</span>
+<span class="kn">from</span> <span class="nn">utils.is_allowed_join</span> <span class="kn">import</span> <span class="n">is_had_permission</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+<span class="kn">from</span> <span class="nn">utils.permission_menu</span> <span class="kn">import</span> <span class="n">get_permission_menu</span>
+
+
+<div class="viewcode-block" id="ImageCodeView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.ImageCodeView">[文档]</a><span class="k">class</span> <span class="nc">ImageCodeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 无需进行登录认证</span>
+
+<div class="viewcode-block" id="ImageCodeView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.ImageCodeView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取图片验证码码</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">get_captcha</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UsersListCreateAPI"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersListCreateAPI">[文档]</a><span class="k">class</span> <span class="nc">UsersListCreateAPI</span><span class="p">(</span><span class="n">ListCreateAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户列表  创建用户</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">UserListCreateSerializer</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">S1UserFilter</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">UserManageListPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="UsersListCreateAPI.get_queryset"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersListCreateAPI.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">user_ids</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">role__platform_id</span><span class="o">=</span><span class="n">platform_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span>
+            <span class="s2">&quot;s1_user_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">())</span>
+
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">id__in</span><span class="o">=</span><span class="n">user_ids</span><span class="p">,</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span></div>
+
+<div class="viewcode-block" id="UsersListCreateAPI.create"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersListCreateAPI.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写创建函数</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @param args:</span>
+<span class="sd">        @param kwargs:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">root_s1_user_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">:</span>
+            <span class="n">root_user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 如果不是根用户，那么ID用当前用户的根ID</span>
+            <span class="n">root_user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">root_s1_user_id</span>
+
+        <span class="c1"># 实例化序列化器</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;parent_user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s2">&quot;root_user_id&quot;</span><span class="p">:</span> <span class="n">root_user_id</span><span class="p">,</span>
+                <span class="s2">&quot;re_password&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;re_password&quot;</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perform_create</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UsersDetailAPI"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersDetailAPI">[文档]</a><span class="k">class</span> <span class="nc">UsersDetailAPI</span><span class="p">(</span><span class="n">RetrieveUpdateAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户详情</span>
+<span class="sd">    编辑用户</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">UserDetailSerializer</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">UserManageListPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="UsersDetailAPI.retrieve"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersDetailAPI.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;user_roles&quot;</span><span class="p">)</span>
+        <span class="c1"># 获取属于客户端的角色</span>
+
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">platform_id</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">userrole__s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span>
+        <span class="n">role_serializer</span> <span class="o">=</span> <span class="n">RolesIdListSerializer</span><span class="p">(</span><span class="n">roles</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">role_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">role_serializer</span><span class="o">.</span><span class="n">data</span><span class="p">]</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;roles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">role_list</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UsersDetailAPI.update"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UsersDetailAPI.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="c1"># 当前编辑的用户是否有创建者角色</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">is_founder</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role__name</span><span class="o">=</span><span class="n">FOUNDER_NAME</span><span class="p">,</span>
+            <span class="n">role__platform_id</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="c1"># 如果当前登录用户不是创建者, 无法修改; 如果用户是创建者, 则无法修改角色和状态</span>
+        <span class="k">if</span> <span class="n">is_founder</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">role__name</span><span class="o">=</span><span class="n">FOUNDER_NAME</span><span class="p">,</span>
+                <span class="n">role__platform_id</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">id</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;当前用户权限不足! 无法修改!&quot;</span><span class="p">)</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;is_active&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">is_active</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;role_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;role_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">username</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">UserDetailUpdateSerializer</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perform_update</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({})</span></div></div>
+
+
+<div class="viewcode-block" id="UserStatusUpdateAPI"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UserStatusUpdateAPI">[文档]</a><span class="k">class</span> <span class="nc">UserStatusUpdateAPI</span><span class="p">(</span><span class="n">UpdateAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    修改用户状态</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">UserManageListPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="UserStatusUpdateAPI.update"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UserStatusUpdateAPI.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="n">user_</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="c1"># # 当前编辑的用户是否有创建者角色</span>
+        <span class="c1"># is_founder = UserRole.objects.filter(</span>
+        <span class="c1">#     s1_user_id=instance.id,</span>
+        <span class="c1">#     role__name=FOUNDER_NAME,</span>
+        <span class="c1">#     role__platform_id=platform_id</span>
+        <span class="c1"># ).exists()</span>
+        <span class="c1"># # 如果当前登录用户不是创建者, 无法修改.</span>
+        <span class="c1"># if is_founder:</span>
+        <span class="k">if</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">role__name</span><span class="o">=</span><span class="n">FOUNDER_NAME</span><span class="p">,</span>
+                <span class="n">role__platform_id</span><span class="o">=</span><span class="n">platform_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;创建者角色无法被停用!&quot;</span><span class="p">)</span>
+
+        <span class="n">instance</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;is_active&quot;</span><span class="p">]</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;修改成功&quot;</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="LoginViewSet"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.LoginViewSet">[文档]</a><span class="k">class</span> <span class="nc">LoginViewSet</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="LoginViewSet.post"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.LoginViewSet.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        登陆逻辑</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">AccountLoginSerializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">)</span> <span class="ow">or</span> <span class="n">user</span><span class="o">.</span><span class="n">is_deleted</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;账户被冻结，请联系管理员&quot;</span><span class="p">)</span>
+        <span class="c1"># 校验图片验证码</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">captcha_utils</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cptch&quot;</span><span class="p">),</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cptch_key&quot;</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;图片验证码错误，请重新输入&quot;</span><span class="p">)</span>
+
+        <span class="n">is_scf_user</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">s1_application_open</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">AuthenticationFailed</span><span class="p">(</span><span class="s2">&quot;无服务权限&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 如果用户来源是供应链金融管理端, 判断当前用户在供应链金融是否有角色</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">source</span> <span class="o">==</span> <span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">:</span>
+            <span class="n">is_permission</span> <span class="o">=</span> <span class="n">is_had_permission</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="c1"># 如果是其他来源, 把token传过去.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_permission</span> <span class="o">=</span> <span class="n">is_had_permission</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">platform</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_permission</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;此账号不可登陆&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 如果来源不是供应链金融后台, 在供应链金融也没有角色, 无法登录</span>
+        <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">source</span> <span class="o">!=</span> <span class="n">SCF_MANAGEMENT_SERVICE</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_scf_user</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;此账号不可登陆管理端&quot;</span><span class="p">)</span>
+
+        <span class="n">user</span><span class="o">.</span><span class="n">last_login</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">is_founder_user</span> <span class="o">=</span> <span class="n">is_scf_user</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role__name</span><span class="o">=</span><span class="n">FOUNDER_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="c1"># 获取全部权限</span>
+        <span class="k">if</span> <span class="n">is_founder_user</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">get_permission_menu</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">exist_app_menus</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># 查询用户对应的角色</span>
+            <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;role_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># 查询用户角色对应的菜单权限</span>
+            <span class="n">app_menus</span> <span class="o">=</span> <span class="n">RoleAppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role_id__in</span><span class="o">=</span><span class="n">roles</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;app_menus_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># 查询出符合调价你的菜单权限</span>
+            <span class="n">selected_permission</span> <span class="o">=</span> <span class="n">AppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">app_menus</span><span class="p">,</span> <span class="n">platform_id</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span>
+            <span class="n">selected_permission_serializer</span> <span class="o">=</span> <span class="n">PermissionSerializer</span><span class="p">(</span><span class="n">selected_permission</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># 把每个权限的code都取出来</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">selected_permission_serializer</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">exist_app_menus</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">])</span>
+                <span class="n">exist_app_menus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
+            <span class="n">exist_app_menus</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">exist_app_menus</span><span class="p">))</span>
+            <span class="c1"># 通过用户已有的所有的权限code中筛选出一级菜单权限</span>
+            <span class="n">selected_permission</span> <span class="o">=</span> <span class="n">AppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">code__in</span><span class="o">=</span><span class="n">exist_app_menus</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">platform_id</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span>
+            <span class="c1"># 将一级菜单示例当做参数传入获取权限菜单的函数</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">get_permission_menu</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span> <span class="n">exist_app_menus</span><span class="p">,</span> <span class="n">first_menu_obj</span><span class="o">=</span><span class="n">selected_permission</span><span class="p">)</span>
+        <span class="n">user_data</span> <span class="o">=</span> <span class="n">UserSimpleDetailSerializer</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;request&#39;</span><span class="p">:</span> <span class="n">request</span><span class="p">})</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;nick_name&quot;</span><span class="p">:</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nick_name&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;icon&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">user_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phone&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
+            <span class="s2">&quot;permissions&quot;</span><span class="p">:</span> <span class="n">res</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UserInfoRefreshAPIView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UserInfoRefreshAPIView">[文档]</a><span class="k">class</span> <span class="nc">UserInfoRefreshAPIView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UserInfoRefreshAPIView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.UserInfoRefreshAPIView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param request:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="c1"># token = request.headers[&quot;Authorization&quot;].split()[1]</span>
+
+        <span class="c1"># resp = s1_application_open(token)</span>
+        <span class="c1"># is_redirect = resp[&quot;data&quot;].get(&quot;is_redirect&quot;, True)</span>
+        <span class="c1"># if not is_redirect:</span>
+        <span class="c1">#     raise AuthenticationFailed(&quot;无服务权限&quot;)</span>
+
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">is_had_permission</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">platform_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;认证失败&quot;</span><span class="p">)</span>
+        <span class="c1"># 查询到当前用户的root用户id</span>
+        <span class="n">root_user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">root_s1_user_id</span>
+        <span class="c1"># 用当前用户的root用户去查询企业是否存在</span>
+        <span class="n">is_company_user</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pk</span><span class="o">=</span><span class="n">scf_config</span><span class="p">[</span><span class="s2">&quot;company&quot;</span><span class="p">],</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">root_user</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_company_user</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;没有权限&quot;</span><span class="p">)</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">},</span> <span class="n">expire_days</span><span class="o">=</span><span class="n">ACCESS_TOKEN_EXPIRE_DAYS</span><span class="p">)</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="n">get_permission_menu</span><span class="p">(</span><span class="n">platform_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;token&quot;</span><span class="p">:</span> <span class="n">token</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="s2">&quot;nick_name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">nick_name</span><span class="p">,</span>
+            <span class="s2">&quot;email&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span>
+            <span class="s2">&quot;icon&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">icon</span><span class="p">,</span>
+            <span class="s2">&quot;permissions&quot;</span><span class="p">:</span> <span class="n">permissions</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="RedirectRoles"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.RedirectRoles">[文档]</a><span class="k">class</span> <span class="nc">RedirectRoles</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="RedirectRoles.get"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.user.RedirectRoles.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;token&quot;</span><span class="p">)</span>
+        <span class="n">secret_key</span> <span class="o">=</span> <span class="n">des_decrypt</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">secret_key</span> <span class="o">==</span> <span class="n">SECRET_KEY</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">()})</span>
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">users</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">role__platform</span><span class="o">=</span><span class="n">platform_id</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span>
+            <span class="s2">&quot;s1_user_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">users</span><span class="p">)})</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

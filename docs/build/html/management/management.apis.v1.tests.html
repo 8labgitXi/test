@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.1.1.1. v1.0测试 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">1.1.1.1. </span>v1.0测试</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/management/management.apis.v1.tests.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="v1-0">
+<h1><span class="section-number">1.1.1.1. </span>v1.0测试<a class="headerlink" href="#v1-0" title="永久链接至标题"></a></h1>
+<section id="module-management.apis.v1.tests.test_cc_approval_history_detail">
+<span id="id1"></span><h2><span class="section-number">1.1.1.1.1. </span>测试管理端获取某信审批快照<a class="headerlink" href="#module-management.apis.v1.tests.test_cc_approval_history_detail" title="永久链接至标题"></a></h2>
+<p>&#64;Summary : 测试管理端获取某信审批快照
+&#64;Author  : Rey
+&#64;Time    : 2022-04-01 10:41:52
+&#64;Run     : python manage.py test management.apis.v1.tests.test_cc_approval_history_detail  -v=3 --keepdb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.tests.test_cc_approval_history_detail.</span></span><span class="sig-name descname"><span class="pre">TestCcApprovalHistoryDetailTests</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_cc_approval_history_detail.html#TestCcApprovalHistoryDetailTests"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.test.APITestCase</span></code></p>
+<p>测试 ApprovalHistoryDetialView.get</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.client_request">
+<span class="sig-name descname"><span class="pre">client_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_cc_approval_history_detail.html#TestCcApprovalHistoryDetailTests.client_request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.client_request" title="永久链接至目标"></a></dt>
+<dd><p>封装请求</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.databases">
+<span class="sig-name descname"><span class="pre">databases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'credible_data',</span> <span class="pre">'default'}</span></em><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.databases" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.fixtures">
+<span class="sig-name descname"><span class="pre">fixtures</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['const_company.json',</span> <span class="pre">'const_credit.json',</span> <span class="pre">'location.json',</span> <span class="pre">'business.json',</span> <span class="pre">'work_flow.json',</span> <span class="pre">'company.json',</span> <span class="pre">'app_menus.json',</span> <span class="pre">'b_approval_history_detail.json',</span> <span class="pre">'const_platform.json']</span></em><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.fixtures" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_fail_no_per">
+<span class="sig-name descname"><span class="pre">test_fail_no_per</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_cc_approval_history_detail.html#TestCcApprovalHistoryDetailTests.test_fail_no_per"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_fail_no_per" title="永久链接至目标"></a></dt>
+<dd><p>测试没有权限</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_success_with_finance_per">
+<span class="sig-name descname"><span class="pre">test_success_with_finance_per</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_cc_approval_history_detail.html#TestCcApprovalHistoryDetailTests.test_success_with_finance_per"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_success_with_finance_per" title="永久链接至目标"></a></dt>
+<dd><p>测试成功: 只有 'X信管理 - 融资管理 - 融资项目审批' 权限</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_success_with_open_per">
+<span class="sig-name descname"><span class="pre">test_success_with_open_per</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_cc_approval_history_detail.html#TestCcApprovalHistoryDetailTests.test_success_with_open_per"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_cc_approval_history_detail.TestCcApprovalHistoryDetailTests.test_success_with_open_per" title="永久链接至目标"></a></dt>
+<dd><p>测试成功: 只有 'X信管理 - X信管理 - 开立审批' 权限</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.tests.test_common_cc_approval">
+<span id="id2"></span><h2><span class="section-number">1.1.1.1.2. </span>测试通用审批<a class="headerlink" href="#module-management.apis.v1.tests.test_common_cc_approval" title="永久链接至标题"></a></h2>
+<p>&#64;Summary : 测试通用审批
+&#64;Author  : Rey
+&#64;Time    : 2022-04-13 18:16:52
+&#64;Run     : python manage.py test management.apis.v1.tests.test_common_cc_approval -v=3 --keepdb</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.tests.test_common_cc_approval.</span></span><span class="sig-name descname"><span class="pre">TestCommonCcApproval</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">methodName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'runTest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.test.APITestCase</span></code></p>
+<p>test CreditCertificateReviewUpdateAPIView.update
+按照work_flow_id顺序测试</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.assertAPIException">
+<span class="sig-name descname"><span class="pre">assertAPIException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.assertAPIException"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.assertAPIException" title="永久链接至目标"></a></dt>
+<dd><p>断言AIPIException</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resp</strong> (<em>_type</em>) -- response</p></li>
+<li><p><strong>msg</strong> (<em>str</em>) -- 错误信息</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.client_request">
+<span class="sig-name descname"><span class="pre">client_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cc_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_ok</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.client_request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.client_request" title="永久链接至目标"></a></dt>
+<dd><p>封装请求</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>int</em>) -- 用户id</p></li>
+<li><p><strong>company_uid</strong> (<em>str</em>) -- 公司uid</p></li>
+<li><p><strong>cc_id</strong> (<em>int</em>) -- 某信id</p></li>
+<li><p><strong>is_ok</strong> (<em>bool</em>) -- 是否通过</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return _type_</dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.databases">
+<span class="sig-name descname"><span class="pre">databases</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'credible_data',</span> <span class="pre">'default'}</span></em><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.databases" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.fixtures">
+<span class="sig-name descname"><span class="pre">fixtures</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('app_menus.json',</span> <span class="pre">'const_company.json',</span> <span class="pre">'const_credit.json',</span> <span class="pre">'location.json',</span> <span class="pre">'business.json',</span> <span class="pre">'work_flow.json',</span> <span class="pre">'business_map.json',</span> <span class="pre">'const_platform.json',</span> <span class="pre">'evidence_type.json',</span> <span class="pre">'base_common_cc_approval.json')</span></em><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.fixtures" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_done">
+<span class="sig-name descname"><span class="pre">test_fail_clear_done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.test_fail_clear_done"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_done" title="永久链接至目标"></a></dt>
+<dd><p>测试失败: 已经清分</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_ready">
+<span class="sig-name descname"><span class="pre">test_fail_clear_ready</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.test_fail_clear_ready"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_ready" title="永久链接至目标"></a></dt>
+<dd><p>测试失败: 即将清分</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_not_platform">
+<span class="sig-name descname"><span class="pre">test_fail_not_platform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.test_fail_not_platform"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_not_platform" title="永久链接至目标"></a></dt>
+<dd><p>测试失败: 非平台节点</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_finance_platform">
+<span class="sig-name descname"><span class="pre">test_success_pass_finance_platform</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.test_success_pass_finance_platform"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_finance_platform" title="永久链接至目标"></a></dt>
+<dd><p>测试成功: 通过融资平台审批</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_open_platform_review">
+<span class="sig-name descname"><span class="pre">test_success_pass_open_platform_review</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/tests/test_common_cc_approval.html#TestCommonCcApproval.test_success_pass_open_platform_review"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_open_platform_review" title="永久链接至目标"></a></dt>
+<dd><p>测试成功: 通过开立平台审批</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

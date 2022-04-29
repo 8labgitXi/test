@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. 序列化器 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">3. </span>序列化器</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/management/management.serializers.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">3. </span>序列化器<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="module-management.serializers.bill">
+<span id="id2"></span><h2><span class="section-number">3.1. </span>对账单<a class="headerlink" href="#module-management.serializers.bill" title="永久链接至标题"></a></h2>
+<p>&#64;File        : bill.py
+&#64;Author      : wst
+&#64;Time        : 2022/4/11 上午9:42
+&#64;Description : 管理端对账单 序列化器</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.bill.</span></span><span class="sig-name descname"><span class="pre">ManageMonthBillDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/bill.html#ManageMonthBillDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.bill.ManageMonthBillDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<a class="reference internal" href="../client/client.serializers.html#client.serializers.bill.MonthBillDetailSerializer" title="client.serializers.bill.MonthBillDetailSerializer"><code class="xref py py-class docutils literal notranslate"><span class="pre">client.serializers.bill.MonthBillDetailSerializer</span></code></a></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillDetailSerializer.get_business">
+<span class="sig-name descname"><span class="pre">get_business</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/bill.html#ManageMonthBillDetailSerializer.get_business"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.bill.ManageMonthBillDetailSerializer.get_business" title="永久链接至目标"></a></dt>
+<dd><p>判断业务类型，逻辑如下：
+开立 本企业为开立方 -》开立，本企业为接收方 -》接收
+转让 本企业为转让方 -》转让，本企业为接收方 -》接收
+融资 本企业为融资方 -》融资，本企业为接收方 -》融资接收</p>
+<p>&#64;param val:
+&#64;return: 业务类型</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.bill.</span></span><span class="sig-name descname"><span class="pre">ManageMonthBillSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/bill.html#ManageMonthBillSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.bill.ManageMonthBillSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/bill.html#ManageMonthBillSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.bill.ManageMonthBillSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'month',</span> <span class="pre">'count',</span> <span class="pre">'company_name']</span></em><a class="headerlink" href="#management.serializers.bill.ManageMonthBillSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.bill.ManageMonthBillSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id3"><span class="problematic" id="id4">`</span></a>client.models.data_summary.HistoryMonthBill`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.bill.ManageMonthBillSerializer.get_month">
+<span class="sig-name descname"><span class="pre">get_month</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/bill.html#ManageMonthBillSerializer.get_month"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.bill.ManageMonthBillSerializer.get_month" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.blockchain_evidence">
+<span id="id5"></span><h2><span class="section-number">3.2. </span>区块链存证<a class="headerlink" href="#module-management.serializers.blockchain_evidence" title="永久链接至标题"></a></h2>
+<p>&#64;File        : blockchain_evidence.py
+&#64;Author      : xixiaoyu
+&#64;Time        : 2022/4/6 4:30 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.blockchain_evidence.</span></span><span class="sig-name descname"><span class="pre">BlockchainEvidenceSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/blockchain_evidence.html#BlockchainEvidenceSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>区块链存证列表</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/blockchain_evidence.html#BlockchainEvidenceSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'number',</span> <span class="pre">'data_type',</span> <span class="pre">'evidence_type',</span> <span class="pre">'tx_hash',</span> <span class="pre">'evidence_type_ch']</span></em><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id6"><span class="problematic" id="id7">`</span></a>client.models.evidence.ChainEvidence`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.blockchain_evidence.</span></span><span class="sig-name descname"><span class="pre">BlockchainEvidenceTypeSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/blockchain_evidence.html#BlockchainEvidenceTypeSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>存证类型</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/blockchain_evidence.html#BlockchainEvidenceTypeSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'desc_name']</span></em><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.blockchain_evidence.BlockchainEvidenceTypeSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id8"><span class="problematic" id="id9">`</span></a>client.models.evidence.EvidenceType`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.credit_certificate">
+<span id="id10"></span><h2><span class="section-number">3.3. </span>智信流转单<a class="headerlink" href="#module-management.serializers.credit_certificate" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_certificate.py
+&#64;Author      : xixiaoyu
+&#64;Time        : 2022/4/2 3:22 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate.CreditCertificateTransferInfos">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateTransferInfos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate.html#CreditCertificateTransferInfos"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate.CreditCertificateTransferInfos" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate.html#CreditCertificateTransferInfos.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'open_company_name',</span> <span class="pre">'receive_company_name',</span> <span class="pre">'pay_company_name',</span> <span class="pre">'amount',</span> <span class="pre">'open_company_code',</span> <span class="pre">'receive_company_code',</span> <span class="pre">'promise_pay_at',</span> <span class="pre">'pay_company_code',</span> <span class="pre">'contract_number',</span> <span class="pre">'pay_reviewer',</span> <span class="pre">'pay_handler',</span> <span class="pre">'amount_ch',</span> <span class="pre">'clear_status',</span> <span class="pre">'number',</span> <span class="pre">'confirm_at']</span></em><a class="headerlink" href="#management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate.CreditCertificateTransferInfos.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id11"><span class="problematic" id="id12">`</span></a>client.models.credit_certificate.TransferLog`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.credit_certificate_manage">
+<span id="id13"></span><h2><span class="section-number">3.4. </span>信用凭证<a class="headerlink" href="#module-management.serializers.credit_certificate_manage" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_certificate_manage.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/7/22 14:32
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">CreditApprovalDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditApprovalDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>信用凭证开立-平台审批-详情页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditApprovalDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company_credit_code',</span> <span class="pre">'company',</span> <span class="pre">'from_company_credit_code',</span> <span class="pre">'from_company',</span> <span class="pre">'number',</span> <span class="pre">'capital_company_credit_code',</span> <span class="pre">'capital_company',</span> <span class="pre">'promise_pay_at',</span> <span class="pre">'created_at',</span> <span class="pre">'amount',</span> <span class="pre">'credit_number',</span> <span class="pre">'start',</span> <span class="pre">'end',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'credit_certificate_receive_time_limit',</span> <span class="pre">'credit_certificate_enclosure']</span></em><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id14"><span class="problematic" id="id15">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.get_credit_certificate_enclosure">
+<span class="sig-name descname"><span class="pre">get_credit_certificate_enclosure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditApprovalDetailSerializer.get_credit_certificate_enclosure"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer.get_credit_certificate_enclosure" title="永久链接至目标"></a></dt>
+<dd><p>信用凭证表反查附件表,拿到数据</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditCertificateSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditCertificateSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditCertificateSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>信用凭证开立-平台审批-列表页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditCertificateSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'number',</span> <span class="pre">'original_open_company',</span> <span class="pre">'transfer_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'amount',</span> <span class="pre">'created_at',</span> <span class="pre">'promise_pay_at',</span> <span class="pre">'s1_user']</span></em><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditCertificateSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id16"><span class="problematic" id="id17">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.CreditCertificateSerializer.get_s1_user">
+<span class="sig-name descname"><span class="pre">get_s1_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#CreditCertificateSerializer.get_s1_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.CreditCertificateSerializer.get_s1_user" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">FinanceApprovalDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>&quot;融资详情页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_company',</span> <span class="pre">'number',</span> <span class="pre">'promise_pay_at',</span> <span class="pre">'balance',</span> <span class="pre">'net_balance',</span> <span class="pre">'amount',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'capital_company',</span> <span class="pre">'company',</span> <span class="pre">'financing_annualized_interes',</span> <span class="pre">'technical_service',</span> <span class="pre">'information_consultation',</span> <span class="pre">'certificate_type',</span> <span class="pre">'credit_certificate_enclosure']</span></em><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id18"><span class="problematic" id="id19">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_amount">
+<span class="sig-name descname"><span class="pre">get_amount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_amount"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_amount" title="永久链接至目标"></a></dt>
+<dd><p>获取融资金额,及返回对应大写</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_balance">
+<span class="sig-name descname"><span class="pre">get_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_balance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_balance" title="永久链接至目标"></a></dt>
+<dd><p>获取 信用凭证余额(单位:元)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_credit_certificate_enclosure">
+<span class="sig-name descname"><span class="pre">get_credit_certificate_enclosure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_credit_certificate_enclosure"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_credit_certificate_enclosure" title="永久链接至目标"></a></dt>
+<dd><p>信用凭证表反查附件表,拿到数据</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_financing_annualized_interes">
+<span class="sig-name descname"><span class="pre">get_financing_annualized_interes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_financing_annualized_interes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_financing_annualized_interes" title="永久链接至目标"></a></dt>
+<dd><p>预计融资利息(单位:元)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_information_consultation">
+<span class="sig-name descname"><span class="pre">get_information_consultation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_information_consultation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_information_consultation" title="永久链接至目标"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>obj</strong> -- </p>
+</dd>
+</dl>
+<p>:return:信息咨询费(单位:元)及费率</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_net_balance">
+<span class="sig-name descname"><span class="pre">get_net_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_net_balance"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_net_balance" title="永久链接至目标"></a></dt>
+<dd><p>获取凭证净额(单位:元)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_technical_service">
+<span class="sig-name descname"><span class="pre">get_technical_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalDetailSerializer.get_technical_service"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer.get_technical_service" title="永久链接至目标"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>obj</strong> -- </p>
+</dd>
+</dl>
+<p>:return:技术服务费(单位:元)及费率</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">FinanceApprovalSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>融资项目-平台审批-列表页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'number',</span> <span class="pre">'finance_project_no',</span> <span class="pre">'finance_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'finance_amount',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'finance_apply_date',</span> <span class="pre">'promise_pay_at',</span> <span class="pre">'applicant']</span></em><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id20"><span class="problematic" id="id21">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_applicant">
+<span class="sig-name descname"><span class="pre">get_applicant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalSerializer.get_applicant"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_applicant" title="永久链接至目标"></a></dt>
+<dd><p>获取申请人</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_finance_project_no">
+<span class="sig-name descname"><span class="pre">get_finance_project_no</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalSerializer.get_finance_project_no"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_finance_project_no" title="永久链接至目标"></a></dt>
+<dd><p>获取融资项目编号</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_financing_annualized_interest_rate">
+<span class="sig-name descname"><span class="pre">get_financing_annualized_interest_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceApprovalSerializer.get_financing_annualized_interest_rate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceApprovalSerializer.get_financing_annualized_interest_rate" title="永久链接至目标"></a></dt>
+<dd><p>获取融资年化利率</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">FinanceProjectSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceProjectSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>融资管理-融资项目列表页</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceProjectSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'finance_number',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'infos',</span> <span class="pre">'finance_sign_date',</span> <span class="pre">'status',</span> <span class="pre">'applicant']</span></em><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id22"><span class="problematic" id="id23">`</span></a>client.models.credit_certificate.FinanceProject`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_applicant">
+<span class="sig-name descname"><span class="pre">get_applicant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceProjectSerializer.get_applicant"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_applicant" title="永久链接至目标"></a></dt>
+<dd><p>返回申请人信息
+:param obj:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_infos">
+<span class="sig-name descname"><span class="pre">get_infos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceProjectSerializer.get_infos"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_infos" title="永久链接至目标"></a></dt>
+<dd><p>返回 智信编号, 融资金额, 融资企业, 资金机构, 承诺付款日, 融资企业uid
+:param obj:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_status">
+<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_certificate_manage.html#FinanceProjectSerializer.get_status"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_certificate_manage.FinanceProjectSerializer.get_status" title="永久链接至目标"></a></dt>
+<dd><p>返回状态信息
+:param obj:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.credit_manage">
+<span id="id24"></span><h2><span class="section-number">3.5. </span>授信审批<a class="headerlink" href="#module-management.serializers.credit_manage" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_manage.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/4/22 17:22
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CompanyApprovalDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>企业审核详情页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'audit_status',</span> <span class="pre">'credit_code',</span> <span class="pre">'establish_at',</span> <span class="pre">'registered_capital',</span> <span class="pre">'paid_in_capital',</span> <span class="pre">'registered_address',</span> <span class="pre">'management_address',</span> <span class="pre">'management_detail_address',</span> <span class="pre">'desc',</span> <span class="pre">'management_range',</span> <span class="pre">'logo_url',</span> <span class="pre">'business_license_url',</span> <span class="pre">'company_file',</span> <span class="pre">'approval_results',</span> <span class="pre">'bank_account_number',</span> <span class="pre">'bank_name',</span> <span class="pre">'bank_open_sub_branch',</span> <span class="pre">'bank_city',</span> <span class="pre">'legal_person_id_card',</span> <span class="pre">'legal_person_name']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id25"><span class="problematic" id="id26">`</span></a>client.models.company.Company`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_approval_results">
+<span class="sig-name descname"><span class="pre">get_approval_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.get_approval_results"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_approval_results" title="永久链接至目标"></a></dt>
+<dd><p>审批状态及意见</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_audit_status">
+<span class="sig-name descname"><span class="pre">get_audit_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.get_audit_status"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_audit_status" title="永久链接至目标"></a></dt>
+<dd><p>获取审核状态</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_management_address">
+<span class="sig-name descname"><span class="pre">get_management_address</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.get_management_address"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_management_address" title="永久链接至目标"></a></dt>
+<dd><p>获取经营地址</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_paid_in_capital">
+<span class="sig-name descname"><span class="pre">get_paid_in_capital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.get_paid_in_capital"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_paid_in_capital" title="永久链接至目标"></a></dt>
+<dd><p>返回实缴资本,千分位展示</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_registered_capital">
+<span class="sig-name descname"><span class="pre">get_registered_capital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalDetailSerializer.get_registered_capital"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalDetailSerializer.get_registered_capital" title="永久链接至目标"></a></dt>
+<dd><p>返回注册资本,千分位展示</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CompanyApprovalListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>企业审核列表页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company_name',</span> <span class="pre">'phone',</span> <span class="pre">'credit_code',</span> <span class="pre">'company_type',</span> <span class="pre">'created_at',</span> <span class="pre">'certification_apply_time',</span> <span class="pre">'audit_time',</span> <span class="pre">'reviewer']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id27"><span class="problematic" id="id28">`</span></a>client.models.company.Company`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.get_audit_time">
+<span class="sig-name descname"><span class="pre">get_audit_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer.get_audit_time"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.get_audit_time" title="永久链接至目标"></a></dt>
+<dd><p>返回审核时间</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.get_certification_apply_time">
+<span class="sig-name descname"><span class="pre">get_certification_apply_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer.get_certification_apply_time"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.get_certification_apply_time" title="永久链接至目标"></a></dt>
+<dd><p>返回认证申请时间</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.get_phone">
+<span class="sig-name descname"><span class="pre">get_phone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer.get_phone"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.get_phone" title="永久链接至目标"></a></dt>
+<dd><p>返回手机号</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyApprovalListSerializer.get_reviewer">
+<span class="sig-name descname"><span class="pre">get_reviewer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyApprovalListSerializer.get_reviewer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyApprovalListSerializer.get_reviewer" title="永久链接至目标"></a></dt>
+<dd><p>返回审核人</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyFileSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CompanyFileSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyFileSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyFileSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>企业文件相关序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyFileSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyFileSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyFileSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyFileSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__all__'</span></em><a class="headerlink" href="#management.serializers.credit_manage.CompanyFileSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyFileSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CompanyFileSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id29"><span class="problematic" id="id30">`</span></a>client.models.company.CompanyFile`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CompanyListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>企业信息列表页</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'company_name',</span> <span class="pre">'phone',</span> <span class="pre">'company_type',</span> <span class="pre">'created_at',</span> <span class="pre">'status',</span> <span class="pre">'equity_type']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id31"><span class="problematic" id="id32">`</span></a>client.models.company.Company`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.get_company_type">
+<span class="sig-name descname"><span class="pre">get_company_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer.get_company_type"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.get_company_type" title="永久链接至目标"></a></dt>
+<dd><p>获取企业类型</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.get_equity_type">
+<span class="sig-name descname"><span class="pre">get_equity_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer.get_equity_type"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.get_equity_type" title="永久链接至目标"></a></dt>
+<dd><p>获取企业权益</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.get_phone">
+<span class="sig-name descname"><span class="pre">get_phone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer.get_phone"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.get_phone" title="永久链接至目标"></a></dt>
+<dd><p>返回手机号</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyListSerializer.get_status">
+<span class="sig-name descname"><span class="pre">get_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyListSerializer.get_status"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyListSerializer.get_status" title="永久链接至目标"></a></dt>
+<dd><p>获取企业认证状态</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CompanyReviewLogSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>企业审核审批接口序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['status',</span> <span class="pre">'s1_user_id',</span> <span class="pre">'reviewed_at',</span> <span class="pre">'opinion']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id33"><span class="problematic" id="id34">`</span></a>client.models.company.CompanyReviewLog`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.create_role">
+<span class="sig-name descname"><span class="pre">create_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">platform_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.create_role"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.create_role" title="永久链接至目标"></a></dt>
+<dd><p>创建公司的role</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>platform_id</strong> (<em>int</em>) -- 平台id</p>
+</dd>
+<dt class="field-even">Return dict</dt>
+<dd class="field-even"><p>{role_name: role_id}</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.create_role_app_menus">
+<span class="sig-name descname"><span class="pre">create_role_app_menus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">roles_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.create_role_app_menus"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.create_role_app_menus" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.create_user_role">
+<span class="sig-name descname"><span class="pre">create_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s1_user_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.create_user_role"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.create_user_role" title="永久链接至目标"></a></dt>
+<dd><p>关联用户角色</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s1_user_id</strong> (<em>int</em>) -- 公司的user_id</p></li>
+<li><p><strong>role_id</strong> (<em>int</em>) -- 角色id</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.permission_type_get">
+<span class="sig-name descname"><span class="pre">permission_type_get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.permission_type_get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.permission_type_get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CompanyReviewLogSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CompanyReviewLogSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CompanyReviewLogSerializer.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditCreateSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditCreateSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditCreateSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditCreateSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>创建授信序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditCreateSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditCreateSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditCreateSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditCreateSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__all__'</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditCreateSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditCreateSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditCreateSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id35"><span class="problematic" id="id36">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditExamineSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditExamineSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditExamineSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditExamineSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>授信审批序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditExamineSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditExamineSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditExamineSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditExamineSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditExamineSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditExamineSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditExamineSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id37"><span class="problematic" id="id38">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditExamineSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditExamineSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditExamineSerializer.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>授信审批列表页序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_number',</span> <span class="pre">'receive_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'quota',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'start',</span> <span class="pre">'end',</span> <span class="pre">'status']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id39"><span class="problematic" id="id40">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditMangeListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditMangeListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>授信管理-授信管理列表页</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditMangeListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'credit_number',</span> <span class="pre">'agreement_no',</span> <span class="pre">'receive_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'quota',</span> <span class="pre">'available_quota',</span> <span class="pre">'total_used_quota',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'available_days',</span> <span class="pre">'start',</span> <span class="pre">'end',</span> <span class="pre">'is_show_all_proccess',</span> <span class="pre">'status']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id41"><span class="problematic" id="id42">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.get_available_days">
+<span class="sig-name descname"><span class="pre">get_available_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditMangeListSerializer.get_available_days"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.get_available_days" title="永久链接至目标"></a></dt>
+<dd><p>获取剩余有效期(天)
+:param obj:
+:return: 剩余有效期(天)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.get_available_quota">
+<span class="sig-name descname"><span class="pre">get_available_quota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditMangeListSerializer.get_available_quota"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.get_available_quota" title="永久链接至目标"></a></dt>
+<dd><p>获取可用额度
+:param obj:
+:return: 可用额度(元)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditMangeListSerializer.get_total_used_quota">
+<span class="sig-name descname"><span class="pre">get_total_used_quota</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditMangeListSerializer.get_total_used_quota"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditMangeListSerializer.get_total_used_quota" title="永久链接至目标"></a></dt>
+<dd><p>获取已用额度
+:param obj:
+:return: 已用额度(元)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditRetrieveSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditRetrieveSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditRetrieveSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'status',</span> <span class="pre">'status_display',</span> <span class="pre">'credit_type',</span> <span class="pre">'credit_number',</span> <span class="pre">'credit_type_id',</span> <span class="pre">'credit_type_name',</span> <span class="pre">'receive_company_id',</span> <span class="pre">'reject_opinion',</span> <span class="pre">'receive_company_name',</span> <span class="pre">'capital_company_id',</span> <span class="pre">'capital_company_name',</span> <span class="pre">'quota_yuan',</span> <span class="pre">'start',</span> <span class="pre">'end',</span> <span class="pre">'agreement_no',</span> <span class="pre">'financing_annualized_interest_rate',</span> <span class="pre">'technical_service_rate',</span> <span class="pre">'punishment_rate',</span> <span class="pre">'information_consultation_rate',</span> <span class="pre">'enclosure',</span> <span class="pre">'credit_clear_type_id',</span> <span class="pre">'credit_clear_type_name',</span> <span class="pre">'is_show_all_proccess']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id43"><span class="problematic" id="id44">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer.get_quota_yuan">
+<span class="sig-name descname"><span class="pre">get_quota_yuan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditRetrieveSerializer.get_quota_yuan"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer.get_quota_yuan" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditRetrieveSerializer.get_reject_opinion">
+<span class="sig-name descname"><span class="pre">get_reject_opinion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditRetrieveSerializer.get_reject_opinion"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditRetrieveSerializer.get_reject_opinion" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditReviewLogSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditReviewLogSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditReviewLogSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditReviewLogSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditReviewLogSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditReviewLogSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditReviewLogSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditReviewLogSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'opinion',</span> <span class="pre">'enclosure',</span> <span class="pre">'result',</span> <span class="pre">'node',</span> <span class="pre">'review_at',</span> <span class="pre">'handle_status',</span> <span class="pre">'s1_user']</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditReviewLogSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditReviewLogSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditReviewLogSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id45"><span class="problematic" id="id46">`</span></a>client.models.credit_certificate.ReviewLog`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditReviewLogSerializer.get_s1_user">
+<span class="sig-name descname"><span class="pre">get_s1_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditReviewLogSerializer.get_s1_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditReviewLogSerializer.get_s1_user" title="永久链接至目标"></a></dt>
+<dd><p>获取用户名
+&#64;param instance:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditUpdateSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.credit_manage.</span></span><span class="sig-name descname"><span class="pre">CreditUpdateSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditUpdateSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditUpdateSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditUpdateSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/credit_manage.html#CreditUpdateSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.credit_manage.CreditUpdateSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditUpdateSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'__all__'</span></em><a class="headerlink" href="#management.serializers.credit_manage.CreditUpdateSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.credit_manage.CreditUpdateSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.credit_manage.CreditUpdateSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id47"><span class="problematic" id="id48">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.examine">
+<span id="id49"></span><h2><span class="section-number">3.6. </span>审批快照<a class="headerlink" href="#module-management.serializers.examine" title="永久链接至标题"></a></h2>
+<p>&#64;File        : examine.py
+&#64;Author      : liuda
+&#64;Time        : 2022/3/7 09:46
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.examine.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateReviewSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.check">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../client/client.models.html#client.models.credit_certificate.CreditCertificate" title="client.models.credit_certificate.CreditCertificate"><span class="pre">client.models.credit_certificate.CreditCertificate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">credit_current_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.check"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.check" title="永久链接至目标"></a></dt>
+<dd><p>检查
+&#64;param instance:
+&#64;param credit_current_node:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.create_log">
+<span class="sig-name descname"><span class="pre">create_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../client/client.models.html#client.models.credit_certificate.CreditCertificate" title="client.models.credit_certificate.CreditCertificate"><span class="pre">client.models.credit_certificate.CreditCertificate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credit_current_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.create_log"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.create_log" title="永久链接至目标"></a></dt>
+<dd><p>&#64;param instance:
+&#64;param validated_data:
+&#64;param credit_current_node: 某信当前节点
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.create_snapshot">
+<span class="sig-name descname"><span class="pre">create_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../client/client.models.html#client.models.credit_certificate.CreditCertificate" title="client.models.credit_certificate.CreditCertificate"><span class="pre">client.models.credit_certificate.CreditCertificate</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.create_snapshot"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.create_snapshot" title="永久链接至目标"></a></dt>
+<dd><p>生成审批快照
+&#64;param instance:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.handle_pass">
+<span class="sig-name descname"><span class="pre">handle_pass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credit_current_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.handle_pass"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.handle_pass" title="永久链接至目标"></a></dt>
+<dd><p>处理审核通过情况
+&#64;param credit_current_node: 当前节点
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.handle_reject">
+<span class="sig-name descname"><span class="pre">handle_reject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">business_flow</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credit_current_node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.handle_reject"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.handle_reject" title="永久链接至目标"></a></dt>
+<dd><p>处理拒绝情况
+&#64;param instance:
+&#64;param business_flow: 业务工作流
+&#64;param credit_current_node: 当前节点
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.CreditCertificateReviewSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../client/client.models.html#client.models.credit_certificate.CreditCertificate" title="client.models.credit_certificate.CreditCertificate"><span class="pre">client.models.credit_certificate.CreditCertificate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#CreditCertificateReviewSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.CreditCertificateReviewSerializer.update" title="永久链接至目标"></a></dt>
+<dd><p>更新逻辑
+&#64;param instance:
+&#64;param validated_data:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.examine.ReviewLogSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.examine.</span></span><span class="sig-name descname"><span class="pre">ReviewLogSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#ReviewLogSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.ReviewLogSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.examine.ReviewLogSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/examine.html#ReviewLogSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.ReviewLogSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.examine.ReviewLogSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'opinion',</span> <span class="pre">'enclosure',</span> <span class="pre">'result',</span> <span class="pre">'node',</span> <span class="pre">'review_at',</span> <span class="pre">'handle_status',</span> <span class="pre">'s1_user']</span></em><a class="headerlink" href="#management.serializers.examine.ReviewLogSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.examine.ReviewLogSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.examine.ReviewLogSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id50"><span class="problematic" id="id51">`</span></a>client.models.credit_certificate.ReviewLog`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.examine.ReviewLogSerializer.get_s1_user">
+<span class="sig-name descname"><span class="pre">get_s1_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/examine.html#ReviewLogSerializer.get_s1_user"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.examine.ReviewLogSerializer.get_s1_user" title="永久链接至目标"></a></dt>
+<dd><p>获取用户名
+&#64;param instance:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.roles">
+<span id="id52"></span><h2><span class="section-number">3.7. </span>权限相关<a class="headerlink" href="#module-management.serializers.roles" title="永久链接至标题"></a></h2>
+<p>&#64;File        : roles.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/3 3:47 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.PermissionSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.roles.</span></span><span class="sig-name descname"><span class="pre">PermissionSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#PermissionSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.PermissionSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>获取权限序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.PermissionSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/roles.html#PermissionSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.PermissionSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.PermissionSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'title',</span> <span class="pre">'code',</span> <span class="pre">'path',</span> <span class="pre">'platform',</span> <span class="pre">'sort_num']</span></em><a class="headerlink" href="#management.serializers.roles.PermissionSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.PermissionSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.roles.PermissionSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id53"><span class="problematic" id="id54">`</span></a>client.models.menus.AppMenus`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleCreateListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.roles.</span></span><span class="sig-name descname"><span class="pre">RoleCreateListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleCreateListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleCreateListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>权限相关序列化器</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleCreateListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleCreateListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleCreateListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleCreateListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'desc',</span> <span class="pre">'permission_ids',</span> <span class="pre">'created_at',</span> <span class="pre">'updated_at',</span> <span class="pre">'platform',</span> <span class="pre">'disable']</span></em><a class="headerlink" href="#management.serializers.roles.RoleCreateListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleCreateListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.roles.RoleCreateListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id55"><span class="problematic" id="id56">`</span></a>client.models.role.Role`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleCreateListSerializer.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleCreateListSerializer.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleCreateListSerializer.create" title="永久链接至目标"></a></dt>
+<dd><p>重写创建函数
+:param validated_data:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.roles.</span></span><span class="sig-name descname"><span class="pre">RoleDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'desc',</span> <span class="pre">'permission_ids',</span> <span class="pre">'role_permissions',</span> <span class="pre">'disable']</span></em><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id57"><span class="problematic" id="id58">`</span></a>client.models.role.Role`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer.get_role_permissions">
+<span class="sig-name descname"><span class="pre">get_role_permissions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleDetailSerializer.get_role_permissions"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer.get_role_permissions" title="永久链接至目标"></a></dt>
+<dd><p>处理返回的角色值
+:param val:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.roles.RoleDetailSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RoleDetailSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RoleDetailSerializer.update" title="永久链接至目标"></a></dt>
+<dd><p>重写更新函数
+:param validated_data:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesIdListSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.roles.</span></span><span class="sig-name descname"><span class="pre">RolesIdListSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RolesIdListSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RolesIdListSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesIdListSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/roles.html#RolesIdListSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RolesIdListSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesIdListSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id']</span></em><a class="headerlink" href="#management.serializers.roles.RolesIdListSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesIdListSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.roles.RolesIdListSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id59"><span class="problematic" id="id60">`</span></a>client.models.role.Role`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.roles.</span></span><span class="sig-name descname"><span class="pre">RolesSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/roles.html#RolesSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RolesSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/roles.html#RolesSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.roles.RolesSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'name',</span> <span class="pre">'desc',</span> <span class="pre">'disable']</span></em><a class="headerlink" href="#management.serializers.roles.RolesSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.roles.RolesSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.roles.RolesSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id61"><span class="problematic" id="id62">`</span></a>client.models.role.Role`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.serializers.user">
+<span id="id63"></span><h2><span class="section-number">3.8. </span>登陆注册<a class="headerlink" href="#module-management.serializers.user" title="永久链接至标题"></a></h2>
+<p>&#64;File        : user.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/4 1:17 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.AccountLoginSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">AccountLoginSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#AccountLoginSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.AccountLoginSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.AccountLoginSerializer.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#AccountLoginSerializer.authenticate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.AccountLoginSerializer.authenticate" title="永久链接至目标"></a></dt>
+<dd><p>获取用户
+&#64;param validated_data:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.AccountLoginSerializer.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#AccountLoginSerializer.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.AccountLoginSerializer.create" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.AccountLoginSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#AccountLoginSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.AccountLoginSerializer.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.ForgetPwdSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">ForgetPwdSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ForgetPwdSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ForgetPwdSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>忘记密码</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.ForgetPwdSerializer.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ForgetPwdSerializer.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ForgetPwdSerializer.create" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.ForgetPwdSerializer.forget_pwd">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forget_pwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ForgetPwdSerializer.forget_pwd"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ForgetPwdSerializer.forget_pwd" title="永久链接至目标"></a></dt>
+<dd><p>重置用户密码
+&#64;param validated_data:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.ForgetPwdSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ForgetPwdSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ForgetPwdSerializer.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.ResetPwdSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">ResetPwdSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ResetPwdSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ResetPwdSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>修改密码</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.ResetPwdSerializer.forget_pwd">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forget_pwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s1_user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#ResetPwdSerializer.forget_pwd"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.ResetPwdSerializer.forget_pwd" title="永久链接至目标"></a></dt>
+<dd><p>重置用户密码</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">UserDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>用户详情</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['nick_name',</span> <span class="pre">'phone',</span> <span class="pre">'source',</span> <span class="pre">'date_joined',</span> <span class="pre">'username',</span> <span class="pre">'id',</span> <span class="pre">'is_active',</span> <span class="pre">'user_roles']</span></em><a class="headerlink" href="#management.serializers.user.UserDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.user.UserDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id64"><span class="problematic" id="id65">`</span></a>client.models.user.S1User`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailSerializer.get_user_roles">
+<span class="sig-name descname"><span class="pre">get_user_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailSerializer.get_user_roles"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailSerializer.get_user_roles" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailUpdateSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">UserDetailUpdateSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailUpdateSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailUpdateSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>编辑用户</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailUpdateSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailUpdateSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailUpdateSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailUpdateSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['nick_name',</span> <span class="pre">'phone',</span> <span class="pre">'role_ids',</span> <span class="pre">'source',</span> <span class="pre">'username',</span> <span class="pre">'is_active']</span></em><a class="headerlink" href="#management.serializers.user.UserDetailUpdateSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailUpdateSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.user.UserDetailUpdateSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id66"><span class="problematic" id="id67">`</span></a>client.models.user.S1User`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserDetailUpdateSerializer.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../client/client.models.html#client.models.user.S1User" title="client.models.user.S1User"><span class="pre">client.models.user.S1User</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserDetailUpdateSerializer.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserDetailUpdateSerializer.update" title="永久链接至目标"></a></dt>
+<dd><p>重写修改逻辑
+&#64;param instance:
+&#64;param validated_data:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">UserListCreateSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>创建用户
+用户列表页</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'username',</span> <span class="pre">'nick_name',</span> <span class="pre">'is_stop',</span> <span class="pre">'phone',</span> <span class="pre">'role_ids',</span> <span class="pre">'date_joined',</span> <span class="pre">'source',</span> <span class="pre">'is_active',</span> <span class="pre">'user_roles',</span> <span class="pre">'remarks',</span> <span class="pre">'password']</span></em><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id68"><span class="problematic" id="id69">`</span></a>client.models.user.S1User`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">validated_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.create" title="永久链接至目标"></a></dt>
+<dd><p>创建用户
+&#64;param validated_data:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.get_is_stop">
+<span class="sig-name descname"><span class="pre">get_is_stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer.get_is_stop"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.get_is_stop" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.get_user_roles">
+<span class="sig-name descname"><span class="pre">get_user_roles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer.get_user_roles"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.get_user_roles" title="永久链接至目标"></a></dt>
+<dd><p>处理返回的角色值
+:param val:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.serializers.user.UserListCreateSerializer.validate_password">
+<span class="sig-name descname"><span class="pre">validate_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserListCreateSerializer.validate_password"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserListCreateSerializer.validate_password" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserSimpleDetailSerializer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.serializers.user.</span></span><span class="sig-name descname"><span class="pre">UserSimpleDetailSerializer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/serializers/user.html#UserSimpleDetailSerializer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserSimpleDetailSerializer" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.serializers.user.UserSimpleDetailSerializer.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/serializers/user.html#UserSimpleDetailSerializer.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.serializers.user.UserSimpleDetailSerializer.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserSimpleDetailSerializer.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['id',</span> <span class="pre">'username',</span> <span class="pre">'nick_name',</span> <span class="pre">'email',</span> <span class="pre">'phone',</span> <span class="pre">'icon']</span></em><a class="headerlink" href="#management.serializers.user.UserSimpleDetailSerializer.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserSimpleDetailSerializer.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.serializers.user.UserSimpleDetailSerializer.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id70"><span class="problematic" id="id71">`</span></a>client.models.user.S1User`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.serializers.user.UserSimpleDetailSerializer.Meta.read_only_fields">
+<span class="sig-name descname"><span class="pre">read_only_fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('id',</span> <span class="pre">'username',</span> <span class="pre">'phone',</span> <span class="pre">'icon',</span> <span class="pre">'email')</span></em><a class="headerlink" href="#management.serializers.user.UserSimpleDetailSerializer.Meta.read_only_fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

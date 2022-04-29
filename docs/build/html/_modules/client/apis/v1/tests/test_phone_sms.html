@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_phone_sms &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_phone_sms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_phone_sms 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试发送手机验证码</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-03-23 15:36:19</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_phone_sms  -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+
+<span class="kn">from</span> <span class="nn">captcha.models</span> <span class="kn">import</span> <span class="n">CaptchaStore</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+
+<div class="viewcode-block" id="TestPhoneSms"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms">[文档]</a><span class="k">class</span> <span class="nc">TestPhoneSms</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;测试获取手机验证码&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestPhoneSms.setUp"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.setUp">[文档]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;初始化数据&quot;&quot;&quot;</span>
+        <span class="n">cs</span> <span class="o">=</span> <span class="s1">&#39;gpvJ&#39;</span>
+        <span class="n">hash_key</span> <span class="o">=</span> <span class="s1">&#39;d64289c54675747b69036c389f829aab20ae51ea&#39;</span>
+        <span class="n">CaptchaStore</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+            <span class="n">challenge</span><span class="o">=</span><span class="s1">&#39;GPVJ&#39;</span><span class="p">,</span>
+            <span class="n">response</span><span class="o">=</span><span class="n">cs</span><span class="p">,</span>
+            <span class="n">hashkey</span><span class="o">=</span><span class="n">hash_key</span><span class="p">,</span>
+            <span class="n">expiration</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestPhoneSms.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.client_request">[文档]</a>    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">img_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cptch_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求</span>
+
+<span class="sd">        :param str phone: 手机号</span>
+<span class="sd">        :param str img_code: 验证码</span>
+<span class="sd">        :param str cptch_key: 验证码的key</span>
+<span class="sd">        :return resp: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;/api/v1/scf/client/phone/code/with_number/&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span>
+            <span class="s1">&#39;img_code&#39;</span><span class="p">:</span> <span class="n">img_code</span><span class="p">,</span>
+            <span class="s1">&#39;cptch_key&#39;</span><span class="p">:</span> <span class="n">cptch_key</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestPhoneSms.assertAPIException"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.assertAPIException">[文档]</a>    <span class="k">def</span> <span class="nf">assertAPIException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;断言AIPIException</span>
+
+<span class="sd">        :param _type resp: response</span>
+<span class="sd">        :param str msg: 错误信息</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="TestPhoneSms.test_success"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.test_success">[文档]</a>    <span class="k">def</span> <span class="nf">test_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;发送验证码需要白名单, 非白名单无法测试&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="TestPhoneSms.test_fail_img_code"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.test_fail_img_code">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_img_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试图片验证码错误&quot;&quot;&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="s1">&#39;18458148505&#39;</span><span class="p">,</span> <span class="s1">&#39;gpvq&#39;</span><span class="p">,</span> <span class="s1">&#39;d64289c54675747b69036c389f829aab20ae51ea&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;图片验证码错误，请重新输入&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="TestPhoneSms.test_fail_send"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_phone_sms.TestPhoneSms.test_fail_send">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_send</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试发送失败&quot;&quot;&quot;</span>
+        <span class="c1"># 非白名单都会发送失败</span>
+        <span class="k">pass</span></div></div>
+        <span class="c1"># resp = self.client_request(&#39;18458148505&#39;, &#39;gpvj&#39;, &#39;d64289c54675747b69036c389f829aab20ae51ea&#39;)</span>
+        <span class="c1"># self.assertAPIException(resp, &#39;短信验证码发送失败，请稍后再试&#39;)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

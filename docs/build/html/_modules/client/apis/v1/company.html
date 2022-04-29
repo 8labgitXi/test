@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.company &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.company</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.company 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : company.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/3/3 15:04</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">CreateAPIView</span><span class="p">,</span> <span class="n">RetrieveUpdateAPIView</span><span class="p">,</span> <span class="n">ListAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span><span class="p">,</span> <span class="n">CompanyType</span><span class="p">,</span> <span class="n">CompanyFile</span>
+<span class="kn">from</span> <span class="nn">client.models.menus</span> <span class="kn">import</span> <span class="n">RoleAppMenus</span><span class="p">,</span> <span class="n">AppMenus</span>
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">UserRole</span><span class="p">,</span> <span class="n">Platform</span>
+<span class="kn">from</span> <span class="nn">client.serializers.company</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CompanyCreateSerializer</span><span class="p">,</span> <span class="n">CompanyFileCreateSerializer</span><span class="p">,</span>
+    <span class="n">CompanyTypeSerializer</span><span class="p">,</span> <span class="n">CompanyRetrieveUpdateSerializer</span><span class="p">,</span> <span class="n">CompanyFileRetrieveUpdateSerializer</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">consts.user</span> <span class="kn">import</span> <span class="n">SCF_CLIENT_SERVICE</span>
+<span class="kn">from</span> <span class="nn">management.serializers.roles</span> <span class="kn">import</span> <span class="n">PermissionSerializer</span>
+<span class="kn">from</span> <span class="nn">utils.permission_menu</span> <span class="kn">import</span> <span class="n">get_permission_menu</span>
+
+
+<div class="viewcode-block" id="CompanyCreateAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyCreateAPIView">[文档]</a><span class="k">class</span> <span class="nc">CompanyCreateAPIView</span><span class="p">(</span><span class="n">CreateAPIView</span><span class="p">):</span>
+
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CompanyCreateSerializer</span>
+
+<div class="viewcode-block" id="CompanyCreateAPIView.create"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyCreateAPIView.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        创建企业</span>
+<span class="sd">        :param request:</span>
+<span class="sd">        :param args:</span>
+<span class="sd">        :param kwargs:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perform_create</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyFileCreateAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyFileCreateAPIView">[文档]</a><span class="k">class</span> <span class="nc">CompanyFileCreateAPIView</span><span class="p">(</span><span class="n">CreateAPIView</span><span class="p">):</span>
+
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CompanyFileCreateSerializer</span></div>
+
+
+<div class="viewcode-block" id="CompanyTypeListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyTypeListAPIView">[文档]</a><span class="k">class</span> <span class="nc">CompanyTypeListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CompanyTypeSerializer</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">CompanyType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyRetrieveUpdateAPIView">[文档]</a><span class="k">class</span> <span class="nc">CompanyRetrieveUpdateAPIView</span><span class="p">(</span><span class="n">RetrieveUpdateAPIView</span><span class="p">):</span>
+
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CompanyRetrieveUpdateSerializer</span>
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateAPIView.get_object"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyRetrieveUpdateAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
+        <span class="n">company</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">company</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;not found company&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">company</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyFileRetrieveUpdateAPIView">[文档]</a><span class="k">class</span> <span class="nc">CompanyFileRetrieveUpdateAPIView</span><span class="p">(</span><span class="n">RetrieveUpdateAPIView</span><span class="p">):</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CompanyFileRetrieveUpdateSerializer</span>
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateAPIView.get_object"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyFileRetrieveUpdateAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;not found company&#39;</span><span class="p">)</span>
+        
+        <span class="n">company_file</span> <span class="o">=</span> <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">company_file</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;not found company file&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">company_file</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyAppMenus"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyAppMenus">[文档]</a><span class="k">class</span> <span class="nc">CompanyAppMenus</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    登录后 选择企业 查看对应的菜单权限</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CompanyAppMenus.get"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.company.CompanyAppMenus.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+
+        <span class="c1"># 获取公司实例</span>
+        <span class="n">company_instance</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">company</span>
+
+        <span class="c1"># 查询当前平台id</span>
+        <span class="n">platform</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_CLIENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="c1"># 在用户角色表中查询到企业角色的角色id</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">role__company_id</span><span class="o">=</span><span class="n">company_instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role__platform_id</span><span class="o">=</span><span class="n">platform</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;role_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># 查询企业角色对应的菜单权限id</span>
+        <span class="n">app_menus</span> <span class="o">=</span> <span class="n">RoleAppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">role_id__in</span><span class="o">=</span><span class="n">roles</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;app_menus_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># 查询当前企业拥有的菜单权限</span>
+        <span class="n">selected_permission</span> <span class="o">=</span> <span class="n">AppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">app_menus</span><span class="p">,</span> <span class="n">platform_id</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span>
+        <span class="n">selected_permission_serializer</span> <span class="o">=</span> <span class="n">PermissionSerializer</span><span class="p">(</span><span class="n">selected_permission</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">exist_app_menus</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 循环每个权限  将父节点的code放到同一个list中去重</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">selected_permission_serializer</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+            <span class="n">exist_app_menus</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;path&quot;</span><span class="p">])</span>
+            <span class="n">exist_app_menus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
+        <span class="n">exist_app_menus</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">exist_app_menus</span><span class="p">))</span>
+        <span class="c1"># 通过用户已有的所有的权限code中筛选出一级菜单权限</span>
+        <span class="n">selected_permission</span> <span class="o">=</span> <span class="n">AppMenus</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">code__in</span><span class="o">=</span><span class="n">exist_app_menus</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">list</span><span class="p">(),</span> <span class="n">platform_id</span><span class="o">=</span><span class="n">platform</span><span class="p">)</span>
+        <span class="c1"># 将一级菜单示例当做参数传入获取权限菜单的函数</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">get_permission_menu</span><span class="p">(</span><span class="n">platform</span><span class="p">,</span> <span class="n">exist_app_menus</span><span class="p">,</span> <span class="n">first_menu_obj</span><span class="o">=</span><span class="n">selected_permission</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">})</span></div></div>
+
+
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

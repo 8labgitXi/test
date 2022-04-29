@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_create_user &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_create_user</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_create_user 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试创建user</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-03-23 17:41:05</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_create_user  -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">create_user</span><span class="p">,</span> <span class="n">action_cache</span>
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">S1UserCompanyMap</span>
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">UserRole</span>
+<span class="kn">from</span> <span class="nn">client.models.user</span> <span class="kn">import</span> <span class="n">S1User</span>
+<span class="kn">from</span> <span class="nn">consts.user</span> <span class="kn">import</span> <span class="n">SCF_CLIENT_SERVICE</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+
+<div class="viewcode-block" id="TestCreateUser"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser">[文档]</a><span class="k">class</span> <span class="nc">TestCreateUser</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;测试UserCreateListAPI.create&quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;const_company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;location.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_platform.json&#39;</span><span class="p">,</span> <span class="s1">&#39;create_user.json&#39;</span><span class="p">,</span> <span class="p">)</span>
+
+<div class="viewcode-block" id="TestCreateUser.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser.client_request">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> 
+        <span class="n">nick_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">re_password</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">role_ids</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求</span>
+
+<span class="sd">        :param int uid: 用户id</span>
+<span class="sd">        :param str company_uid: 公司uid</span>
+<span class="sd">        :param str phone: 手机号</span>
+<span class="sd">        :param str nick_name: 昵称</span>
+<span class="sd">        :param str password: 密码</span>
+<span class="sd">        :param str re_password: 确认密码</span>
+<span class="sd">        :param str email: 邮箱</span>
+<span class="sd">        :param list role_ids: 用户角色列表</span>
+<span class="sd">        :param bool is_active: 是否启用</span>
+<span class="sd">        :return _type_: resp</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/api/v1/scf/client/users/&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;phone&#39;</span><span class="p">:</span> <span class="n">phone</span><span class="p">,</span>
+            <span class="s1">&#39;nick_name&#39;</span><span class="p">:</span> <span class="n">nick_name</span><span class="p">,</span>
+            <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">password</span><span class="p">,</span>
+            <span class="s1">&#39;re_password&#39;</span><span class="p">:</span> <span class="n">re_password</span><span class="p">,</span>
+            <span class="s1">&#39;email&#39;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="s1">&#39;role_ids&#39;</span><span class="p">:</span> <span class="n">role_ids</span><span class="p">,</span>
+            <span class="s1">&#39;is_active&#39;</span><span class="p">:</span> <span class="n">is_active</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCreateUser.test_success"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser.test_success">[文档]</a>    <span class="k">def</span> <span class="nf">test_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试创建启用状态的&quot;&quot;&quot;</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="s1">&#39;18458148500&#39;</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="s1">&#39;AAAaaa111&#39;</span>
+        <span class="n">nick_name</span> <span class="o">=</span> <span class="s1">&#39;nickname&#39;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;test@8lab.com&#39;</span>
+        <span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">role_id</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">role_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">role_id</span><span class="p">]</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> 
+            <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;4aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+            <span class="n">nick_name</span><span class="o">=</span><span class="n">nick_name</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">re_password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+            <span class="n">is_active</span><span class="o">=</span><span class="n">is_active</span><span class="p">,</span>
+            <span class="n">role_ids</span><span class="o">=</span><span class="n">role_ids</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;is_active&#39;</span><span class="p">],</span> <span class="n">is_active</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_roles&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;administrator&#39;</span><span class="p">])</span>
+
+        <span class="n">new_user</span><span class="p">:</span> <span class="n">S1User</span> <span class="o">=</span>  <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">nick_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">SCF_CLIENT_SERVICE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">new_user</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s1_user_id</span><span class="o">=</span><span class="n">new_user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">is_deleted</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">is_active</span><span class="p">))</span>
+        <span class="p">)</span></div>
+        
+        <span class="c1"># TODO(Rey): 判断root_user_id和parent_user_id</span>
+        <span class="c1"># TODO(Rey): assert disable</span>
+
+<div class="viewcode-block" id="TestCreateUser.test_fail_repeat_phone"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser.test_fail_repeat_phone">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_repeat_phone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 使用已存在的手机号&quot;&quot;&quot;</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="s1">&#39;18458148500&#39;</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="s1">&#39;AAAaaa111&#39;</span>
+        <span class="n">nick_name</span> <span class="o">=</span> <span class="s1">&#39;nickname&#39;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;test@8lab.com&#39;</span>
+        <span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">role_id</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">role_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">role_id</span><span class="p">]</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> 
+            <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;4aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+            <span class="n">nick_name</span><span class="o">=</span><span class="n">nick_name</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">re_password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+            <span class="n">is_active</span><span class="o">=</span><span class="n">is_active</span><span class="p">,</span>
+            <span class="n">role_ids</span><span class="o">=</span><span class="n">role_ids</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;该手机号已经被注册&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCreateUser.test_fail_unknow_role"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser.test_fail_unknow_role">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_unknow_role</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 不存在的role&quot;&quot;&quot;</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="s1">&#39;18458148501&#39;</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="s1">&#39;AAAaaa111&#39;</span>
+        <span class="n">nick_name</span> <span class="o">=</span> <span class="s1">&#39;nickname&#39;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s1">&#39;test@8lab.com&#39;</span>
+        <span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">role_id</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">role_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">role_id</span><span class="p">]</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> 
+            <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;4aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+            <span class="n">nick_name</span><span class="o">=</span><span class="n">nick_name</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">re_password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+            <span class="n">is_active</span><span class="o">=</span><span class="n">is_active</span><span class="p">,</span>
+            <span class="n">role_ids</span><span class="o">=</span><span class="n">role_ids</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;invalid role&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCreateUser.test_success_no_email"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_create_user.TestCreateUser.test_success_no_email">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_no_email</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功: 创建email=None&quot;&quot;&quot;</span>
+        <span class="n">uid</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="s1">&#39;18458148500&#39;</span>
+        <span class="n">pwd</span> <span class="o">=</span> <span class="s1">&#39;AAAaaa111&#39;</span>
+        <span class="n">nick_name</span> <span class="o">=</span> <span class="s1">&#39;nickname&#39;</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">is_active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">role_id</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">role_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">role_id</span><span class="p">]</span>
+
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> 
+            <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;4aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span>
+            <span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">,</span>
+            <span class="n">nick_name</span><span class="o">=</span><span class="n">nick_name</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">re_password</span><span class="o">=</span><span class="n">pwd</span><span class="p">,</span>
+            <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+            <span class="n">is_active</span><span class="o">=</span><span class="n">is_active</span><span class="p">,</span>
+            <span class="n">role_ids</span><span class="o">=</span><span class="n">role_ids</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;is_active&#39;</span><span class="p">],</span> <span class="n">is_active</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;user_roles&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;administrator&#39;</span><span class="p">])</span>
+
+        <span class="n">new_user</span><span class="p">:</span> <span class="n">S1User</span> <span class="o">=</span>  <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">nick_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">phone</span><span class="p">,</span> <span class="n">phone</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">email</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_user</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">SCF_CLIENT_SERVICE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">new_user</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">s1_user_id</span><span class="o">=</span><span class="n">new_user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">is_deleted</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">is_active</span><span class="p">))</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

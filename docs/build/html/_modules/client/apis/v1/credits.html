@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.credits &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.credits</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.credits 源代码</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">@File:credits.py</span>
+<span class="sd">@DateTime:2022/2/25 6:28 下午</span>
+<span class="sd">@Author:xixiaoyu</span>
+<span class="sd">@Desc:</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span><span class="p">,</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">ListAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+
+<span class="kn">from</span> <span class="nn">client</span> <span class="kn">import</span> <span class="n">client_permissions</span> <span class="k">as</span> <span class="n">client</span>
+<span class="kn">from</span> <span class="nn">client.filters.credits</span> <span class="kn">import</span> <span class="n">CreditsFilter</span>
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span>
+<span class="kn">from</span> <span class="nn">client.models.credit</span> <span class="kn">import</span> <span class="n">Credit</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credits</span> <span class="kn">import</span> <span class="n">CreditsValidSerializers</span><span class="p">,</span> <span class="n">InvalidCreditsValidSerializers</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">CREDIT_CERTIFICATE_PAY_LIMIT</span>
+<span class="kn">from</span> <span class="nn">utils.drf.paginations</span> <span class="kn">import</span> <span class="n">MyPageNumberPagination</span>
+<span class="kn">import</span> <span class="nn">datetime</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">from</span> <span class="nn">client.filters.credits</span> <span class="kn">import</span> <span class="n">CreditOpenFilter</span><span class="p">,</span> <span class="n">CreditReceivesFilter</span><span class="p">,</span> <span class="n">TransfersFilter</span><span class="p">,</span> <span class="n">FinancingsFilter</span><span class="p">,</span> \
+    <span class="n">RetuensFilter</span><span class="p">,</span> <span class="n">ExpiresFilter</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">Business</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credits</span> <span class="kn">import</span> <span class="n">OpenSerializers</span><span class="p">,</span> <span class="n">ReceivesSerializers</span><span class="p">,</span> <span class="n">AvailablesSerializer</span><span class="p">,</span> \
+    <span class="n">TransfersSerializers</span><span class="p">,</span> <span class="n">FinancingsSerializers</span><span class="p">,</span> <span class="n">ReturnsSerializers</span><span class="p">,</span> <span class="n">ExpiresSerializers</span><span class="p">,</span> <span class="n">BusinessSerializer</span>
+
+
+<div class="viewcode-block" id="CreditsListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.CreditsListAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditsListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    可用授信列表</span>
+<span class="sd">        if 可用额度=0 不显示，资金机构的授信状态是否是 已开立，</span>
+<span class="sd">        在计算时间的时候看该start 时间是不是还没有到，</span>
+<span class="sd">        查看公司为资方还是被授信企业</span>
+<span class="sd">    1. 首先使用公司id查该公司所有 资金机构授信给该公司的授信信息，经过序列化器，得出所所有的授信</span>
+<span class="sd">    2. 拿出所有的授信id</span>
+<span class="sd">    3. 剩余有效期的时候需要先看now()当前时间是否在 start和end 时间之内，如果是 让end-now时间</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditsValidSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditsFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterCreditManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+    <span class="c1"># 取出该公司下的所有资金机构已pass通过的授信,</span>
+<div class="viewcode-block" id="CreditsListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.CreditsListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">company_type</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span>
+            <span class="s1">&#39;company_type__name&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">company_type</span> <span class="o">==</span> <span class="s1">&#39;financial_institutions&#39;</span><span class="p">:</span>
+            <span class="n">credit</span> <span class="o">=</span> <span class="n">Credit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">capital_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+                <span class="s1">&#39;receive_company&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+                    <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_number&#39;</span><span class="p">,</span> <span class="s1">&#39;agreement_no&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company__name&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;financing_annualized_interest_rate&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;quota&#39;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">credit</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">Credit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">receive_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;receive_company&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_number&#39;</span><span class="p">,</span> <span class="s1">&#39;agreement_no&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;financing_annualized_interest_rate&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;quota&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div>
+
+<div class="viewcode-block" id="CreditsListAPIView.list"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.CreditsListAPIView.list">[文档]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_queryset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">())</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">credit</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># 判断是历史授信还是可用授信，end&gt;now(),并且去除可用额度为0的授信 和 还没有到开始日期的授信</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;available_quota&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">end</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span> <span class="ow">or</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;remaining_validity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">credit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paginated_response</span><span class="p">(</span><span class="n">credit</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CreditsInvalidListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.CreditsInvalidListAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditsInvalidListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    历史授信列表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">InvalidCreditsValidSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditsFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterCreditManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+    <span class="c1"># 取出该公司下的所有资金机构已pass通过的授信,</span>
+<div class="viewcode-block" id="CreditsInvalidListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.CreditsInvalidListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">company_type</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span>
+            <span class="s1">&#39;company_type__name&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">company_type</span> <span class="o">==</span> <span class="s1">&#39;financial_institutions&#39;</span><span class="p">:</span>
+            <span class="n">credit</span> <span class="o">=</span> <span class="n">Credit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">capital_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+                <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">end__lt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+                <span class="s1">&#39;receive_company&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+                <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_number&#39;</span><span class="p">,</span> <span class="s1">&#39;agreement_no&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company__name&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;financing_annualized_interest_rate&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;quota&#39;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">credit</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">Credit</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">receive_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+            <span class="n">status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">end__lt</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;receive_company&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_number&#39;</span><span class="p">,</span> <span class="s1">&#39;agreement_no&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;financing_annualized_interest_rate&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;end&#39;</span><span class="p">,</span> <span class="s1">&#39;quota&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="OpenListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.OpenListAPIView">[文档]</a><span class="k">class</span> <span class="nc">OpenListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信开立列表</span>
+<span class="sd">    当前用户所登录的企业，</span>
+<span class="sd">    拿到企业id, 找该企业下的开立，</span>
+<span class="sd">    该企业首先 要资金授信状态为pass，然后开立状态不要作废</span>
+<span class="sd">    开立中：审批中</span>
+<span class="sd">    已开立：审批通过</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">OpenSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditOpenFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="OpenListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.OpenListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">from_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">business__name</span><span class="o">=</span><span class="s1">&#39;open&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+            <span class="n">Q</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;reject&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="n">Q</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;creating&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;company&#39;</span><span class="p">,</span> <span class="s1">&#39;credit&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;credit__capital_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span> <span class="s1">&#39;s1_user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;confirm_at&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="ReceivesListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ReceivesListAPIView">[文档]</a><span class="k">class</span> <span class="nc">ReceivesListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    待接收状态 -- 只要看最后一部状态是否审批成功，排除审批成功、审批驳回、创建中，即是待接收</span>
+<span class="sd">    x信管理-x信代接收列表</span>
+<span class="sd">    当前用户所登录的企业，</span>
+<span class="sd">    该企业首先 要资金授信状态为pass，然后开立状态不要作废</span>
+<span class="sd">    待接收：包含开立接收 和 转让接收</span>
+<span class="sd">    拿到企业id, 找该企业下的待接收状态，</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">ReceivesSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditReceivesFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ReceivesListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ReceivesListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;reviewing&#39;</span><span class="p">,</span>
+            <span class="n">creditcurrentnode__work_flow__code__in</span><span class="o">=</span><span class="p">(</span>
+                <span class="s2">&quot;receive_confirm&quot;</span><span class="p">,</span> <span class="s2">&quot;open_receive_confirm&quot;</span><span class="p">,</span> <span class="s2">&quot;open_platform_review&quot;</span><span class="p">,</span> <span class="s2">&quot;approval_review&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s1">&#39;financing&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;credit&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company&#39;</span><span class="p">,</span> <span class="s1">&#39;business&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__capital_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span> <span class="s1">&#39;expire_at&#39;</span><span class="p">,</span> <span class="s1">&#39;business__desc_name&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="AvailablesListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.AvailablesListAPIView">[文档]</a><span class="k">class</span> <span class="nc">AvailablesListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信可用列表  净额&gt;0 的数据</span>
+<span class="sd">    根据企业id，找到资方授信通过pass，开立通过pass的,并且是未作废</span>
+<span class="sd">    清分状态下是没有 净额的</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">AvailablesSerializer</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditReceivesFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AvailablesListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.AvailablesListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;credit&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company&#39;</span><span class="p">,</span> <span class="s1">&#39;business&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__capital_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span> <span class="s1">&#39;confirm_at&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div>
+
+<div class="viewcode-block" id="AvailablesListAPIView.list"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.AvailablesListAPIView.list">[文档]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_queryset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">())</span>
+
+        <span class="n">page</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paginate_queryset</span><span class="p">(</span><span class="n">queryset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">page</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="c1"># 去除净额为0的，和时间在付款日期前3天的</span>
+            <span class="n">availables</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+                <span class="n">pay_at</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">],</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">now_at</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+                <span class="n">day</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">CREDIT_CERTIFICATE_PAY_LIMIT</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;net_amount&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pay_at</span> <span class="o">-</span> <span class="n">day</span> <span class="o">&lt;=</span> <span class="n">now_at</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">availables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paginated_response</span><span class="p">(</span><span class="n">availables</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TransfersListAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.TransfersListAPIView">[文档]</a><span class="k">class</span> <span class="nc">TransfersListAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信转让列表</span>
+<span class="sd">    聚合经办人所在企业向外转让X信的转让中和已转让数据。（注意：接收转让的不在此范围）</span>
+<span class="sd">    信用凭证业务类型-转让</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">TransfersSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">TransfersFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TransfersListAPIView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.TransfersListAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">from_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s1">&#39;transfer&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;creating&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;credit&#39;</span><span class="p">,</span> <span class="s1">&#39;company&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;confirm_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="FinancingsListAIPView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.FinancingsListAIPView">[文档]</a><span class="k">class</span> <span class="nc">FinancingsListAIPView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信融资列表</span>
+<span class="sd">    经办人所在企业下开展融资业务的X信数据</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">FinancingsSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">FinancingsFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FinancingsListAIPView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.FinancingsListAIPView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">from_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s1">&#39;financing&#39;</span><span class="p">,</span> <span class="n">is_valid</span><span class="o">=</span><span class="s1">&#39;True&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;creating&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;credit&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;confirm_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__capital_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="ReturnsListAIPView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ReturnsListAIPView">[文档]</a><span class="k">class</span> <span class="nc">ReturnsListAIPView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信已退回列表</span>
+<span class="sd">    经办人所在企业下聚合开立被退回、转让被退回、融资被退回数据。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">ReturnsSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">RetuensFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ReturnsListAIPView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ReturnsListAIPView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">from_company__id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;reject&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;business&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="s1">&#39;business__desc_name&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="ExpiresListAIPView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ExpiresListAIPView">[文档]</a><span class="k">class</span> <span class="nc">ExpiresListAIPView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信已到期列表</span>
+<span class="sd">        超过承诺付款日期</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">ExpiresSerializers</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">ExpiresFilter</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">client</span><span class="o">.</span><span class="n">XLetterManagePermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ExpiresListAIPView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.ExpiresListAIPView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="c1"># 接收方是自己的到期</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span> <span class="n">credit__status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">promise_pay_at__lte</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;business&#39;</span><span class="p">,</span> <span class="s1">&#39;credit&#39;</span><span class="p">,</span> <span class="s1">&#39;from_company&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="s1">&#39;review_status&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span> <span class="s1">&#39;confirm_at&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit</span></div></div>
+
+
+<div class="viewcode-block" id="BusinessListAIPView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credits.BusinessListAIPView">[文档]</a><span class="k">class</span> <span class="nc">BusinessListAIPView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    信用凭证业务类型表</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">BusinessSerializer</span>
+    <span class="n">authentication_classes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">Business</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;desc_name&#39;</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

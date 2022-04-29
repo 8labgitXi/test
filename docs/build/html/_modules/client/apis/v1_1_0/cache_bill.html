@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1_1_0.cache_bill &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1_1_0.cache_bill</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1_1_0.cache_bill 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : cache_bill.py</span>
+<span class="sd">@Author      : wst</span>
+<span class="sd">@Time        : 2022/4/7 下午1:41</span>
+<span class="sd">@Description : 月度账单缓存程序</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">django.db.models.aggregates</span> <span class="kn">import</span> <span class="n">Sum</span><span class="p">,</span> <span class="n">Count</span>
+
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span>
+<span class="kn">from</span> <span class="nn">utils.date_and_time</span> <span class="kn">import</span> <span class="n">get_period</span>
+<span class="kn">from</span> <span class="nn">utils.db_util</span> <span class="kn">import</span> <span class="n">GroupConcat</span>
+
+
+<div class="viewcode-block" id="CacheMonthBill"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill">[文档]</a><span class="k">class</span> <span class="nc">CacheMonthBill</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">company</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 缓存月度账单数据</span>
+
+<span class="sd">            @param month: 月份，如2022-09-01</span>
+<span class="sd">            @param company: 企业id</span>
+<span class="sd">            @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">month</span> <span class="o">=</span> <span class="n">month</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">company</span> <span class="o">=</span> <span class="n">company</span>
+
+<div class="viewcode-block" id="CacheMonthBill.get_open_bill"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill.get_open_bill">[文档]</a>    <span class="k">def</span> <span class="nf">get_open_bill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取开立的智信 &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;open&quot;</span><span class="p">,</span>
+            <span class="n">confirm_at__range</span><span class="o">=</span><span class="p">(</span><span class="n">get_period</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;amount&#39;</span><span class="p">),</span> <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="n">ids</span><span class="o">=</span><span class="n">GroupConcat</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="CacheMonthBill.get_receive_bill"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill.get_receive_bill">[文档]</a>    <span class="k">def</span> <span class="nf">get_receive_bill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取接收的智信 &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company</span><span class="p">,</span>
+            <span class="n">business__name__in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="s1">&#39;transfer&#39;</span><span class="p">),</span>
+            <span class="n">confirm_at__range</span><span class="o">=</span><span class="p">(</span><span class="n">get_period</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;amount&#39;</span><span class="p">),</span> <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="n">ids</span><span class="o">=</span><span class="n">GroupConcat</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="CacheMonthBill.get_transfer_bill"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill.get_transfer_bill">[文档]</a>    <span class="k">def</span> <span class="nf">get_transfer_bill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取转让的智信 &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;transfer&quot;</span><span class="p">,</span>
+            <span class="n">confirm_at__range</span><span class="o">=</span><span class="p">(</span><span class="n">get_period</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;amount&#39;</span><span class="p">),</span> <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="n">ids</span><span class="o">=</span><span class="n">GroupConcat</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="CacheMonthBill.get_finance_bill"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill.get_finance_bill">[文档]</a>    <span class="k">def</span> <span class="nf">get_finance_bill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取融资的智信 &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">financeproject__sign_contract_enclosure__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;transfer&quot;</span><span class="p">,</span>
+            <span class="n">confirm_at__range</span><span class="o">=</span><span class="p">(</span><span class="n">get_period</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">))</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;amount&#39;</span><span class="p">),</span> <span class="n">count</span><span class="o">=</span><span class="n">Count</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="n">ids</span><span class="o">=</span><span class="n">GroupConcat</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="CacheMonthBill.get_result"><a class="viewcode-back" href="../../../../client/client.apis.v1_1_0.html#client.apis.v1_1_0.cache_bill.CacheMonthBill.get_result">[文档]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取最终结果--组合以上数据 &quot;&quot;&quot;</span>
+        <span class="c1"># 初始数据</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;company_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">company</span><span class="p">,</span>
+            <span class="s2">&quot;month&quot;</span><span class="p">:</span> <span class="n">get_period</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">month</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="c1"># 计算</span>
+        <span class="n">open_bill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_open_bill</span><span class="p">()</span>
+        <span class="n">receive_bill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_receive_bill</span><span class="p">()</span>
+        <span class="n">transfer_bill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transfer_bill</span><span class="p">()</span>
+        <span class="n">finance_bill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_finance_bill</span><span class="p">()</span>
+        <span class="c1"># 根据情况存入最终结果</span>
+        <span class="n">record_count</span> <span class="o">=</span> <span class="n">open_bill</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">receive_bill</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">transfer_bill</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">finance_bill</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;record_count&quot;</span><span class="p">,</span> <span class="n">record_count</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;open_acc&quot;</span><span class="p">,</span> <span class="n">open_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">open_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;receive_acc&quot;</span><span class="p">,</span> <span class="n">receive_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">receive_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;transfer_acc&quot;</span><span class="p">,</span> <span class="n">transfer_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">transfer_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;finance_acc&quot;</span><span class="p">,</span> <span class="n">finance_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">finance_bill</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="p">[</span><span class="n">ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="s1">&#39;ids&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">open_bill</span><span class="p">,</span> <span class="n">receive_bill</span><span class="p">,</span> <span class="n">transfer_bill</span><span class="p">,</span> <span class="n">finance_bill</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span><span class="p">[</span><span class="s1">&#39;ids&#39;</span><span class="p">]]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;record_list&quot;</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

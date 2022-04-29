@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.serializers.user &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.serializers.user</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.serializers.user 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : user.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/3/3 11:28</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django.contrib.auth.hashers</span> <span class="kn">import</span> <span class="n">make_password</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">transaction</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">S1UserCompanyMap</span>
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">UserRole</span><span class="p">,</span> <span class="n">Platform</span>
+<span class="kn">from</span> <span class="nn">client.models.user</span> <span class="kn">import</span> <span class="n">S1User</span>
+<span class="kn">from</span> <span class="nn">consts.user</span> <span class="kn">import</span> <span class="n">SCF_CLIENT_SERVICE</span>
+<span class="kn">from</span> <span class="nn">utils.phone_and_email_re</span> <span class="kn">import</span> <span class="n">phone_validator</span>
+<span class="kn">from</span> <span class="nn">utils.pwd_check</span> <span class="kn">import</span> <span class="n">validate_pwd</span>
+<span class="kn">from</span> <span class="nn">utils.sms</span> <span class="kn">import</span> <span class="n">validate_reset_code</span>
+<span class="kn">from</span> <span class="nn">utils.sms</span> <span class="kn">import</span> <span class="n">validate_login_code</span>
+
+
+<div class="viewcode-block" id="PhoneCodeWithNumberSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneCodeWithNumberSerializer">[文档]</a><span class="k">class</span> <span class="nc">PhoneCodeWithNumberSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">],</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">img_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">cptch_key</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="PhoneCodeWithNumberSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneCodeWithNumberSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PhoneCodeWithNumberSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneCodeWithNumberSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="RegisterSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.RegisterSerializer">[文档]</a><span class="k">class</span> <span class="nc">RegisterSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">])</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_pwd</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">sms_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">nick_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RegisterSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.RegisterSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="RegisterSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.RegisterSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="PhoneLoginSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneLoginSerializer">[文档]</a><span class="k">class</span> <span class="nc">PhoneLoginSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">])</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">cptch</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">cptch_key</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PhoneLoginSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneLoginSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PhoneLoginSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.PhoneLoginSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span> <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="UserListCreateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer">[文档]</a><span class="k">class</span> <span class="nc">UserListCreateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    创建用户</span>
+<span class="sd">    用户列表页</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">],</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">role_ids</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">date_joined</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">user_roles</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;get_source_display&quot;</span><span class="p">)</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">min_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">disable</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 是否可以操作状态</span>
+
+<div class="viewcode-block" id="UserListCreateSerializer.get_user_roles"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.get_user_roles">[文档]</a>    <span class="k">def</span> <span class="nf">get_user_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        处理返回的角色值</span>
+<span class="sd">        :param val:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role__company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;company_id&#39;</span><span class="p">),</span>
+            <span class="n">role__platform</span><span class="o">=</span><span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_CLIENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;role__desc&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.get_is_active"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.get_is_active">[文档]</a>    <span class="k">def</span> <span class="nf">get_is_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">user_map_instance</span> <span class="o">=</span> <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;company_id&#39;</span><span class="p">),</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s1">&#39;is_deleted&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="n">user_map_instance</span><span class="o">.</span><span class="n">is_deleted</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.get_disable"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.get_disable">[文档]</a>    <span class="k">def</span> <span class="nf">get_disable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role__disable</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.validate_phone"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.validate_phone">[文档]</a>    <span class="k">def</span> <span class="nf">validate_phone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;检查手机号是否已经注册在数据库&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;该手机号已经被注册&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.validate_role_ids"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.validate_role_ids">[文档]</a>    <span class="k">def</span> <span class="nf">validate_role_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;校验角色&quot;&quot;&quot;</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span>
+            <span class="n">disable</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">platform__name</span><span class="o">=</span><span class="n">SCF_CLIENT_SERVICE</span><span class="p">,</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;company_id&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">roles</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;invalid role&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.validate_password"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.validate_password">[文档]</a>    <span class="k">def</span> <span class="nf">validate_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">is_digit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">is_lower</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">is_upper</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                <span class="n">is_digit</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">and</span> <span class="n">char</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+                <span class="n">is_lower</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">char</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="n">char</span><span class="o">.</span><span class="n">isalpha</span><span class="p">():</span>
+                <span class="n">is_upper</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">is_digit</span> <span class="ow">and</span> <span class="n">is_lower</span> <span class="ow">and</span> <span class="n">is_upper</span><span class="p">:</span>
+            <span class="n">re_pwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;re_password&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="o">==</span> <span class="n">re_pwd</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;两次密码输入不一致&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;密码需要同时包含大写，小写字母和数字&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        创建用户</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="c1"># 创建用户</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">username</span><span class="o">=</span><span class="n">validated_data</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">],</span>
+                <span class="n">phone</span><span class="o">=</span><span class="n">validated_data</span><span class="p">[</span><span class="s2">&quot;phone&quot;</span><span class="p">],</span>
+                <span class="n">password</span><span class="o">=</span><span class="n">make_password</span><span class="p">(</span><span class="n">validated_data</span><span class="p">[</span><span class="s2">&quot;password&quot;</span><span class="p">]),</span>
+                <span class="n">nick_name</span><span class="o">=</span><span class="n">validated_data</span><span class="p">[</span><span class="s2">&quot;nick_name&quot;</span><span class="p">],</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">SCF_CLIENT_SERVICE</span><span class="p">,</span>
+                <span class="n">root_s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;root_user_id&quot;</span><span class="p">),</span>
+                <span class="n">parent_s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parent_user_id&quot;</span><span class="p">),</span>
+                <span class="n">email</span><span class="o">=</span><span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                <span class="n">last_login</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="p">)</span>
+
+            <span class="c1"># 关联角色</span>
+            <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">UserRole</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">role_id</span> <span class="ow">in</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;role_ids&#39;</span><span class="p">)]</span>
+            <span class="p">)</span>
+            <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;company_id&#39;</span><span class="p">),</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">is_deleted</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_active&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">user</span></div>
+
+<div class="viewcode-block" id="UserListCreateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserListCreateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S1User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;nick_name&quot;</span><span class="p">,</span> <span class="s2">&quot;email&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;role_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;date_joined&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;is_active&quot;</span><span class="p">,</span> <span class="s2">&quot;user_roles&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;remarks&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="s2">&quot;date_joined&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;disable&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="UserDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">UserDetailSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户详情</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+    <span class="n">date_joined</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">roles</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UserDetailSerializer.get_roles"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailSerializer.get_roles">[文档]</a>    <span class="k">def</span> <span class="nf">get_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取关联企业的所有角色&quot;&quot;&quot;</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">role__company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;role_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">roles</span></div>
+
+<div class="viewcode-block" id="UserDetailSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S1User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;nick_name&quot;</span><span class="p">,</span> <span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;date_joined&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;is_active&quot;</span><span class="p">,</span> <span class="s2">&quot;roles&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="UserDetailUpdateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailUpdateSerializer">[文档]</a><span class="k">class</span> <span class="nc">UserDetailUpdateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    编辑用户</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">role_ids</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">is_active</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="UserDetailUpdateSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailUpdateSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">S1User</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写修改逻辑</span>
+<span class="sd">        @param instance:</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO  需要补充当前用户是否有权限修改创建者逻辑</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="n">update_fields</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nick_name&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;nick_name&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">instance</span><span class="o">.</span><span class="n">nick_name</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">nick_name</span> <span class="o">=</span> <span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;nick_name&#39;</span><span class="p">]</span>
+                <span class="n">update_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;nick_name&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">instance</span><span class="o">.</span><span class="n">email</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+                <span class="n">update_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;email&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">update_fields</span><span class="p">:</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">update_fields</span><span class="o">=</span><span class="n">update_fields</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;role_ids&#39;</span><span class="p">):</span>
+                <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+                <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">UserRole</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">role_id</span> <span class="ow">in</span> <span class="n">validated_data</span><span class="p">[</span><span class="s1">&#39;role_ids&#39;</span><span class="p">]]</span>
+                <span class="p">)</span>
+
+            <span class="c1"># 修改映射表中用户的状态</span>
+            <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s1">&#39;request&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">pk</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">is_deleted</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;is_active&#39;</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="UserDetailUpdateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.UserDetailUpdateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S1User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;nick_name&quot;</span><span class="p">,</span> <span class="s1">&#39;email&#39;</span><span class="p">,</span> <span class="s2">&quot;role_ids&quot;</span><span class="p">,</span> <span class="s2">&quot;is_active&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ForgetPwdSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ForgetPwdSerializer">[文档]</a><span class="k">class</span> <span class="nc">ForgetPwdSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    忘记密码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_pwd</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">sms_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">4</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ForgetPwdSerializer.forget_pwd"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ForgetPwdSerializer.forget_pwd">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">forget_pwd</span><span class="p">(</span><span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重置用户密码</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">phone</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;phone&quot;</span><span class="p">)</span>
+        <span class="c1"># 判断能否找到用户</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">S1User</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;无此用户&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 验证码校验</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">validate_reset_code</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sms_code&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;tips&#39;</span><span class="p">])</span>
+
+        <span class="c1"># 修改密码</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pwd&quot;</span><span class="p">))</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="ForgetPwdSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ForgetPwdSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ForgetPwdSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ForgetPwdSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
+
+
+<div class="viewcode-block" id="ResetPwdSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ResetPwdSerializer">[文档]</a><span class="k">class</span> <span class="nc">ResetPwdSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    修改密码</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sms_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">4</span>
+    <span class="p">)</span>
+    <span class="n">pwd</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">validate_pwd</span><span class="p">]</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ResetPwdSerializer.forget_pwd"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.ResetPwdSerializer.forget_pwd">[文档]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">forget_pwd</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">,</span> <span class="n">s1_user_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重置用户密码</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 判断能否找到用户</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">S1User</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;无此用户&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 验证码校验</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">validate_reset_code</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sms_code&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;tips&#39;</span><span class="p">])</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s1">&#39;credible_data&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">phone</span><span class="p">)</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">set_password</span><span class="p">(</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pwd&quot;</span><span class="p">))</span>
+        <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="LoginCodeSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.LoginCodeSerializer">[文档]</a><span class="k">class</span> <span class="nc">LoginCodeSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    短信验证码登录</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">min_length</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+        <span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">phone_validator</span><span class="p">],</span>
+        <span class="n">trim_whitespace</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="LoginCodeSerializer.validate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.LoginCodeSerializer.validate">[文档]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">phone</span><span class="o">=</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;phone&quot;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="n">S1User</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;请输入正确的账户名&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;后端拥挤,稍后重试！&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">validate_login_code</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;phone&quot;</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;短信验证码不正确&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">user</span></div>
+
+<div class="viewcode-block" id="LoginCodeSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.LoginCodeSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S1User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;source&quot;</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="AdduserCompanySerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.AdduserCompanySerializer">[文档]</a><span class="k">class</span> <span class="nc">AdduserCompanySerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    用户详情</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">roles</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">phone</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AdduserCompanySerializer.get_roles"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.AdduserCompanySerializer.get_roles">[文档]</a>    <span class="k">def</span> <span class="nf">get_roles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取关联企业的所有角色&quot;&quot;&quot;</span>
+        <span class="n">roles</span> <span class="o">=</span> <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;role_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">roles</span></div>
+
+<div class="viewcode-block" id="AdduserCompanySerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.AdduserCompanySerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        将用户加入到企业中</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pk</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;request&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;此用户已经在该企业中&quot;</span><span class="p">)</span>
+
+        <span class="n">UserRole</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">UserRole</span><span class="p">(</span><span class="n">s1_user_id</span><span class="o">=</span><span class="n">pk</span><span class="p">,</span> <span class="n">role_id</span><span class="o">=</span><span class="n">role_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">role_id</span> <span class="ow">in</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;role_ids&#39;</span><span class="p">)]</span>
+        <span class="p">)</span>
+        <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">[</span><span class="s2">&quot;request&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdduserCompanySerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.user.AdduserCompanySerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">S1User</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;nick_name&quot;</span><span class="p">,</span> <span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="s2">&quot;date_joined&quot;</span><span class="p">,</span> <span class="s2">&quot;is_active&quot;</span><span class="p">,</span> <span class="s2">&quot;roles&quot;</span>
+        <span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

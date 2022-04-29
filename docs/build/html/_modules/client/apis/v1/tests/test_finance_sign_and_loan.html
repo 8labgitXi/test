@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_finance_sign_and_loan &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_finance_sign_and_loan</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_finance_sign_and_loan 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试融资签约/放款</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-04-13 14:41:30</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_finance_sign_and_loan -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">action_cache</span>
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests</span> <span class="kn">import</span> <span class="n">mock_common_cc_approval</span> <span class="k">as</span> <span class="n">mock</span>
+<span class="kn">from</span> <span class="nn">client.models.contract</span> <span class="kn">import</span> <span class="n">Contract</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">FinanceProject</span><span class="p">,</span> <span class="n">TransferLog</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">client.models.evidence</span> <span class="kn">import</span> <span class="n">ChainEvidence</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+
+<div class="viewcode-block" id="TestFinanceSignLoan"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan">[文档]</a><span class="k">class</span> <span class="nc">TestFinanceSignLoan</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;test FinancingProjectUploadAPIView.update&quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;app_menus.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_credit.json&#39;</span><span class="p">,</span> <span class="s1">&#39;location.json&#39;</span><span class="p">,</span> <span class="s1">&#39;business.json&#39;</span><span class="p">,</span> <span class="s1">&#39;work_flow.json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;business_map.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_platform.json&#39;</span><span class="p">,</span> <span class="s1">&#39;evidence_type.json&#39;</span><span class="p">,</span> <span class="s1">&#39;base_common_cc_approval.json&#39;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.client_request">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fk_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">is_sign</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求</span>
+
+<span class="sd">        :param int uid: 用户id</span>
+<span class="sd">        :param str company_uid: 公司uid</span>
+<span class="sd">        :param int fk_id: 融资项目id</span>
+<span class="sd">        :param bool is_sign: 是否是签约</span>
+<span class="sd">        :return _type_: _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mock</span><span class="o">.</span><span class="n">create_all_users</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/api/v1_1_0/scf/client/financing/upload/</span><span class="si">{</span><span class="n">fk_id</span><span class="si">}</span><span class="s1">/&#39;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;file_type&quot;</span><span class="p">:</span> <span class="s2">&quot;sign_contract&quot;</span> <span class="k">if</span> <span class="n">is_sign</span> <span class="k">else</span> <span class="s2">&quot;loan_voucher&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;upload_data&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;md5_code&quot;</span><span class="p">:</span> <span class="s2">&quot;3&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://tigyykbvk.by/bvfrpfgfnv&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;龙立活数么消&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;ipsum&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;md5_code&quot;</span><span class="p">:</span> <span class="s2">&quot;4&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://bkbkib.cu/cxj&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;则花间儿查带&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;ut tempor sed cillum&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;md5_code&quot;</span><span class="p">:</span> <span class="s2">&quot;95&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://zwfwluh.tel/jabgco&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;于下后着&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="s2">&quot;culpa adipisicing&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.assertAPIException"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.assertAPIException">[文档]</a>    <span class="k">def</span> <span class="nf">assertAPIException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;断言AIPIException</span>
+
+<span class="sd">        :param _type resp: response</span>
+<span class="sd">        :param str msg: 错误信息</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_success_sign"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_success_sign">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功签约&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">Contract</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">contract_type</span><span class="o">=</span><span class="s1">&#39;finance&#39;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">new_fk</span> <span class="o">=</span> <span class="n">FinanceProject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s1">&#39;un_pay&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">sign_contract_at</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">sign_contract_enclosure</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">TransferLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">FINANCE</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">FINANCE_SIGN</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_success_loan"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_success_loan">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_loan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功放款&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">,</span> <span class="n">finance_project_status</span><span class="o">=</span><span class="s1">&#39;un_pay&#39;</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">resp_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+
+        <span class="n">new_fk</span> <span class="o">=</span> <span class="n">FinanceProject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s1">&#39;un_clear&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">loan_at</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_fk</span><span class="o">.</span><span class="n">loan_voucher_enclosure</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">FINANCE_AGREEMENT</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_fail_sign_1"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_fail_sign_1">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_sign_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 签约融资项目状态!=un_sign&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">,</span> <span class="n">finance_project_status</span><span class="o">=</span><span class="s1">&#39;un_pay&#39;</span><span class="p">)</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;invalid data type&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_fail_loan_1"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_fail_loan_1">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_loan_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 放款融资项目状态!=un_pay&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">)</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;invalid data type&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_fail_1"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_fail_1">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 核心企业请求&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">)</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;4aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;invalid company&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_fail_2"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_fail_2">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 核心企业请求&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="p">)</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;invalid company&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestFinanceSignLoan.test_fail_3"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_finance_sign_and_loan.TestFinanceSignLoan.test_fail_3">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 当前工作流!=finance_setup&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_APPLY</span><span class="p">)</span>
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;finance_project&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">finance_project</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;invalid work flow&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.admin &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>client.admin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.admin 源代码</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+
+<span class="c1"># Register your models here.</span>
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Company</span><span class="p">,</span>
+    <span class="n">CompanyType</span><span class="p">,</span>
+    <span class="n">CompanySupplyChain</span><span class="p">,</span>
+    <span class="n">CompanyReviewLog</span><span class="p">,</span>
+    <span class="n">S1UserCompanyMap</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">client.models.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="kn">from</span> <span class="nn">client.models.contract</span> <span class="kn">import</span> <span class="n">Contract</span><span class="p">,</span> <span class="n">ContractTemplateType</span><span class="p">,</span> <span class="n">ContractTemplate</span>
+<span class="kn">from</span> <span class="nn">client.models.credit</span> <span class="kn">import</span> <span class="n">Credit</span><span class="p">,</span> <span class="n">CreditType</span><span class="p">,</span> <span class="n">CreditClearType</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Business</span><span class="p">,</span>
+    <span class="n">CreditCertificateReceiveTimeLimit</span><span class="p">,</span>
+    <span class="n">WorkFlow</span><span class="p">,</span>
+    <span class="n">WorkFlowBusinessMap</span><span class="p">,</span>
+    <span class="n">CreditCertificate</span><span class="p">,</span>
+    <span class="n">CreditClear</span><span class="p">,</span>
+    <span class="n">CreditClearDetail</span><span class="p">,</span>
+    <span class="n">CreditCertificateEnclosure</span><span class="p">,</span>
+    <span class="n">CreditCurrentNode</span><span class="p">,</span>
+    <span class="n">FinanceProject</span><span class="p">,</span>
+    <span class="n">ReviewLog</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">client.models.menus</span> <span class="kn">import</span> <span class="n">AppMenus</span>
+<span class="kn">from</span> <span class="nn">client.models.permission</span> <span class="kn">import</span> <span class="n">PermissionCategory</span><span class="p">,</span> <span class="n">Permission</span><span class="p">,</span> <span class="n">RolePermission</span>
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">Platform</span><span class="p">,</span> <span class="n">Role</span><span class="p">,</span> <span class="n">UserRole</span>
+<span class="kn">from</span> <span class="nn">client.models.user</span> <span class="kn">import</span> <span class="n">S1User</span>
+
+
+<span class="c1"># user</span>
+<div class="viewcode-block" id="S1UserAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.S1UserAdmin">[文档]</a><span class="k">class</span> <span class="nc">S1UserAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">,</span> <span class="s2">&quot;phone&quot;</span><span class="p">,</span> <span class="s2">&quot;root_s1_user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;nick_name&quot;</span><span class="p">]</span></div>
+
+
+<span class="c1"># company</span>
+<div class="viewcode-block" id="CompanyAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CompanyAdmin">[文档]</a><span class="k">class</span> <span class="nc">CompanyAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;s1_user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CompanyTypeAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CompanyTypeAdmin">[文档]</a><span class="k">class</span> <span class="nc">CompanyTypeAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CompanySupplyChainAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CompanySupplyChainAdmin">[文档]</a><span class="k">class</span> <span class="nc">CompanySupplyChainAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;chain_company&quot;</span><span class="p">,</span> <span class="s1">&#39;s1_user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;is_deleted&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="S1UserCompanyMapAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.S1UserCompanyMapAdmin">[文档]</a><span class="k">class</span> <span class="nc">S1UserCompanyMapAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;s1_user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;is_deleted&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CompanyReviewLogAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CompanyReviewLogAdmin">[文档]</a><span class="k">class</span> <span class="nc">CompanyReviewLogAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;s1_user_id&quot;</span><span class="p">]</span></div>
+
+
+<span class="c1"># contract</span>
+<div class="viewcode-block" id="make_download_data"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.make_download_data">[文档]</a><span class="k">def</span> <span class="nf">make_download_data</span><span class="p">(</span><span class="n">modeladmin</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">queryset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    手动生成或打包文件至阿里云：</span>
+<span class="sd">        - 在django admin 增加的一个动作</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">contract</span> <span class="ow">in</span> <span class="n">queryset</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">contract</span><span class="o">.</span><span class="n">generate_and_upload_file</span><span class="p">()</span></div>
+
+
+<span class="n">make_download_data</span><span class="o">.</span><span class="n">short_description</span> <span class="o">=</span> <span class="s2">&quot;生成或打包文件至阿里云&quot;</span>
+
+
+<div class="viewcode-block" id="ContractAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.ContractAdmin">[文档]</a><span class="k">class</span> <span class="nc">ContractAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;contract_type&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span> <span class="p">]</span>
+    <span class="n">list_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;contract_type&quot;</span><span class="p">,</span> <span class="p">]</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="n">make_download_data</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ContractTemplateTypeAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.ContractTemplateTypeAdmin">[文档]</a><span class="k">class</span> <span class="nc">ContractTemplateTypeAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ContractTemplateAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.ContractTemplateAdmin">[文档]</a><span class="k">class</span> <span class="nc">ContractTemplateAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;contract_template_type&quot;</span><span class="p">,</span> <span class="p">]</span></div>
+
+
+<span class="c1"># credit</span>
+<div class="viewcode-block" id="CreditAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;receive_company&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_type&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditTypeAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditTypeAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditTypeAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditClearTypeAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditClearTypeAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditClearTypeAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<span class="c1"># credit_certificate</span>
+<div class="viewcode-block" id="BusinessAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.BusinessAdmin">[文档]</a><span class="k">class</span> <span class="nc">BusinessAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificateReceiveTimeLimitAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditCertificateReceiveTimeLimitAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateReceiveTimeLimitAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="WorkFlowAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.WorkFlowAdmin">[文档]</a><span class="k">class</span> <span class="nc">WorkFlowAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="WorkFlowBusinessMapAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.WorkFlowBusinessMapAdmin">[文档]</a><span class="k">class</span> <span class="nc">WorkFlowBusinessMapAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;start_work_flow&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificateAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditCertificateAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;from_company&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;review_status&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">,</span> <span class="s2">&quot;is_valid&quot;</span><span class="p">,</span> <span class="s2">&quot;creditcurrentnode&quot;</span><span class="p">]</span>
+    <span class="n">list_filter</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;review_status&quot;</span><span class="p">,</span> <span class="s2">&quot;is_valid&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditClearAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditClearAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditClearAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span> <span class="s2">&quot;is_clear&quot;</span><span class="p">,</span> <span class="s2">&quot;pay_amount&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditClearDetailAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditClearDetailAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditClearDetailAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;clear_principal&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificateEnclosureAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditCertificateEnclosureAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateEnclosureAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;contract_no&#39;</span><span class="p">,</span> <span class="s1">&#39;contract_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;contract_sign_at&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_certificate&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditCurrentNodeAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.CreditCurrentNodeAdmin">[文档]</a><span class="k">class</span> <span class="nc">CreditCurrentNodeAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span> <span class="s1">&#39;work_flow&#39;</span><span class="p">,</span> <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="FinanceProjectAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.FinanceProjectAdmin">[文档]</a><span class="k">class</span> <span class="nc">FinanceProjectAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span> <span class="s1">&#39;finance_number&#39;</span><span class="p">,</span> <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ReviewLogAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.ReviewLogAdmin">[文档]</a><span class="k">class</span> <span class="nc">ReviewLogAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;handle_status&#39;</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="s1">&#39;handle_status&#39;</span><span class="p">,</span> <span class="s1">&#39;data_table&#39;</span><span class="p">,</span> <span class="s1">&#39;data_id&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span> <span class="s1">&#39;s1_user_id&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">]</span></div>
+
+
+<span class="c1"># menus</span>
+<div class="viewcode-block" id="AppMenusAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.AppMenusAdmin">[文档]</a><span class="k">class</span> <span class="nc">AppMenusAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;icon&quot;</span><span class="p">,</span> <span class="s2">&quot;sort_num&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;is_deleted&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span>
+    <span class="p">]</span></div>
+
+
+<span class="c1"># permission</span>
+<div class="viewcode-block" id="PermissionCategoryAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.PermissionCategoryAdmin">[文档]</a><span class="k">class</span> <span class="nc">PermissionCategoryAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="PermissionAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.PermissionAdmin">[文档]</a><span class="k">class</span> <span class="nc">PermissionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;is_deleted&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">,</span> <span class="s2">&quot;permission_category&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RolePermissionAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.RolePermissionAdmin">[文档]</a><span class="k">class</span> <span class="nc">RolePermissionAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;permission&quot;</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">]</span></div>
+
+
+<span class="c1"># role</span>
+<div class="viewcode-block" id="PlatformAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.PlatformAdmin">[文档]</a><span class="k">class</span> <span class="nc">PlatformAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;desc_name&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RoleAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.RoleAdmin">[文档]</a><span class="k">class</span> <span class="nc">RoleAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;is_deleted&quot;</span><span class="p">,</span> <span class="s2">&quot;platform&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="UserRoleAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.UserRoleAdmin">[文档]</a><span class="k">class</span> <span class="nc">UserRoleAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;s1_user_id&quot;</span><span class="p">,</span> <span class="s2">&quot;role&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ConfigAdmin"><a class="viewcode-back" href="../../client/client.toctree.html#client.admin.ConfigAdmin">[文档]</a><span class="k">class</span> <span class="nc">ConfigAdmin</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">ModelAdmin</span><span class="p">):</span>
+    <span class="n">list_display</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="s2">&quot;value_type&quot;</span><span class="p">,</span> <span class="s2">&quot;is_deleted&quot;</span><span class="p">]</span></div>
+
+
+<span class="c1"># user</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">S1User</span><span class="p">,</span> <span class="n">S1UserAdmin</span><span class="p">)</span>
+
+<span class="c1"># company</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Company</span><span class="p">,</span> <span class="n">CompanyAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CompanyType</span><span class="p">,</span> <span class="n">CompanyTypeAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CompanySupplyChain</span><span class="p">,</span> <span class="n">CompanySupplyChainAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">S1UserCompanyMap</span><span class="p">,</span> <span class="n">S1UserCompanyMapAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CompanyReviewLog</span><span class="p">,</span> <span class="n">CompanyReviewLogAdmin</span><span class="p">)</span>
+
+<span class="c1"># contract</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Contract</span><span class="p">,</span> <span class="n">ContractAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ContractTemplateType</span><span class="p">,</span> <span class="n">ContractTemplateTypeAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ContractTemplate</span><span class="p">,</span> <span class="n">ContractTemplateAdmin</span><span class="p">)</span>
+
+<span class="c1"># Credit</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Credit</span><span class="p">,</span> <span class="n">CreditAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditType</span><span class="p">,</span> <span class="n">CreditTypeAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditClearType</span><span class="p">,</span> <span class="n">CreditClearTypeAdmin</span><span class="p">)</span>
+
+<span class="c1"># credit_certificate</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Business</span><span class="p">,</span> <span class="n">BusinessAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditCertificateReceiveTimeLimit</span><span class="p">,</span> <span class="n">CreditCertificateReceiveTimeLimitAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">WorkFlow</span><span class="p">,</span> <span class="n">WorkFlowAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">WorkFlowBusinessMap</span><span class="p">,</span> <span class="n">WorkFlowBusinessMapAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">CreditCertificateAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditClear</span><span class="p">,</span> <span class="n">CreditClearAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditClearDetail</span><span class="p">,</span> <span class="n">CreditClearDetailAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditCertificateEnclosure</span><span class="p">,</span> <span class="n">CreditCertificateEnclosureAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">CreditCurrentNode</span><span class="p">,</span> <span class="n">CreditCurrentNodeAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">FinanceProject</span><span class="p">,</span> <span class="n">FinanceProjectAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ReviewLog</span><span class="p">,</span> <span class="n">ReviewLogAdmin</span><span class="p">)</span>
+
+<span class="c1"># menus</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">AppMenus</span><span class="p">,</span> <span class="n">AppMenusAdmin</span><span class="p">)</span>
+
+<span class="c1"># permission</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">PermissionCategory</span><span class="p">,</span> <span class="n">PermissionCategoryAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Permission</span><span class="p">,</span> <span class="n">PermissionAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">RolePermission</span><span class="p">,</span> <span class="n">RolePermissionAdmin</span><span class="p">)</span>
+
+<span class="c1"># role</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Platform</span><span class="p">,</span> <span class="n">PlatformAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Role</span><span class="p">,</span> <span class="n">RoleAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">UserRole</span><span class="p">,</span> <span class="n">UserRoleAdmin</span><span class="p">)</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Config</span><span class="p">,</span> <span class="n">ConfigAdmin</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

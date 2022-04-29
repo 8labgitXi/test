@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>management.apis.v1.credit_certificate_manage &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>management.apis.v1.credit_certificate_manage</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>management.apis.v1.credit_certificate_manage 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : credit_certificate_manage.py</span>
+<span class="sd">@Author      : duanluhui</span>
+<span class="sd">@Time        : 3/7/22 14:28</span>
+<span class="sd">@Description : 信用凭证管理-(开立审批,融资项目审批相关接口)(5.6 X信平台审批节点,7.4 X 信融资平台审批节点)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">ListAPIView</span><span class="p">,</span> <span class="n">RetrieveAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.base_class</span> <span class="kn">import</span> <span class="n">BaseApprovalView</span>
+<span class="kn">from</span> <span class="nn">client.apis.v1.base_node</span> <span class="kn">import</span> <span class="n">OPEN</span><span class="p">,</span> <span class="n">TRANSFER</span><span class="p">,</span> <span class="n">FINANCING</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">ReviewLog</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credit_approval_detail</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseCCApprovalDetailSerializer</span><span class="p">,</span>
+    <span class="n">ReceiveCCApprovalDetailSerializer</span><span class="p">,</span>
+    <span class="n">CapitalFinanceApprovalDetailNestedSerializer</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">CERTIFICATE_OPEN</span><span class="p">,</span> <span class="n">OPEN_PLATFORM_REVIEW</span><span class="p">,</span> <span class="n">CERTIFICATE_FINANCING</span><span class="p">,</span> <span class="n">FINANCE_PLATFORM</span>
+<span class="kn">from</span> <span class="nn">management.filters.credit_certificate_filter</span> <span class="kn">import</span> <span class="n">CreditCertificateFilter</span><span class="p">,</span> <span class="n">FinanceCertificateFilter</span>
+<span class="kn">from</span> <span class="nn">management.management_permissions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">XLetterManageOpenCheckPermission</span><span class="p">,</span> 
+    <span class="n">XLetterManageFinancingCheckPermission</span><span class="p">,</span>
+    <span class="n">XLetterManageOpenFinancingCheck</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">management.serializers.credit_certificate_manage</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CreditCertificateSerializer</span><span class="p">,</span>
+    <span class="n">CreditApprovalDetailSerializer</span><span class="p">,</span> 
+    <span class="n">FinanceApprovalSerializer</span><span class="p">,</span> 
+    <span class="n">FinanceApprovalDetailSerializer</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">utils.drf.paginations</span> <span class="kn">import</span> <span class="n">MyPageNumberPagination</span>
+
+
+<div class="viewcode-block" id="CreditCerAPIView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CreditCerAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditCerAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;开立审批-列表页接口&quot;&quot;&quot;</span>
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">business__name</span><span class="o">=</span><span class="n">CERTIFICATE_OPEN</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditCertificateSerializer</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditCertificateFilter</span>  <span class="c1"># 过滤条件</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageOpenCheckPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="CreditCerAPIView.get_queryset"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CreditCerAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewed&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;请检查查询参数[status]!&#39;</span><span class="p">)</span>
+        <span class="n">result_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queryset</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">:</span>
+            <span class="n">approval_obj</span> <span class="o">=</span> <span class="n">BaseApprovalView</span><span class="p">(</span><span class="n">CERTIFICATE_OPEN</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">OPEN_PLATFORM_REVIEW</span><span class="p">)</span>
+            <span class="n">result_query</span> <span class="o">=</span> <span class="n">approval_obj</span><span class="o">.</span><span class="n">get_queryset_undo</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reviewed&#39;</span><span class="p">:</span>
+            <span class="n">approval_obj</span> <span class="o">=</span> <span class="n">BaseApprovalView</span><span class="p">(</span><span class="n">CERTIFICATE_OPEN</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">OPEN_PLATFORM_REVIEW</span><span class="p">)</span>
+            <span class="n">result_query</span> <span class="o">=</span> <span class="n">approval_obj</span><span class="o">.</span><span class="n">get_queryset_done</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result_query</span></div></div>
+
+
+<div class="viewcode-block" id="CreditCerDetailAPIView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditCerDetailAPIView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;信用凭证审批详情页,编辑接口&quot;&quot;&quot;</span>
+
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditApprovalDetailSerializer</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageOpenCheckPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="CreditCerDetailAPIView.get_object"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">credit_c_obj</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">credit_c_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;没有查询到相关数据,请检查!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit_c_obj</span></div>
+
+<div class="viewcode-block" id="CreditCerDetailAPIView.retrieve"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">credit_c_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># 工作节点状态数据</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;work_flow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">credit_c_obj</span><span class="o">.</span><span class="n">get_work_flow</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">credit_c_obj</span><span class="p">)</span>
+
+        <span class="c1"># 基本信息数据</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">total_contract_amount</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;total_contract_amount&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;total_contract_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_contract_amount</span>
+
+        <span class="c1"># 附件信息数据</span>
+        <span class="n">enclosure_list</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;enclosure_list&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enclosure_list</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="FinanceApprovalAPIView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView">[文档]</a><span class="k">class</span> <span class="nc">FinanceApprovalAPIView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;融资平台审批-列表页接口&quot;&quot;&quot;</span>
+
+    <span class="n">queryset</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">business__name</span><span class="o">=</span><span class="n">CERTIFICATE_FINANCING</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">FinanceApprovalSerializer</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">FinanceCertificateFilter</span>  <span class="c1"># 过滤条件</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageFinancingCheckPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="FinanceApprovalAPIView.get_queryset"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;status&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewed&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;请检查查询参数[status]!&#39;</span><span class="p">)</span>
+        <span class="n">result_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queryset</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">:</span>
+            <span class="n">approval_obj</span> <span class="o">=</span> <span class="n">BaseApprovalView</span><span class="p">(</span><span class="n">CERTIFICATE_FINANCING</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">FINANCE_PLATFORM</span><span class="p">)</span>
+            <span class="n">result_query</span> <span class="o">=</span> <span class="n">approval_obj</span><span class="o">.</span><span class="n">get_queryset_undo</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;reviewed&#39;</span><span class="p">:</span>
+            <span class="n">approval_obj</span> <span class="o">=</span> <span class="n">BaseApprovalView</span><span class="p">(</span><span class="n">CERTIFICATE_FINANCING</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">FINANCE_PLATFORM</span><span class="p">)</span>
+            <span class="n">result_query</span> <span class="o">=</span> <span class="n">approval_obj</span><span class="o">.</span><span class="n">get_queryset_done</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result_query</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-id&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="FinanceDetailAPIView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView">[文档]</a><span class="k">class</span> <span class="nc">FinanceDetailAPIView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;融资审批详情页接口&quot;&quot;&quot;</span>
+    <span class="c1"># 页面的净额余额直接调用model里的方法;</span>
+    <span class="c1"># 开立金额或者转让金额 需要根据信用凭证的类型;</span>
+    <span class="c1"># 详情页进来的是当前的信用凭证-&gt;sub_c, 需要去查sub_c的上一级的信用凭证p_c, 根据path取最后一个, 附件信息也是取p_c;</span>
+
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">FinanceApprovalDetailSerializer</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageFinancingCheckPermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="FinanceDetailAPIView.get_object"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">credit_c_obj</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">credit_c_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;没有查询到相关数据,请检查!&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">credit_c_obj</span></div>
+
+<div class="viewcode-block" id="FinanceDetailAPIView.retrieve"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">credit_c_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="c1"># 工作节点状态数据</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;work_flow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">credit_c_obj</span><span class="o">.</span><span class="n">get_work_flow</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">credit_c_obj</span><span class="p">)</span>
+
+        <span class="c1"># 基本信息数据</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">open_transfer_amount</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;open_transfer_amount&#39;</span><span class="p">)</span>
+        <span class="n">total_contract_amount</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;total_contract_amount&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;open_transfer_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">open_transfer_amount</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;total_contract_amount&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_contract_amount</span>
+
+        <span class="c1"># 附件信息数据</span>
+        <span class="n">enclosure_list</span> <span class="o">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;enclosure_list&#39;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;object&#39;</span><span class="p">][</span><span class="s1">&#39;credit_certificate_enclosure&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">enclosure_list</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s1">&#39;data&#39;</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="ApprovalHistoryDetialView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView">[文档]</a><span class="k">class</span> <span class="nc">ApprovalHistoryDetialView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取X信历史审批记录详情&quot;&quot;&quot;</span>
+
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageOpenFinancingCheck</span><span class="p">,]</span>
+
+<div class="viewcode-block" id="ApprovalHistoryDetialView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取某个数据&quot;&quot;&quot;</span>
+        <span class="n">cc_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 查询审批日志</span>
+        <span class="n">review_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">cc_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">result__in</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span> <span class="s1">&#39;reject&#39;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span>
+            <span class="s1">&#39;snapshot&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">review_log</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s1">&#39;not found log&#39;</span><span class="p">)</span>
+
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pk</span><span class="o">=</span><span class="n">cc_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;creditcurrentnode&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;business_id&#39;</span><span class="p">,</span> <span class="s1">&#39;creditcurrentnode__work_flow_id&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;obj&#39;</span><span class="p">:</span> <span class="n">review_log</span><span class="p">[</span><span class="s1">&#39;snapshot&#39;</span><span class="p">],</span> <span class="s1">&#39;work_flow&#39;</span><span class="p">:</span> <span class="n">cc</span><span class="o">.</span><span class="n">get_work_flow</span><span class="p">()})</span></div></div>
+
+
+<div class="viewcode-block" id="CommonCreditCertificateDetailView"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView">[文档]</a><span class="k">class</span> <span class="nc">CommonCreditCertificateDetailView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 通用的X信最新详情页 &quot;&quot;&quot;</span>
+
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterManageOpenFinancingCheck</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CommonCreditCertificateDetailView.get_queryset"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CommonCreditCertificateDetailView.get_serializer_class"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_serializer_class">[文档]</a>    <span class="k">def</span> <span class="nf">get_serializer_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">ty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;business&quot;</span><span class="p">,</span> <span class="n">OPEN</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ty</span> <span class="o">==</span> <span class="n">OPEN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">BaseCCApprovalDetailSerializer</span>
+        <span class="k">elif</span> <span class="n">ty</span> <span class="o">==</span> <span class="n">TRANSFER</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ReceiveCCApprovalDetailSerializer</span>
+        <span class="k">elif</span> <span class="n">ty</span> <span class="o">==</span> <span class="n">FINANCING</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CapitalFinanceApprovalDetailNestedSerializer</span></div>
+
+<div class="viewcode-block" id="CommonCreditCertificateDetailView.retrieve"><a class="viewcode-back" href="../../../../management/management.apis.v1.html#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">business</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;business&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;传入的X信id和其业务类型不一致！&quot;</span><span class="p">)</span>
+        <span class="c1"># 获得审批结果</span>
+        <span class="n">cc_log_detail</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cc_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">cc_log</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">cc_log_detail</span> <span class="o">=</span> <span class="n">cc_log</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">extra</span><span class="p">(</span><span class="n">select</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;work_flow__title&#39;</span><span class="p">:</span> <span class="s1">&#39;node&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">values</span><span class="p">(</span>
+                <span class="s1">&#39;opinion&#39;</span><span class="p">,</span> <span class="s1">&#39;result&#39;</span><span class="p">,</span> <span class="s1">&#39;created_at&#39;</span><span class="p">,</span> <span class="s1">&#39;node&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+            <span class="n">cc_log_detail</span><span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc_log_detail</span><span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span><span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;approval_info&quot;</span><span class="p">:</span> <span class="n">cc_log_detail</span><span class="p">})</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

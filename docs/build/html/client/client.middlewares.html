@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. 中间件 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">3. </span>中间件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/client/client.middlewares.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">3. </span>中间件<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="module-client.middlewares.no_action_expire_token">
+<span id="token"></span><h2><span class="section-number">3.1. </span>token白名单<a class="headerlink" href="#module-client.middlewares.no_action_expire_token" title="永久链接至标题"></a></h2>
+<p>&#64;Summary : docstr
+&#64;Author  : Rey
+&#64;Time    : 2022-03-28 10:03:29</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="client.middlewares.no_action_expire_token.NoActionExpireTokenMiddleware">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.middlewares.no_action_expire_token.</span></span><span class="sig-name descname"><span class="pre">NoActionExpireTokenMiddleware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/no_action_expire_token.html#NoActionExpireTokenMiddleware"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.no_action_expire_token.NoActionExpireTokenMiddleware" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.utils.deprecation.MiddlewareMixin</span></code></p>
+<p>客户端一定时长内用户没有操作判定token失效</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="client.middlewares.no_action_expire_token.NoActionExpireTokenMiddleware.process_request">
+<span class="sig-name descname"><span class="pre">process_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/no_action_expire_token.html#NoActionExpireTokenMiddleware.process_request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.no_action_expire_token.NoActionExpireTokenMiddleware.process_request" title="永久链接至目标"></a></dt>
+<dd><p>处理请求</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-client.middlewares.request_middleware">
+<span id="tokenuid"></span><h2><span class="section-number">3.2. </span>token携带企业uid<a class="headerlink" href="#module-client.middlewares.request_middleware" title="永久链接至标题"></a></h2>
+<p>&#64;File        : request_middleware.py
+&#64;Author      : liuda
+&#64;Time        : 2021/10/19 10:14
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="client.middlewares.request_middleware.RequestMiddleware">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">client.middlewares.request_middleware.</span></span><span class="sig-name descname"><span class="pre">RequestMiddleware</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">get_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/request_middleware.html#RequestMiddleware"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.request_middleware.RequestMiddleware" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.utils.deprecation.MiddlewareMixin</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="client.middlewares.request_middleware.RequestMiddleware.process_exception">
+<span class="sig-name descname"><span class="pre">process_exception</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/request_middleware.html#RequestMiddleware.process_exception"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.request_middleware.RequestMiddleware.process_exception" title="永久链接至目标"></a></dt>
+<dd><p>捕捉异常
+&#64;param request:
+&#64;param exception:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="client.middlewares.request_middleware.RequestMiddleware.process_request">
+<span class="sig-name descname"><span class="pre">process_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/request_middleware.html#RequestMiddleware.process_request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.request_middleware.RequestMiddleware.process_request" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="client.middlewares.request_middleware.RequestMiddleware.process_response">
+<span class="sig-name descname"><span class="pre">process_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/client/middlewares/request_middleware.html#RequestMiddleware.process_response"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#client.middlewares.request_middleware.RequestMiddleware.process_response" title="永久链接至目标"></a></dt>
+<dd><p>重写返回逻辑
+&#64;param request:
+&#64;param response:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

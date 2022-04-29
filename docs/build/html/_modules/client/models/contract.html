@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.models.contract &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.models.contract</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.models.contract 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : contract.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/4/1 16:47</span>
+<span class="sd">@Description : 合同相关</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django.contrib.postgres.fields</span> <span class="kn">import</span> <span class="n">ArrayField</span><span class="p">,</span> <span class="n">JSONField</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.template</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">Template</span>
+
+<span class="kn">from</span> <span class="nn">client.models.base</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">NameAndDescNameModel</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">CREDITCERTIFICATE_CONTRACT_PREFIX</span>
+
+
+<div class="viewcode-block" id="ContractTemplateType"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.ContractTemplateType">[文档]</a><span class="k">class</span> <span class="nc">ContractTemplateType</span><span class="p">(</span><span class="n">NameAndDescNameModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc_name</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;contract_template_type&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;合同类型表&quot;</span></div>
+
+
+<div class="viewcode-block" id="ContractTemplate"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.ContractTemplate">[文档]</a><span class="k">class</span> <span class="nc">ContractTemplate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">is_deleted</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;是否已删除，默认未删除&quot;</span>
+    <span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;模板内容&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_template_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">ContractTemplateType</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;模板类型&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="ContractTemplate.render_django_html"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.ContractTemplate.render_django_html">[文档]</a>    <span class="k">def</span> <span class="nf">render_django_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        对模板内容替换变量生成html源代码：</span>
+<span class="sd">            - self.content存储的是复合django template规范的文本：</span>
+<span class="sd">                - 例如：&quot;My name is {{ my_name }}.&quot;</span>
+
+<span class="sd">        @param context: 与content模板对应的变量字典</span>
+<span class="sd">        @return: html源代码</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">Context</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></div>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;contract_template&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;合同模板表&quot;</span></div>
+
+
+<div class="viewcode-block" id="Contract"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.Contract">[文档]</a><span class="k">class</span> <span class="nc">Contract</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    合同协议数据模型：</span>
+<span class="sd">        - 当前两种数据：</span>
+<span class="sd">            - 付款承诺函.pdf</span>
+<span class="sd">            - 签约上传文件.zip</span>
+<span class="sd">    两个关键字段：</span>
+<span class="sd">        - 含义说明：</span>
+<span class="sd">            - source_content：</span>
+<span class="sd">                - 可能是html源码，也可能是附件对象列表的字符串</span>
+<span class="sd">            - content：</span>
+<span class="sd">                - 文件下载信息的列表</span>
+<span class="sd">                    - 例；[{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;, &quot;size&quot;: &quot;M&quot;, &quot;md5_code&quot;: &quot;&quot;}]</span>
+<span class="sd">        - 使用说明：</span>
+<span class="sd">            - 数据库事务中同步处理：</span>
+<span class="sd">                - 将付款承诺函的html源码或者签约上传文件的Json信息，保存到source_content里</span>
+<span class="sd">            - celery异步任务处理：</span>
+<span class="sd">                - 上传至阿里云的付款承诺函文件地址等信息存储在content里</span>
+<span class="sd">                - 打包后的签约协议文件上传至阿里云返回的相关信息</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contract_type_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;pay&quot;</span><span class="p">,</span> <span class="s2">&quot;付款承诺函&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;finance&quot;</span><span class="p">,</span> <span class="s2">&quot;融资协议&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;智信编号&quot;</span>
+    <span class="p">)</span>
+    <span class="n">source_content</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;content的原始内容&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;, &quot;size&quot;: &quot;M&quot;, &quot;md5_code&quot;: &quot;&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同信息&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">contract_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">contract_type_choices</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同类型&quot;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="Contract.generate_pay_file_name"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.Contract.generate_pay_file_name">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_pay_file_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @return: 付款承诺函文件名</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;付款承诺函</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">))</span><span class="si">}</span><span class="s2">.pdf&quot;</span></div>
+
+<div class="viewcode-block" id="Contract.generate_number"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.Contract.generate_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成【付款承诺函编号】：</span>
+<span class="sd">            - 1. 编码规则Acc+年月日+4位流水（0001开始)</span>
+<span class="sd">                - {Acc}{年月日}{4位流水}</span>
+<span class="sd">                - 例：Acc202001010001</span>
+<span class="sd">            - 2. 开立提交成功后生成。</span>
+<span class="sd">            - 3. 如果驳回，编辑后再次提交，流水号+1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">year_month_day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">CREDITCERTIFICATE_CONTRACT_PREFIX</span> <span class="o">+</span> <span class="n">year_month_day</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;0001&quot;</span>
+        <span class="n">last_contract</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">last_contract</span> <span class="ow">and</span> <span class="n">last_contract</span><span class="o">.</span><span class="n">number</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">number_prefix</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_contract</span><span class="o">.</span><span class="n">number</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number_prefix</span> <span class="o">+</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="Contract.generate_and_upload_file"><a class="viewcode-back" href="../../../client/client.models.html#client.models.contract.Contract.generate_and_upload_file">[文档]</a>    <span class="k">def</span> <span class="nf">generate_and_upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        付款承诺函：</span>
+<span class="sd">            - 生成pdf文件，上传至阿里云，保存返回地址至content</span>
+<span class="sd">        合同协议：</span>
+<span class="sd">            - 打包所有附件文件，上传至阿里云，保存返回地址至content</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">client.tasks</span> <span class="kn">import</span> <span class="n">generate_and_upload_pdf</span><span class="p">,</span> <span class="n">generate_and_upload_rar</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_content</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;合同协议原始内容不存在!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract_type</span> <span class="o">==</span> <span class="s2">&quot;pay&quot;</span><span class="p">:</span>
+            <span class="n">generate_and_upload_pdf</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">contract_type</span> <span class="o">==</span> <span class="s2">&quot;finance&quot;</span><span class="p">:</span>
+            <span class="n">generate_and_upload_rar</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span></div>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;contract&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;合同表&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
