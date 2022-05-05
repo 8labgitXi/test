@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_common_cc_approval &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_common_cc_approval</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_common_cc_approval 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试通用审批</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-04-12 15:46:19</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_common_cc_approval -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">action_cache</span>
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests</span> <span class="kn">import</span> <span class="n">mock_common_cc_approval</span> <span class="k">as</span> <span class="n">mock</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">CreditCurrentNode</span><span class="p">,</span> <span class="n">FinanceProject</span><span class="p">,</span> <span class="n">ReviewLog</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">client.models.evidence</span> <span class="kn">import</span> <span class="n">ChainEvidence</span>
+<span class="kn">from</span> <span class="nn">utils.date_and_time</span> <span class="kn">import</span> <span class="n">n_hours_later</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+
+<div class="viewcode-block" id="TestCommonCcApproval"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval">[文档]</a><span class="k">class</span> <span class="nc">TestCommonCcApproval</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;test CreditCertificateReviewUpdateAPIView.update</span>
+<span class="sd">    按照work_flow_id顺序测试</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s1">&#39;app_menus.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_credit.json&#39;</span><span class="p">,</span> <span class="s1">&#39;location.json&#39;</span><span class="p">,</span> <span class="s1">&#39;business.json&#39;</span><span class="p">,</span> <span class="s1">&#39;work_flow.json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;business_map.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_platform.json&#39;</span><span class="p">,</span> <span class="s1">&#39;evidence_type.json&#39;</span><span class="p">,</span> <span class="s1">&#39;base_common_cc_approval.json&#39;</span>
+    <span class="p">)</span>
+
+<div class="viewcode-block" id="TestCommonCcApproval.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.client_request">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cc_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">is_ok</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求</span>
+
+<span class="sd">        :param int uid: 用户id</span>
+<span class="sd">        :param str company_uid: 公司uid</span>
+<span class="sd">        :param int cc_id: 某信id</span>
+<span class="sd">        :param bool is_ok: 是否通过</span>
+<span class="sd">        :return _type_: _description_</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mock</span><span class="o">.</span><span class="n">create_all_users</span><span class="p">()</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/capital/credit_certificates/review/</span><span class="si">{</span><span class="n">cc_id</span><span class="si">}</span><span class="s1">/&#39;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;opinion&quot;</span><span class="p">:</span> <span class="s2">&quot;dolore&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;pass&quot;</span> <span class="k">if</span> <span class="n">is_ok</span> <span class="k">else</span> <span class="s2">&quot;reject&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;enclosure&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;战家老织世&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://wedi.na/fwbltzjkn&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;做例才金观&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://ujgr.org/uavnaf&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;她圆过连五强整&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://hvqfgsk.hr/blwcz&quot;</span>
+                <span class="p">},</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="s2">&quot;和油果&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://hcck.tj/xcj&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.assertAPIException"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.assertAPIException">[文档]</a>    <span class="k">def</span> <span class="nf">assertAPIException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;断言AIPIException</span>
+
+<span class="sd">        :param _type resp: response</span>
+<span class="sd">        :param str msg: 错误信息</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_pass_enclosure_upload"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_pass_enclosure_upload">[文档]</a>    <span class="k">def</span> <span class="nf">test_pass_enclosure_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功通过转让要件上传&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">transfer_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_transfer_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">ENCLOSURE_UPLOAD</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">transfer_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">ENCLOSURE_UPLOAD</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">work_flow_id__gt</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">ENCLOSURE_UPLOAD</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 未确权</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_EXAMINE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_pass_transfer_examine"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_pass_transfer_examine">[文档]</a>    <span class="k">def</span> <span class="nf">test_pass_transfer_examine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功通过转让审核&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">transfer_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_transfer_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_EXAMINE</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">transfer_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_EXAMINE</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">work_flow_id__gt</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_EXAMINE</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 未确权</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+        <span class="n">expire_at</span> <span class="o">=</span> <span class="n">n_hours_later</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">new_cc</span><span class="o">.</span><span class="n">credit_certificate_receive_time_limit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">expire_at</span><span class="p">,</span> <span class="n">expire_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">RECEIVE_CONFIRM</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_pass_receive_confirm"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_receive_confirm">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_pass_receive_confirm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试转让接收成功&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">transfer_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_transfer_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">transfer_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;8aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">RECEIVE_CONFIRM</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">auto_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_COMPLETE</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">auto_log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">opinion</span><span class="p">,</span> <span class="s1">&#39;通过&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">enclosure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 确权信息</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_COMPLETE</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># 确认转让确权数据上链</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">TRANSFER</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_reject_receive_confirm"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_reject_receive_confirm">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_reject_receive_confirm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试转让接收拒绝&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">transfer_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_transfer_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">transfer_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;8aMaYaeNRWQaYTy8Ydm2Hn&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">RECEIVE_CONFIRM</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_COMPLETE</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 某信信息</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reject&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">TRANSFER_APPLICATION</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_open_platform_review"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_open_platform_review">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_open_platform_review</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 开立平台审批&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_PLATFORM_REVIEW</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;无法进行平台审核。&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_pass_approval_review"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_approval_review">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_pass_approval_review</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试开立资金方审批成功&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">APPROVAL_REVIEW</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">auto_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_HOLD</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">auto_log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">opinion</span><span class="p">,</span> <span class="s1">&#39;通过&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">enclosure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 确权信息</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_HOLD</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># 确认开立付款承诺函上链</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">PAY</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">())</span>
+        <span class="c1"># 确认开立确权数据上链</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">ChainEvidence</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="n">evidence_type_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">EvidenceTypeEnum</span><span class="o">.</span><span class="n">OPEN</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_reject_approval_review"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_reject_approval_review">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_reject_approval_review</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试开立资金方审批拒绝&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">APPROVAL_REVIEW</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_HOLD</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 智信状态</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reject&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_APPLICATION</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_pass_fin_fund_side_review"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_pass_fin_fund_side_review">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_pass_fin_fund_side_review</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试融资资金方审批成功&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FIN_FUND_SIDE_REVIEW</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">auto_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">auto_log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">opinion</span><span class="p">,</span> <span class="s1">&#39;通过&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">enclosure</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">auto_log</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+
+        <span class="c1"># 未确权</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_success_reject_fin_fund_side_review"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_success_reject_fin_fund_side_review">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_reject_fin_fund_side_review</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试融资资金方审批拒绝&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s1">&#39;ok&#39;</span><span class="p">)</span>
+        <span class="c1"># 日志信息</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FIN_FUND_SIDE_REVIEW</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span>
+            <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">,</span>
+                <span class="n">data_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span>
+                <span class="n">work_flow_id</span><span class="o">=</span><span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_SETUP</span><span class="o">.</span><span class="n">value</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># 未确权</span>
+        <span class="n">new_cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">review_status</span><span class="p">,</span> <span class="s1">&#39;reject&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">new_cc</span><span class="o">.</span><span class="n">confirm_at</span><span class="p">)</span>
+
+        <span class="n">current_node</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">work_flow_id</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_APPLY</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">finance_project</span> <span class="o">=</span> <span class="n">FinanceProject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">finance_project</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s1">&#39;backed&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_finance_platform"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_finance_platform">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_finance_platform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 融资平台审批&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_finance_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">FINANCE_PLATFORM</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;无法进行平台审核。&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_transfer_expire"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_transfer_expire">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_transfer_expire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 转让达到接收时限&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">finance_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_transfer_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">RECEIVE_CONFIRM</span><span class="p">,</span> <span class="n">expire_timedelta</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">finance_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;已经超过接收时限&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_open_expire"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_open_expire">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_open_expire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 开立达到接收时限&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_EXAMINE</span><span class="p">,</span> <span class="n">expire_timedelta</span><span class="o">=-</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;已经超过接收时限&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_clear_done"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_done">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_clear_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 已经清分&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_EXAMINE</span><span class="p">,</span> <span class="n">clear_status</span><span class="o">=</span><span class="s1">&#39;done&#39;</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;已经清分无法审核&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestCommonCcApproval.test_fail_clear_ready"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_common_cc_approval.TestCommonCcApproval.test_fail_clear_ready">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_clear_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 即将清分&quot;&quot;&quot;</span>
+        <span class="n">credit</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_credit</span><span class="p">(</span><span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">NORMAL_ONE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">CompanyEnum</span><span class="o">.</span><span class="n">FINANCING</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">open_items</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">create_open_cc</span><span class="p">(</span><span class="n">credit</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="n">mock</span><span class="o">.</span><span class="n">WorkFlowEnum</span><span class="o">.</span><span class="n">OPEN_EXAMINE</span><span class="p">,</span> <span class="n">clear_status</span><span class="o">=</span><span class="s1">&#39;ready&#39;</span><span class="p">)</span>
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">open_items</span><span class="p">[</span><span class="s1">&#39;cc&#39;</span><span class="p">]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;H6aSWCy3dq7TANcwWDpLqL&#39;</span><span class="p">,</span> <span class="n">cc</span><span class="o">.</span><span class="n">pk</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;信用凭证即将清分，无法审核&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

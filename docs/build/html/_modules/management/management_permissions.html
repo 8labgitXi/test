@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>management.management_permissions &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>management.management_permissions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>management.management_permissions 源代码</h1><div class="highlight"><pre>
+<span></span> <span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : management_permissions.py</span>
+<span class="sd">@Author      : yu wen yang</span>
+<span class="sd">@Time        : 2022/3/15 10:29 上午</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework.permissions</span> <span class="kn">import</span> <span class="n">BasePermission</span>
+
+<span class="kn">from</span> <span class="nn">client.models.role</span> <span class="kn">import</span> <span class="n">Role</span><span class="p">,</span> <span class="n">Platform</span>
+<span class="kn">from</span> <span class="nn">client.models.user</span> <span class="kn">import</span> <span class="n">S1User</span>
+<span class="kn">from</span> <span class="nn">consts.menus</span> <span class="kn">import</span> <span class="n">MANAGEMENT_MENU</span>
+<span class="kn">from</span> <span class="nn">consts.user</span> <span class="kn">import</span> <span class="n">SCF_MANAGEMENT_SERVICE</span>
+
+
+<div class="viewcode-block" id="ClientMenuBasePermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.ClientMenuBasePermission">[文档]</a><span class="k">class</span> <span class="nc">ClientMenuBasePermission</span><span class="p">(</span><span class="n">BasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    权限基类</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ClientMenuBasePermission.has_permission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.ClientMenuBasePermission.has_permission">[文档]</a>    <span class="k">def</span> <span class="nf">has_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="c1"># 如果用户未激活，禁止访问</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="c1"># 普通用户检验访问权限</span>
+        <span class="n">menu_code_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menu_code_name</span>
+
+        <span class="c1"># 获取当前用户在s1库中的用户实例</span>
+        <span class="n">s1_user_instance</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pk</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">platform_id</span><span class="o">=</span><span class="n">platform_id</span><span class="p">,</span>
+            <span class="n">userrole__s1_user_id</span><span class="o">=</span><span class="n">s1_user_instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">roleappmenus__app_menus__code</span><span class="o">=</span><span class="n">menu_code_name</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<div class="viewcode-block" id="XLetterManageOpenCheckPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageOpenCheckPermission">[文档]</a><span class="k">class</span> <span class="nc">XLetterManageOpenCheckPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - X信管理 - 开立审批</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="XLetterManageFinancingProjectPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageFinancingProjectPermission">[文档]</a><span class="k">class</span> <span class="nc">XLetterManageFinancingProjectPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - 融资管理 - 融资项目</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="XLetterManageFinancingCheckPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageFinancingCheckPermission">[文档]</a><span class="k">class</span> <span class="nc">XLetterManageFinancingCheckPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - 融资管理 - 融资项目审批</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="XLetterManageAccountListPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageAccountListPermission">[文档]</a><span class="k">class</span> <span class="nc">XLetterManageAccountListPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - 对账单 - 对账单</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageChainListPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageChainListPermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageChainListPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - 区块链存证 - 区块链存证</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageCertificationApprovePermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageCertificationApprovePermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageCertificationApprovePermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 认证管理 - 认证审批</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageCustomerPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageCustomerPermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageCustomerPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 客户管理 - 客户管理</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageAddCreditPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageAddCreditPermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageAddCreditPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 授信管理 - 新增授信</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageCreditApprovalPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageCreditApprovalPermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageCreditApprovalPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 授信管理 - 授信审批</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageCreditManagePermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageCreditManagePermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageCreditManagePermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 授信管理 - 授信管理</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CustomerManageMessageManagePermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.CustomerManageMessageManagePermission">[文档]</a><span class="k">class</span> <span class="nc">CustomerManageMessageManagePermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    客户管理 - 消息管理 - 消息管理</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">3</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="UserManageListPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.UserManageListPermission">[文档]</a><span class="k">class</span> <span class="nc">UserManageListPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    系统管理 - 用户管理 - 用户管理</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RoleManageListPermission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.RoleManageListPermission">[文档]</a><span class="k">class</span> <span class="nc">RoleManageListPermission</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    系统管理 - 角色管理 - 角色管理</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="XLetterManageOpenFinancingCheck"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageOpenFinancingCheck">[文档]</a><span class="k">class</span> <span class="nc">XLetterManageOpenFinancingCheck</span><span class="p">(</span><span class="n">ClientMenuBasePermission</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    X信管理 - X信管理 - 开立审批</span>
+<span class="sd">    or</span>
+<span class="sd">    X信管理 - 融资管理 - 融资项目审批</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">open_approve_menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+    <span class="n">financing_approval_menu_code_name</span> <span class="o">=</span> <span class="n">MANAGEMENT_MENU</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;children&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="XLetterManageOpenFinancingCheck.has_permission"><a class="viewcode-back" href="../../management/management.html#management.management_permissions.XLetterManageOpenFinancingCheck.has_permission">[文档]</a>    <span class="k">def</span> <span class="nf">has_permission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+        <span class="c1"># 如果用户未激活，禁止访问</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">is_active</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="n">platform_id</span> <span class="o">=</span> <span class="n">Platform</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">SCF_MANAGEMENT_SERVICE</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+        <span class="c1"># 普通用户检验访问权限</span>
+        <span class="n">menu_code_name</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open_approve_menu_code_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">financing_approval_menu_code_name</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="c1"># 获取当前用户在s1库中的用户实例</span>
+        <span class="n">s1_user_instance</span> <span class="o">=</span> <span class="n">S1User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="s2">&quot;credible_data&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pk</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Role</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">is_deleted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">platform_id</span><span class="o">=</span><span class="n">platform_id</span><span class="p">,</span>
+            <span class="n">userrole__s1_user_id</span><span class="o">=</span><span class="n">s1_user_instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">roleappmenus__app_menus__code__in</span><span class="o">=</span><span class="n">menu_code_name</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">result</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

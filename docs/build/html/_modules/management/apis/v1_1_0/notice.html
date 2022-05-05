@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>management.apis.v1_1_0.notice &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>management.apis.v1_1_0.notice</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>management.apis.v1_1_0.notice 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : management notice</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-04-02 16:29:43</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.views</span> <span class="kn">import</span> <span class="n">APIView</span>
+
+<span class="kn">from</span> <span class="nn">notice.views</span> <span class="kn">import</span> <span class="n">admin</span> <span class="k">as</span> <span class="n">notice_admin_views</span>
+
+<span class="kn">from</span> <span class="nn">management.management_permissions</span> <span class="kn">import</span> <span class="n">CustomerManageMessageManagePermission</span>
+
+
+<div class="viewcode-block" id="ListCreateNoticeView"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListCreateNoticeView">[文档]</a><span class="k">class</span> <span class="nc">ListCreateNoticeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">CustomerManageMessageManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="ListCreateNoticeView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListCreateNoticeView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端分页获取所有消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span><span class="p">:</span> <span class="n">JsonResponse</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">list_notice</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
+        <span class="n">son_resp_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;total&#39;</span><span class="p">:</span> <span class="n">son_resp_json</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;current_page&#39;</span><span class="p">:</span> <span class="n">son_resp_json</span><span class="p">[</span><span class="s1">&#39;page&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="n">son_resp_json</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;page_range&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">son_resp_json</span><span class="p">[</span><span class="s1">&#39;max_page&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ListCreateNoticeView.post"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListCreateNoticeView.post">[文档]</a>    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端创建消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">create_notice</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ListNoticeTypeView"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListNoticeTypeView">[文档]</a><span class="k">class</span> <span class="nc">ListNoticeTypeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">CustomerManageMessageManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="ListNoticeTypeView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListNoticeTypeView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端获取所有消息类型&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span><span class="p">:</span> <span class="n">JsonResponse</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">list_all_notice_types</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ListNoticeReceiverTypeView"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListNoticeReceiverTypeView">[文档]</a><span class="k">class</span> <span class="nc">ListNoticeReceiverTypeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">CustomerManageMessageManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="ListNoticeReceiverTypeView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.ListNoticeReceiverTypeView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端获取所有接收人类型&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span><span class="p">:</span> <span class="n">JsonResponse</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">list_all_receiver_types</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="RetrieveUpdateDeleteNoticeView"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.RetrieveUpdateDeleteNoticeView">[文档]</a><span class="k">class</span> <span class="nc">RetrieveUpdateDeleteNoticeView</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">CustomerManageMessageManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="RetrieveUpdateDeleteNoticeView.get"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.RetrieveUpdateDeleteNoticeView.get">[文档]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端获取某个消息详情&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span><span class="p">:</span> <span class="n">JsonResponse</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">retrieve_notice</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RetrieveUpdateDeleteNoticeView.put"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.RetrieveUpdateDeleteNoticeView.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端修改某个消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">put_notice</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="RetrieveUpdateDeleteNoticeView.delete"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.RetrieveUpdateDeleteNoticeView.delete">[文档]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端删除某个消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">delete_notice</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="UpdateDeleteTimingNotice"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.UpdateDeleteTimingNotice">[文档]</a><span class="k">class</span> <span class="nc">UpdateDeleteTimingNotice</span><span class="p">(</span><span class="n">APIView</span><span class="p">):</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">CustomerManageMessageManagePermission</span><span class="p">,</span> <span class="p">]</span>
+
+<div class="viewcode-block" id="UpdateDeleteTimingNotice.put"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.UpdateDeleteTimingNotice.put">[文档]</a>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端修改定时消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">change_timing</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="UpdateDeleteTimingNotice.delete"><a class="viewcode-back" href="../../../../management/management.apis.v1_1_0.html#management.apis.v1_1_0.notice.UpdateDeleteTimingNotice.delete">[文档]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;管理端删除定时消息&quot;&quot;&quot;</span>
+        <span class="n">son_resp</span> <span class="o">=</span> <span class="n">notice_admin_views</span><span class="o">.</span><span class="n">delete_timing</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pk&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">son_resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">son_resp</span><span class="o">.</span><span class="n">content</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

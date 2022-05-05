@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/client/modules.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="client">
+<h1>client<a class="headerlink" href="#client" title="永久链接至标题"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="client.html">客户端</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="client.html#v1-0v1-1">v1.0和v1.1</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="client.apis.html">1. 视图API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.apis.html#v1-0">1.1. v1.0</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.apis.html#v1-1">1.2. v1.1</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="client.filters.html">2. 过滤器文件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.bill">2.1. 账单相关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.blockchain_evidence">2.2. 区块链存证</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.contract">2.3. 合同协议</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.credit_approval">2.4. X信审批</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.credit_clear">2.5. 清分相关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.credit_clear_income">2.6. 清分应收</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.credits">2.7. 授信管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.financing">2.8. 融资相关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.supply_chains">2.9. 供应链企业</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.filters.html#module-client.filters.user">2.10. 用户的筛选</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="client.middlewares.html">3. 中间件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.middlewares.html#module-client.middlewares.no_action_expire_token">3.1. token白名单</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.middlewares.html#module-client.middlewares.request_middleware">3.2. token携带企业uid</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models_file.html">4. model 文件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models_file.html#id1">4.1. model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="client.serializers.html">5. 序列化器</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.bill">5.1. 账单相关的序列化器</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.blockchain_evidence">5.2. 区块链存证</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.common">5.3. x信-x信管理-x信开立</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.company">5.4. 公司相关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.contract">5.5. 合同协议</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_approval">5.6. 审批列表相关</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_approval_detail">5.7. 各种审批详情页</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_certificate">5.8. 智信流转单</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_clear">5.9. 清分</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_clear_income">5.10. 清分收款</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_financing">5.11. 融资信用凭证</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_open">5.12. 开立</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credit_transfer">5.13. 转让</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.credits">5.14. 授信</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.examine">5.15. 信息上链</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.financing">5.16. 融资</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.role">5.17. 角色</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.small_payment">5.18. 小额打款</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.supply_chains">5.19. 供应链企业</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.serializers.html#module-client.serializers.user">5.20. 登陆注册</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="client.urls.html">6. urls文件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.urls.html#module-client.urls.v1">6.1. urls.v1版本</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.urls.html#module-client.urls.v1_1_0">6.2. urls.v1_1_0 版本</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.urls.html#module-client.urls">6.3. Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="client.toctree.html">7. <em>子模块</em></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="client.toctree.html#module-client.admin">7.1. admin.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.toctree.html#module-client.apps">7.2. App注册</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.toctree.html#module-client.client_permissions">7.3. 客户端菜单权限</a></li>
+<li class="toctree-l4"><a class="reference internal" href="client.toctree.html#module-client.tasks">7.4. 定时任务</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

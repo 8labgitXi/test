@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1. drf &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="2. 工具包" href="utils.package.html" />
+    <link rel="prev" title="utils 工具包" href="utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="utils.html">utils 工具包</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1. drf</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.drf.authentications">1.1. 登陆认证器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.drf.fields">1.2. 金额转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.drf.filters">1.3. 重写月份过滤器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.drf.paginations">1.4. 分页</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="utils.package.html">2. 工具包</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="utils.html">utils 工具包</a> &raquo;</li>
+      <li><span class="section-number">1. </span>drf</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/utils/utils.drf.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="drf">
+<h1><span class="section-number">1. </span>drf<a class="headerlink" href="#drf" title="永久链接至标题"></a></h1>
+<section id="module-utils.drf.authentications">
+<span id="id1"></span><h2><span class="section-number">1.1. </span>登陆认证器<a class="headerlink" href="#module-utils.drf.authentications" title="永久链接至标题"></a></h2>
+<p>&#64;File        : authentications.py
+&#64;Author      : liuda
+&#64;Time        : 2021/10/4 17:30
+&#64;Description : 登陆认证器</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.authentications.LoginAuth">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.authentications.</span></span><span class="sig-name descname"><span class="pre">LoginAuth</span></span><a class="reference internal" href="../_modules/utils/drf/authentications.html#LoginAuth"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.authentications.LoginAuth" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.authentication.BaseAuthentication</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.authentications.LoginAuth.authenticate">
+<span class="sig-name descname"><span class="pre">authenticate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/authentications.html#LoginAuth.authenticate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.authentications.LoginAuth.authenticate" title="永久链接至目标"></a></dt>
+<dd><p>Authenticate the request and return a two-tuple of (user, token).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.authentications.LoginAuth.authenticate_header">
+<span class="sig-name descname"><span class="pre">authenticate_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/authentications.html#LoginAuth.authenticate_header"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.authentications.LoginAuth.authenticate_header" title="永久链接至目标"></a></dt>
+<dd><p>获取验证auth
+&#64;param request:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.drf.fields">
+<span id="id2"></span><h2><span class="section-number">1.2. </span>金额转换<a class="headerlink" href="#module-utils.drf.fields" title="永久链接至标题"></a></h2>
+<p>&#64;File        : fields.py
+&#64;Author      : niuxingjie
+&#64;Time        : 2022/3/4 17:42
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.fields.ChineseYuanFloatField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.fields.</span></span><span class="sig-name descname"><span class="pre">ChineseYuanFloatField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/fields.html#ChineseYuanFloatField"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.fields.ChineseYuanFloatField" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.fields.FloatField</span></code></p>
+<p>分转换成中文大写元字段</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.fields.ChineseYuanFloatField.to_representation">
+<span class="sig-name descname"><span class="pre">to_representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/fields.html#ChineseYuanFloatField.to_representation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.fields.ChineseYuanFloatField.to_representation" title="永久链接至目标"></a></dt>
+<dd><p>分--&gt;中文大写元</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.fields.FenToYuanFloatField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.fields.</span></span><span class="sig-name descname"><span class="pre">FenToYuanFloatField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/fields.html#FenToYuanFloatField"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.fields.FenToYuanFloatField" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.fields.FloatField</span></code></p>
+<p>分转换成元字段：</p>
+<p>When a field is instantiated, we store the arguments that were used,
+so that we can present a helpful representation of the object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.fields.FenToYuanFloatField.to_internal_value">
+<span class="sig-name descname"><span class="pre">to_internal_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/fields.html#FenToYuanFloatField.to_internal_value"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.fields.FenToYuanFloatField.to_internal_value" title="永久链接至目标"></a></dt>
+<dd><p>元--&gt;分</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.fields.FenToYuanFloatField.to_representation">
+<span class="sig-name descname"><span class="pre">to_representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/fields.html#FenToYuanFloatField.to_representation"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.fields.FenToYuanFloatField.to_representation" title="永久链接至目标"></a></dt>
+<dd><p>分--&gt;元</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.drf.filters">
+<span id="id3"></span><h2><span class="section-number">1.3. </span>重写月份过滤器<a class="headerlink" href="#module-utils.drf.filters" title="永久链接至标题"></a></h2>
+<p>&#64;File        : filters.py
+&#64;Author      : niuxingjie
+&#64;Time        : 2022/4/15 14:59
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthDateField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.filters.</span></span><span class="sig-name descname"><span class="pre">MonthDateField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_formats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/filters.html#MonthDateField"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.filters.MonthDateField" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.fields.DateField</span></code></p>
+<dl class="simple">
+<dt>重写月份校验字段：</dt><dd><ul class="simple">
+<li><p>2006-10</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthDateField.input_formats">
+<span class="sig-name descname"><span class="pre">input_formats</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['%Y-%m']</span></em><a class="headerlink" href="#utils.drf.filters.MonthDateField.input_formats" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthDateRangeField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.filters.</span></span><span class="sig-name descname"><span class="pre">MonthDateRangeField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/filters.html#MonthDateRangeField"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.filters.MonthDateRangeField" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.fields.RangeField</span></code></p>
+<dl class="simple">
+<dt>自定义月份起止过滤字段:</dt><dd><ul class="simple">
+<li><p>start: 2022-01  --&gt; 2022-01-01</p></li>
+<li><p>end: 2022-02 --&gt; 2022-02-28</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthDateRangeField.compress">
+<span class="sig-name descname"><span class="pre">compress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/filters.html#MonthDateRangeField.compress"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.filters.MonthDateRangeField.compress" title="永久链接至目标"></a></dt>
+<dd><p>Return a single value for the given list of values. The values can be
+assumed to be valid.</p>
+<p>For example, if this MultiValueField was instantiated with
+fields=(DateField(), TimeField()), this might return a datetime
+object created by combining the date and time in data_list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthDateRangeField.widget">
+<span class="sig-name descname"><span class="pre">widget</span></span><a class="headerlink" href="#utils.drf.filters.MonthDateRangeField.widget" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id4"><span class="problematic" id="id5">`</span></a>django_filters.widgets.DateRangeWidget`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthFromToRangeFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.filters.</span></span><span class="sig-name descname"><span class="pre">MonthFromToRangeFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lookup_expr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distinct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/filters.html#MonthFromToRangeFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.filters.MonthFromToRangeFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.filters.RangeFilter</span></code></p>
+<dl class="simple">
+<dt>用于月份范围内数据字段的过滤：</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>2022-01到2024-02之间的数据</dt><dd><ul>
+<li><p>2022-01-01 00:00:00</p></li>
+<li><p>2024-02-29 23:59:59.999999</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>使用示例：</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>过滤字段用法：</dt><dd><p>sign = MonthFromToRangeFilter(field_name='credit_certificate__confirm_at')</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>输入两个字段：</dt><dd><ul>
+<li><p>sign_after --&gt; 2022-01</p></li>
+<li><p>sign_before --&gt; 2024-02</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.filters.MonthFromToRangeFilter.field_class">
+<span class="sig-name descname"><span class="pre">field_class</span></span><a class="headerlink" href="#utils.drf.filters.MonthFromToRangeFilter.field_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id6"><span class="problematic" id="id7">`</span></a>utils.drf.filters.MonthDateRangeField`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.drf.paginations">
+<span id="id8"></span><h2><span class="section-number">1.4. </span>分页<a class="headerlink" href="#module-utils.drf.paginations" title="永久链接至标题"></a></h2>
+<p>&#64;File        : paginations.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/1/24 9:12 上午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.drf.paginations.</span></span><span class="sig-name descname"><span class="pre">MyPageNumberPagination</span></span><a class="reference internal" href="../_modules/utils/drf/paginations.html#MyPageNumberPagination"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.pagination.PageNumberPagination</span></code></p>
+<p>指定页码和显示数量分页</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination.get_paginated_response">
+<span class="sig-name descname"><span class="pre">get_paginated_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/drf/paginations.html#MyPageNumberPagination.get_paginated_response"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination.get_paginated_response" title="永久链接至目标"></a></dt>
+<dd><p>重写返回结果
+:param data:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination.max_page_size">
+<span class="sig-name descname"><span class="pre">max_page_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50</span></em><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination.max_page_size" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination.page_query_param">
+<span class="sig-name descname"><span class="pre">page_query_param</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'page'</span></em><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination.page_query_param" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination.page_size">
+<span class="sig-name descname"><span class="pre">page_size</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20</span></em><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination.page_size" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.drf.paginations.MyPageNumberPagination.page_size_query_param">
+<span class="sig-name descname"><span class="pre">page_size_query_param</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'size'</span></em><a class="headerlink" href="#utils.drf.paginations.MyPageNumberPagination.page_size_query_param" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utils.html" class="btn btn-neutral float-left" title="utils 工具包" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="utils.package.html" class="btn btn-neutral float-right" title="2. 工具包" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

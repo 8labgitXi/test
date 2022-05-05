@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.serializers.credit_approval_detail &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.serializers.credit_approval_detail</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.serializers.credit_approval_detail 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : credit_approval_detail.py</span>
+<span class="sd">@Author      : wst</span>
+<span class="sd">@Time        : 2022/3/14 上午6:35</span>
+<span class="sd">@Description : 各种审批详情页的序列化器</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django.db.models.aggregates</span> <span class="kn">import</span> <span class="n">Sum</span>
+<span class="kn">from</span> <span class="nn">django.utils.functional</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.base_node</span> <span class="kn">import</span> <span class="n">OPEN_APPLICATION</span><span class="p">,</span> <span class="n">TRANSFER_EXAMINE</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CreditCertificate</span><span class="p">,</span>
+    <span class="n">CreditCertificateEnclosure</span><span class="p">,</span>
+    <span class="n">ReviewLog</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credit_open</span> <span class="kn">import</span> <span class="n">CreditCertificateEnclosureSerializer</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">FEN_TO_YUAN</span>
+<span class="kn">from</span> <span class="nn">utils.drf.fields</span> <span class="kn">import</span> <span class="n">FenToYuanFloatField</span>
+
+
+<div class="viewcode-block" id="BaseContractDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseContractDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">BaseContractDetailSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 基础合同详情 &quot;&quot;&quot;</span>
+    <span class="n">contract_amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;合同金额&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseContractDetailSerializer.get_contract_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseContractDetailSerializer.get_contract_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_contract_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">contract_amount</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseContractDetailSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseContractDetailSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificateEnclosure</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;contract_no&quot;</span><span class="p">,</span> <span class="s2">&quot;contract_amount&quot;</span><span class="p">,</span> <span class="s2">&quot;contract_sign_at&quot;</span><span class="p">,</span> <span class="s2">&quot;contract_enclosure&quot;</span><span class="p">,</span> <span class="s2">&quot;invoice_enclosure&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;other_enclosure&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">BaseCCApprovalDetailSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 基础X信详情--开立用 &quot;&quot;&quot;</span>
+    <span class="n">from_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;开立企业全称&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;from_company.name&quot;</span><span class="p">)</span>
+    <span class="n">from_credit_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;开立企业社会信用代码&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;from_company.credit_code&quot;</span><span class="p">)</span>
+    <span class="n">to_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;接收企业全称&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;company.name&quot;</span><span class="p">)</span>
+    <span class="n">to_credit_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;接收企业社会信用代码&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;company.credit_code&quot;</span><span class="p">)</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;资金机构名称&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;credit.capital_company.name&quot;</span><span class="p">)</span>
+    <span class="n">capital_credit_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;资金机构社会信用代码&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;credit.capital_company.credit_code&quot;</span><span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;开立金额&quot;</span><span class="p">)</span>
+    <span class="n">acc_contract_amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;累计合同金额&#39;</span><span class="p">)</span>
+    <span class="n">financing_annualized_interest_rate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;融资年化利率&quot;</span><span class="p">)</span>
+    <span class="n">apply_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;开立申请日期&quot;</span><span class="p">)</span>
+    <span class="n">promise_pay_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;承诺付款日&quot;</span><span class="p">)</span>
+    <span class="n">credit_certificate_receive_time</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;确认接收时限&quot;</span><span class="p">)</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;授信编号&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;授信开始时间&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;credit.start&quot;</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;授信结束时间&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;credit.end&quot;</span><span class="p">)</span>
+    <span class="n">enclosure</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;附件列表&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">amount</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_acc_contract_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_acc_contract_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_acc_contract_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">contracts</span> <span class="o">=</span> <span class="n">CreditCertificateEnclosure</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">contracts</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="mf">0.00</span>
+        <span class="n">agg</span> <span class="o">=</span> <span class="n">contracts</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s1">&#39;contract_amount&#39;</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">agg</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_financing_annualized_interest_rate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_financing_annualized_interest_rate">[文档]</a>    <span class="k">def</span> <span class="nf">get_financing_annualized_interest_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">financing_annualized_interest_rate</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_apply_at"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_apply_at">[文档]</a>    <span class="k">def</span> <span class="nf">get_apply_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_APPLICATION</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">created_at</span><span class="o">.</span><span class="n">date</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_credit_certificate_receive_time"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_credit_certificate_receive_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_credit_certificate_receive_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">objs</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_APPLICATION</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">created_at</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">credit_certificate_receive_time_limit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.get_enclosure"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.get_enclosure">[文档]</a>    <span class="k">def</span> <span class="nf">get_enclosure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">contracts</span> <span class="o">=</span> <span class="n">CreditCertificateEnclosure</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BaseContractDetailSerializer</span><span class="p">(</span><span class="n">contracts</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="BaseCCApprovalDetailSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.BaseCCApprovalDetailSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;from_company&quot;</span><span class="p">,</span> <span class="s2">&quot;from_credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;to_company&quot;</span><span class="p">,</span> <span class="s2">&quot;to_credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;capital_credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">,</span> <span class="s2">&quot;acc_contract_amount&quot;</span><span class="p">,</span> <span class="s2">&quot;financing_annualized_interest_rate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;apply_at&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_at&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_certificate_receive_time&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;enclosure&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ReceiveCCApprovalDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.ReceiveCCApprovalDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">ReceiveCCApprovalDetailSerializer</span><span class="p">(</span><span class="n">BaseCCApprovalDetailSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 基础X信详情--转让业务用（包括所有节点） &quot;&quot;&quot;</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;授信编号&quot;</span><span class="p">)</span>
+    <span class="n">from_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;原始开立企业全称&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;credit.receive_company.name&quot;</span><span class="p">)</span>
+    <span class="n">transfer_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;转让企业&quot;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;from_company.name&quot;</span><span class="p">)</span>
+    <span class="n">financing_annualized_interest_rate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;融资年化利率&quot;</span><span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;开立金额&quot;</span><span class="p">)</span>
+    <span class="n">promise_pay_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;承诺付款日&quot;</span><span class="p">)</span>
+    <span class="n">credit_certificate_receive_time</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;确认接收时限&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReceiveCCApprovalDetailSerializer.get_credit_certificate_receive_time"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.ReceiveCCApprovalDetailSerializer.get_credit_certificate_receive_time">[文档]</a>    <span class="k">def</span> <span class="nf">get_credit_certificate_receive_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="c1"># 获取X信当前所在节点</span>
+        <span class="n">objs</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">TRANSFER_EXAMINE</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;-id&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">objs</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">created_at</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">val</span><span class="o">.</span><span class="n">credit_certificate_receive_time_limit</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReceiveCCApprovalDetailSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.ReceiveCCApprovalDetailSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="s2">&quot;from_company&quot;</span><span class="p">,</span> <span class="s2">&quot;transfer_company&quot;</span><span class="p">,</span> <span class="s2">&quot;to_company&quot;</span><span class="p">,</span> <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;financing_annualized_interest_rate&quot;</span><span class="p">,</span> <span class="s2">&quot;amount&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_at&quot;</span><span class="p">,</span> <span class="s2">&quot;credit_certificate_receive_time&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;acc_contract_amount&quot;</span><span class="p">,</span> <span class="s2">&quot;enclosure&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="OpenApprovalDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.OpenApprovalDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">OpenApprovalDetailSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">Serializer</span><span class="p">):</span>
+    <span class="n">work_flow</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;工作流列表&quot;</span><span class="p">)</span>
+    <span class="n">detail</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;审批详情&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OpenApprovalDetailSerializer.get_work_flow"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.OpenApprovalDetailSerializer.get_work_flow">[文档]</a>    <span class="k">def</span> <span class="nf">get_work_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">val</span><span class="o">.</span><span class="n">get_work_flow</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OpenApprovalDetailSerializer.get_detail"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.OpenApprovalDetailSerializer.get_detail">[文档]</a>    <span class="k">def</span> <span class="nf">get_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BaseCCApprovalDetailSerializer</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="TransferReceiveApprovalDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.TransferReceiveApprovalDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">TransferReceiveApprovalDetailSerializer</span><span class="p">(</span><span class="n">OpenApprovalDetailSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 转让接收审批详情 &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TransferReceiveApprovalDetailSerializer.get_detail"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.TransferReceiveApprovalDetailSerializer.get_detail">[文档]</a>    <span class="k">def</span> <span class="nf">get_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ReceiveCCApprovalDetailSerializer</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="o">.</span><span class="n">data</span></div></div>
+
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailSerializer">[文档]</a><span class="k">class</span> <span class="nc">CapitalFinanceApprovalDetailSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;资金机构融资审批详情&quot;&quot;&quot;</span>
+    <span class="nb">object</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+    <span class="n">work_flow</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailSerializer.get_object"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailSerializer.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取审批详情&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CapitalFinanceApprovalDetailNestedSerializer</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailSerializer.get_work_flow"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailSerializer.get_work_flow">[文档]</a>    <span class="k">def</span> <span class="nf">get_work_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取工作流列表&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">get_work_flow</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">,</span> <span class="s1">&#39;work_flow&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer">[文档]</a><span class="k">class</span> <span class="nc">CapitalFinanceApprovalDetailNestedSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;内嵌序列化器: 资金机构融资审批详情&quot;&quot;&quot;</span>
+    <span class="n">credit_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;credit.receive_company.name&#39;</span><span class="p">)</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">()</span>
+    <span class="n">net_balance</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;net_amount&#39;</span><span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">()</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;credit.capital_company.name&#39;</span><span class="p">)</span>
+    <span class="n">finance_company</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;from_company.name&#39;</span><span class="p">)</span>
+    <span class="n">finance_company_credit_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;from_company.credit_code&#39;</span><span class="p">)</span>
+    <span class="n">financing_annualized_interest_rate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.financing_annualized_interest_rate&#39;</span><span class="p">,</span> <span class="n">max_digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">financing_annualized_interest</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.financing_annualized_interest&#39;</span><span class="p">)</span>
+    <span class="n">technical_service_rate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.technical_service_rate&#39;</span><span class="p">,</span> <span class="n">max_digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">technical_service</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.technical_service&#39;</span><span class="p">)</span>
+    <span class="n">information_consultation_rate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.information_consultation_rate&#39;</span><span class="p">,</span> <span class="n">max_digits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">information_consultation</span> <span class="o">=</span> <span class="n">FenToYuanFloatField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s1">&#39;financeproject.information_consultation&#39;</span><span class="p">)</span>
+    <span class="n">financing_net_amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+    <span class="n">credit_certificate_amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+    <span class="n">enclosures</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+    <span class="n">total_contract_amount</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;元数据&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_company&#39;</span><span class="p">,</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;balance&#39;</span><span class="p">,</span> <span class="s1">&#39;net_balance&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">,</span> <span class="s1">&#39;financing_annualized_interest&#39;</span><span class="p">,</span> <span class="s1">&#39;financing_annualized_interest_rate&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;capital_company&#39;</span><span class="p">,</span> <span class="s1">&#39;finance_company&#39;</span><span class="p">,</span> <span class="s1">&#39;finance_company_credit_code&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;technical_service_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;technical_service&#39;</span><span class="p">,</span> <span class="s1">&#39;information_consultation_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;information_consultation&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;financing_net_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;credit_certificate_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;enclosures&#39;</span><span class="p">,</span> <span class="s1">&#39;total_contract_amount&#39;</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.to_representation"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.to_representation">[文档]</a>    <span class="k">def</span> <span class="nf">to_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">:</span> <span class="n">CreditCertificate</span> <span class="o">=</span> <span class="n">instance</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;cached_enclosures&#39;</span><span class="p">,</span> <span class="s1">&#39;cached_parent&#39;</span><span class="p">,):</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_representation</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span></div>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">cached_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CreditCertificate</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;缓存父级&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">number</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span>
+            <span class="s1">&#39;business&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;amount&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;business__name&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">cached_enclosures</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;缓存附件&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CreditCertificateEnclosure</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">credit_certificate_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cached_parent</span><span class="o">.</span><span class="n">pk</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;contract_no&#39;</span><span class="p">,</span> <span class="s1">&#39;contract_amount&#39;</span><span class="p">,</span> <span class="s1">&#39;contract_enclosure&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;contract_sign_at&#39;</span><span class="p">,</span> <span class="s1">&#39;invoice_enclosure&#39;</span><span class="p">,</span> <span class="s1">&#39;other_enclosure&#39;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.get_financing_net_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.get_financing_net_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_financing_net_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取预计融资净额&quot;&quot;&quot;</span>
+        <span class="n">interests</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">financeproject</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">&#39;financing_annualized_interest&#39;</span><span class="p">,</span> <span class="s1">&#39;technical_service&#39;</span><span class="p">,</span> <span class="s1">&#39;information_consultation&#39;</span><span class="p">,)</span>
+        <span class="p">)</span>
+        <span class="n">net_amount</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">amount</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">interests</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">net_amount</span> <span class="o">/</span> <span class="n">FEN_TO_YUAN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.get_type"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.get_type">[文档]</a>    <span class="k">def</span> <span class="nf">get_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取信用凭证类型&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_parent</span><span class="o">.</span><span class="n">business</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.get_credit_certificate_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.get_credit_certificate_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_credit_certificate_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取(转让/开立)金额&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cached_parent</span><span class="o">.</span><span class="n">amount</span> <span class="o">/</span> <span class="n">FEN_TO_YUAN</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.get_enclosures"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.get_enclosures">[文档]</a>    <span class="k">def</span> <span class="nf">get_enclosures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取附件&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CreditCertificateEnclosureSerializer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cached_enclosures</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">data</span></div>
+
+<div class="viewcode-block" id="CapitalFinanceApprovalDetailNestedSerializer.get_total_contract_amount"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.credit_approval_detail.CapitalFinanceApprovalDetailNestedSerializer.get_total_contract_amount">[文档]</a>    <span class="k">def</span> <span class="nf">get_total_contract_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取累计合同金额&quot;&quot;&quot;</span>
+        <span class="n">total_amount</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_enclosures</span><span class="p">:</span>
+            <span class="n">total_amount</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">contract_amount</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_enclosures</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">total_amount</span> <span class="o">/</span> <span class="n">FEN_TO_YUAN</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

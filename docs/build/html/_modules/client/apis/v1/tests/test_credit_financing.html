@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_credit_financing &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_credit_financing</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_credit_financing 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : test_credit_financing.py</span>
+<span class="sd">@Author      : niuxingjie</span>
+<span class="sd">@Time        : 2022/4/19 17:11</span>
+<span class="sd">@Description :  python manage.py test client.apis.v1.tests.test_credit_financing -v=3 --keepdb</span>
+
+<span class="sd">用户id	用户名	手机号	密码</span>
+<span class="sd">92	万事通	18163959268	Wst555666</span>
+<span class="sd">93	沈娟	    18639638824	Lab888999</span>
+<span class="sd">94	金主	    18185148177	Labcd666</span>
+<span class="sd">80	金秀英	13366026441	Ld666666</span>
+<span class="sd">46	yangk	13666778822	ykl17176</span>
+
+<span class="sd">包含以下公司：</span>
+
+<span class="sd">公司id	公司名称	创建人</span>
+<span class="sd">6	银河石油公司	92</span>
+<span class="sd">7	银河石油公司供应商	93</span>
+<span class="sd">17	跑的飞快公司	92</span>
+<span class="sd">18	跑的飞快公司供应商	93</span>
+<span class="sd">28	红杉资本	80</span>
+<span class="sd">14	啊达资本-美国	94</span>
+
+<span class="sd">包含以下授信：</span>
+
+<span class="sd">授信id	授信金额	来源公司	接收公司</span>
+<span class="sd">1	1000万	14	17</span>
+<span class="sd">2	1000万	14	6</span>
+
+<span class="sd">包含以下智信：</span>
+
+<span class="sd">智信id	智信金额	业务类型	审批节点	用途	状态	前置智信id	依赖的授信id	来源公司	接收公司	创建智信的用户</span>
+<span class="sd">1	100万	开立	内部审批	测试	未审核	无	1	17	28	92</span>
+<span class="sd">2	100万			测试	通过	无	1	17	28	92</span>
+<span class="sd">3	100万			测试	驳回	无	1	17	28	92</span>
+<span class="sd">4	50万		接收审批	测试	未审核	无	2	6	7	92</span>
+<span class="sd">5	50万			测试	通过	无	2	6	7	92</span>
+<span class="sd">6	50万			测试	驳回	无	2	6	7	92</span>
+<span class="sd">7	50万		平台审批	测试	未审核	无	1	17	18	92</span>
+<span class="sd">8	50万			测试	通过	无	1	17	18	92</span>
+<span class="sd">9	50万			测试	驳回	无	1	17	18	92</span>
+<span class="sd">10	50万		资金方审批	测试	未审核	无	2	6	7	92</span>
+<span class="sd">11	50万			测试	通过	无	2	6	7	92</span>
+<span class="sd">12	50万			测试	驳回	无	2	6	7	92</span>
+<span class="sd">13	100万		开立持有	转让用	通过	无	1	17	18	92</span>
+<span class="sd">14	10万	转让	内部审批	测试	未审核	13	1	18	28	93</span>
+<span class="sd">15	10万			测试	通过	13	1	18	28	93</span>
+<span class="sd">16	10万			测试	驳回	13	1	18	28	93</span>
+<span class="sd">17	10万		接收审批	测试	未审核	13	1	18	28	93</span>
+<span class="sd">18	10万			测试	通过	13	1	18	28	93</span>
+<span class="sd">19	10万			测试	驳回	13	1	18	28	93</span>
+<span class="sd">20	10万		转让完成	融资用	通过	13	1	18	28	93</span>
+<span class="sd">21	1万	融资	内部审批	测试	未审核	13,20	1	28	14	80</span>
+<span class="sd">22	1万			测试	通过	13,20	1	28	14	80</span>
+<span class="sd">23	1万			测试	驳回	13,20	1	28	14	80</span>
+<span class="sd">24	1万		平台审批	测试	未审核	13,20	1	28	14	80</span>
+<span class="sd">25	1万			测试	通过	13,20	1	28	14	80</span>
+<span class="sd">26	1万			测试	驳回	13,20	1	28	14	80</span>
+<span class="sd">27	1万		资金方审批	测试	未审核	13,20	1	28	14	80</span>
+<span class="sd">28	1万			测试	通过	13,20	1	28	14	80</span>
+<span class="sd">29	1万			测试	驳回	13,20	1	28	14	80</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">action_cache</span><span class="p">,</span> <span class="n">create_user</span><span class="p">,</span> <span class="n">PhoneCode</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest">[文档]</a><span class="k">class</span> <span class="nc">CreditFinancingCRUDTest</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    融资申请相关接口测试</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;credit_manage.json&#39;</span>  <span class="c1"># 这里包含了各种类型的凭证（开立，转让，融资）</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.setUp"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.setUp">[文档]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># 提前创建好所有用户</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">phone</span><span class="o">=</span><span class="s2">&quot;18163959268&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">92</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">94</span><span class="p">,</span> <span class="mi">46</span><span class="p">]:</span>
+            <span class="n">create_user</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.client_request_get"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.client_request_get">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求&quot;&quot;&quot;</span>
+        <span class="c1"># 添加认证</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># 创建请求</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.client_request_post"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.client_request_post">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求&quot;&quot;&quot;</span>
+        <span class="c1"># 添加认证</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># 创建请求</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.client_request_put"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.client_request_put">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求&quot;&quot;&quot;</span>
+        <span class="c1"># 添加认证</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># 创建请求</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.client_request_delete"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.client_request_delete">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uid</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求&quot;&quot;&quot;</span>
+        <span class="c1"># 添加认证</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s2">&quot;user_id&quot;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># 创建请求</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_get_parent"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_get_parent">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_get_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取待融资（父级）信用凭证信息&quot;&quot;&quot;</span>
+        <span class="n">ppk</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">resp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_get</span><span class="p">(</span>
+            <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/parent/</span><span class="si">{</span><span class="n">ppk</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp_1</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_1</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">ppk</span><span class="p">,</span> <span class="s2">&quot;获取待融资凭证信息失败！&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_create"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_create">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_create</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;融资申请&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">PhoneCode</span><span class="p">(</span><span class="s1">&#39;pay&#39;</span><span class="p">,</span> <span class="s1">&#39;18163959268&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">phone_code</span><span class="p">:</span>
+            <span class="n">ppk</span> <span class="o">=</span> <span class="mi">20</span>
+            <span class="n">data_basic</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                <span class="s2">&quot;phone_code&quot;</span><span class="p">:</span> <span class="n">phone_code</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">resp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_post</span><span class="p">(</span>
+                <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/parent/</span><span class="si">{</span><span class="n">ppk</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data_basic</span>
+            <span class="p">)</span>
+            <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp_1</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="n">fpk</span> <span class="o">=</span> <span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_1</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">fpk</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="s2">&quot;提交融资申请失败！&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_get_basic"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_get_basic">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_get_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;获取融资申请信息&quot;&quot;&quot;</span>
+        <span class="n">fpk</span> <span class="o">=</span> <span class="mi">23</span>
+        <span class="n">resp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_get</span><span class="p">(</span>
+            <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/</span><span class="si">{</span><span class="n">fpk</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp_1</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_1</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">fpk</span><span class="p">,</span> <span class="s2">&quot;获取融资基本信息失败！&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_put"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_put">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_put</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;修改融资申请信息&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">PhoneCode</span><span class="p">(</span><span class="s1">&#39;pay&#39;</span><span class="p">,</span> <span class="s1">&#39;18163959268&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">phone_code</span><span class="p">:</span>
+            <span class="n">fpk</span> <span class="o">=</span> <span class="mi">23</span>
+            <span class="n">data_basic</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;amount&quot;</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+                <span class="s2">&quot;phone_code&quot;</span><span class="p">:</span> <span class="n">phone_code</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">resp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_put</span><span class="p">(</span>
+                <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/</span><span class="si">{</span><span class="n">fpk</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data_basic</span>
+            <span class="p">)</span>
+            <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp_1</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_1</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="n">fpk</span><span class="p">,</span> <span class="s2">&quot;修改融资申请失败！&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_get_detail"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_get_detail">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_get_detail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取融资凭证详情</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tpk</span> <span class="o">=</span> <span class="mi">23</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_get</span><span class="p">(</span>
+            <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/</span><span class="si">{</span><span class="n">tpk</span><span class="si">}</span><span class="s1">/detail/&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNotNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;credit_certificate&#39;</span><span class="p">],</span> <span class="s2">&quot;获取融资详情信息失败！&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditFinancingCRUDTest.test_credit_financing_invalid"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_credit_financing.CreditFinancingCRUDTest.test_credit_financing_invalid">[文档]</a>    <span class="k">def</span> <span class="nf">test_credit_financing_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        作废融资凭证</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tpk</span> <span class="o">=</span> <span class="mi">23</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request_delete</span><span class="p">(</span>
+            <span class="s1">&#39;klnbsdfcwer3894ffwstww&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;/api/v1/scf/client/credit_manage/financing/</span><span class="si">{</span><span class="n">tpk</span><span class="si">}</span><span class="s1">/&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">,</span> <span class="s2">&quot;作废融资凭证失败！&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

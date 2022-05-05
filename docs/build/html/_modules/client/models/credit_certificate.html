@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.models.credit_certificate &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.models.credit_certificate</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.models.credit_certificate 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : credit_certificate.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/2/25 17:18</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+
+<span class="kn">from</span> <span class="nn">django.contrib.postgres.fields</span> <span class="kn">import</span> <span class="n">ArrayField</span><span class="p">,</span> <span class="n">JSONField</span>
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ObjectDoesNotExist</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Sum</span>
+
+<span class="kn">from</span> <span class="nn">client.models.base</span> <span class="kn">import</span> <span class="n">NameAndDescNameModel</span><span class="p">,</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span>
+<span class="kn">from</span> <span class="nn">client.models.credit</span> <span class="kn">import</span> <span class="n">Credit</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">CREDITCERTIFICATE_PREFIX</span><span class="p">,</span> <span class="n">DAYS_PER_YEAR</span><span class="p">,</span> <span class="n">PERCENTAGE_NUM</span><span class="p">,</span> <span class="n">FINANCEPROJECTNUMBER_PREFIX</span>
+
+
+<div class="viewcode-block" id="Business"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.Business">[文档]</a><span class="k">class</span> <span class="nc">Business</span><span class="p">(</span><span class="n">NameAndDescNameModel</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">desc_name</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;business&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证业务类型表&quot;</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificateReceiveTimeLimit"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificateReceiveTimeLimit">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateReceiveTimeLimit</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;时限名&quot;</span>
+    <span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;小时数&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_certificate_receive_time_limit&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证接收时限表&quot;</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificate"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificate</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    - 当前信用凭证的三种类型：</span>
+<span class="sd">        - 开立业务</span>
+<span class="sd">        - 转让业务</span>
+<span class="sd">        - 融资业务</span>
+<span class="sd">    - 关于from_company和company的使用说明：</span>
+<span class="sd">        - 开立业务：A公司  开立信用凭证给  B公司, 那么from_company就是A, company就是B</span>
+<span class="sd">        - 转让业务：A公司  转让信用凭证给  B公司, 那么from_company就是A, company就是B</span>
+<span class="sd">        - 融资业务：A公司  向 B公司（金融机构） 融资, 那么from_company就是A, company就是B</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">review_status_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;creating&quot;</span><span class="p">,</span> <span class="s2">&quot;创建中&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span> <span class="s2">&quot;审批中&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span> <span class="s2">&quot;审批通过&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;reject&quot;</span><span class="p">,</span> <span class="s2">&quot;驳回&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;开立金额: 单位分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Credit</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">company</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Company</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;company_credit_certificates&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接受企业ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">from_company</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Company</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;from_company_credit_certificates&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;业务发起企业ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">expire_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接受过期时间&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">promise_pay_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;承诺付款时间&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;凭证编号-系统生成&quot;</span>
+    <span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;凭证编号&quot;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;节点路径&quot;</span>
+    <span class="p">)</span>
+    <span class="n">s1_user_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;开立人ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">review_status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">review_status_choices</span>
+    <span class="p">)</span>
+    <span class="n">business</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Business</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;业务类型ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">is_valid</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;是否作废，默认没作废&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate_receive_time_limit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditCertificateReceiveTimeLimit</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接收时效&quot;</span>
+    <span class="p">)</span>
+    <span class="n">confirm_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;确权日期&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent_credit_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;假设：信用凭证number唯一&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parent_number</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">number</span><span class="o">=</span><span class="n">parent_number</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CreditCertificate.generate_open_number"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate.generate_open_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_open_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成【开立信用凭证编号】：</span>
+<span class="sd">            - {XYPZ}{年月日}{4位流水}</span>
+<span class="sd">                - 例：XYPZ202001010001</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">year_month_day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">CREDITCERTIFICATE_PREFIX</span> <span class="o">+</span> <span class="n">year_month_day</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;0001&quot;</span>
+        <span class="n">last_open</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">business__name</span><span class="o">=</span><span class="s1">&#39;open&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">last_open</span> <span class="ow">and</span> <span class="n">last_open</span><span class="o">.</span><span class="n">number</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">number_prefix</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_open</span><span class="o">.</span><span class="n">number</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number_prefix</span> <span class="o">+</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="CreditCertificate.generate_transfer_number"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate.generate_transfer_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_transfer_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成【转让信用凭证编号】：</span>
+<span class="sd">            - {父级凭证编号}-{2位流水}</span>
+<span class="sd">                - 例：XYPZ202001010001-01</span>
+<span class="sd">            - 注意流水号根据同是转让业务的流水号递增</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">last_transfer</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span> <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;transfer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;01&#39;</span>
+        <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span>
+        <span class="k">if</span> <span class="n">last_transfer</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_transfer</span><span class="o">.</span><span class="n">number</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">last_transfer</span><span class="o">.</span><span class="n">number</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">number_prefix</span> <span class="o">+</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="CreditCertificate.generate_financing_number"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate.generate_financing_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_financing_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成【融资信用凭证编号】：</span>
+<span class="sd">            - {父级凭证编号}-{2位流水}</span>
+<span class="sd">                - 例：XYPZ202001010001-01-R01</span>
+<span class="sd">            - 注意流水号根据同是融资业务的流水号递增</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">last_financing</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span> <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;financing&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="s1">&#39;01&#39;</span>
+        <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">number</span> <span class="o">+</span> <span class="s1">&#39;-R&#39;</span>
+        <span class="k">if</span> <span class="n">last_financing</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_financing</span><span class="o">.</span><span class="n">number</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">last_financing</span><span class="o">.</span><span class="n">number</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">number_prefix</span> <span class="o">+</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="CreditCertificate.generate_path"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate.generate_path">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_path</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成path：</span>
+<span class="sd">            - path只包含父级凭证的number，不包含自己的凭证number</span>
+<span class="sd">                - 例 1：开立凭证的path为空列表：[]</span>
+<span class="sd">                - 例 2：融资凭证的path可能为[&#39;开立凭证number&#39;, &#39;一级转让凭证number&#39;， &#39;二级转让凭证number&#39;]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parent</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="n">parent</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+            <span class="n">parent_path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">parent_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">parent_path</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">parent</span><span class="o">.</span><span class="n">number</span><span class="p">]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        余额</span>
+<span class="sd">        @return: 返回值单位是分</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">review_status</span> <span class="o">!=</span> <span class="s2">&quot;pass&quot;</span><span class="p">:</span>
+            <span class="c1"># 作废的或者审核是0</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">self_path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">self_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">self_path</span>
+
+        <span class="c1"># 查询本信用凭证的儿子节点，且状态是审批通过，还没作废的</span>
+        <span class="n">son</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+        <span class="c1"># 已经清分的余额直接为0</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;creditcleardetail&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+            <span class="c1"># 最开始的算法</span>
+            <span class="c1"># clear_principal = self.creditcleardetail.clear_principal if hasattr(self, &quot;creditcleardetail&quot;) else 0</span>
+
+        <span class="n">used_amount</span> <span class="o">=</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="c1"># return self.amount - used_amount - clear_principal  # 最开始的算法</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount</span> <span class="o">-</span> <span class="n">used_amount</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">net_amount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取信用凭证净额</span>
+<span class="sd">        @return: 返回值单位是分</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">promise_pay_at</span> <span class="o">&lt;=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">():</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">self_path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">self_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">self_path</span>
+        <span class="c1"># 查找儿子信用凭证 审批通过 进行中或者退回，但是未作废的数据，进行金额求和</span>
+        <span class="n">son</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;creating&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+        <span class="n">used_amount</span> <span class="o">=</span> <span class="n">son</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount</span> <span class="o">-</span> <span class="n">used_amount</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_transfer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        已经转让的金额</span>
+<span class="sd">        @return: 单位 分</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">self_path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">self_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">self_path</span>
+        <span class="c1"># 查询本信用凭证的儿子节点，且状态是审批通过，还没作废的</span>
+        <span class="n">son</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;transfer&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_financing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        已经融资的金额</span>
+<span class="sd">        @return: 单位 分</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">self_path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">self_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+        <span class="n">current_path</span> <span class="o">=</span> <span class="n">self_path</span>
+        <span class="c1"># 查询本信用凭证的儿子节点，且状态是审批通过，还没作废的</span>
+        <span class="n">son</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">current_path</span><span class="p">,</span>
+            <span class="n">review_status</span><span class="o">=</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">business__name</span><span class="o">=</span><span class="s2">&quot;financing&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">Sum</span><span class="p">(</span><span class="s2">&quot;amount&quot;</span><span class="p">))</span>
+        <span class="n">has_financing</span> <span class="o">=</span> <span class="n">son</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">son</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">has_financing</span>
+
+<div class="viewcode-block" id="CreditCertificate.get_work_flow"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificate.get_work_flow">[文档]</a>    <span class="k">def</span> <span class="nf">get_work_flow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取x信相关的工作流</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">business_id_flow</span> <span class="o">=</span> <span class="n">WorkFlowBusinessMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">business_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_id</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span>
+            <span class="s1">&#39;end_work_flow__path&#39;</span><span class="p">,</span> <span class="s1">&#39;end_work_flow__code&#39;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="c1"># 获取所有的工作流节点</span>
+        <span class="n">complete_path</span> <span class="o">=</span> <span class="n">business_id_flow</span><span class="o">.</span><span class="n">end_work_flow</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="p">[</span><span class="n">business_id_flow</span><span class="o">.</span><span class="n">end_work_flow</span><span class="o">.</span><span class="n">code</span><span class="p">]</span>
+        <span class="c1"># 获取所有的工作节点表记录</span>
+        <span class="n">node_objects</span> <span class="o">=</span> <span class="n">WorkFlow</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">code__in</span><span class="o">=</span><span class="n">complete_path</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 形成字典，便于查询</span>
+        <span class="n">node_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">node_objects</span><span class="p">)</span>
+
+        <span class="n">flows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 获取当前节点的位置</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;creditcurrentnode&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;此信用凭证还没进入审核流程！&quot;</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">complete_path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">creditcurrentnode</span><span class="o">.</span><span class="n">work_flow</span><span class="o">.</span><span class="n">code</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">complete_path</span><span class="p">):</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">index</span><span class="p">:</span>
+                <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">flows</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">node_dict</span><span class="p">[</span><span class="n">v</span><span class="p">],</span> <span class="s2">&quot;is_done&quot;</span><span class="p">:</span> <span class="n">done</span><span class="p">})</span>
+        <span class="k">return</span> <span class="n">flows</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">penalty_interest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取罚息金额</span>
+<span class="sd">        @return: 分</span>
+<span class="sd">        if X信承诺付款日-today&lt;=0，罚息金额=X信余额*罚息费率/360*清分逾期天数；else 罚息金额=0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">overdue_days</span> <span class="o">=</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">promise_pay_at</span><span class="p">)</span><span class="o">.</span><span class="n">days</span>
+        <span class="k">if</span> <span class="n">overdue_days</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="c1"># 罚息金额 = X信余额 * 罚息费率 / 360 * 清分逾期天数</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">balance</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">punishment_rate</span> <span class="o">/</span> <span class="n">PERCENTAGE_NUM</span> <span class="o">/</span> <span class="n">DAYS_PER_YEAR</span><span class="p">)</span> <span class="o">*</span> <span class="n">overdue_days</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">amount</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">get_preorder_traversal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取开立类型信用凭证先序遍历列表-清分逻辑使用</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 获取全部的相关</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path__0</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">,</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">review_status__in</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span> <span class="s2">&quot;reviewing&quot;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;company&quot;</span><span class="p">)</span>
+        <span class="n">child_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">child</span><span class="p">:</span>
+            <span class="n">path_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">path_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">child_map</span><span class="p">:</span>
+                <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span>
+                <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">child_map</span><span class="p">[</span><span class="n">path_str</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+        <span class="n">need_sort_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">number</span><span class="p">],</span>
+            <span class="n">is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">review_status__in</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span> <span class="s2">&quot;reviewing&quot;</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">need_sort_list</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># 查找数据</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">need_sort_list</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="c1"># 弹出带查找元素</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">need_sort_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># 追加到结果里面</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">number</span><span class="p">)</span>
+            <span class="c1"># 查询是否存在下级子节点</span>
+            <span class="n">next_child</span> <span class="o">=</span> <span class="n">child_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">next_child</span><span class="p">:</span>
+                <span class="c1"># 把查到的数据插入到待排序头部</span>
+                <span class="n">next_child</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">need_sort_list</span><span class="p">)</span>
+                <span class="n">need_sort_list</span> <span class="o">=</span> <span class="n">next_child</span>
+            <span class="c1"># 更新长度</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">need_sort_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">entry_principal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        需入账本金</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">balance</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_transfer</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_financing</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty_interest</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">out_principal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        需出账本金</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_transfer</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_financing</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_certificate&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证&quot;</span></div>
+
+
+<div class="viewcode-block" id="FinanceProject"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject">[文档]</a><span class="k">class</span> <span class="nc">FinanceProject</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+
+    <span class="n">status_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;un_sign&quot;</span><span class="p">,</span> <span class="s2">&quot;待签约&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;un_pay&quot;</span><span class="p">,</span> <span class="s2">&quot;待放款&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;un_clear&quot;</span><span class="p">,</span> <span class="s2">&quot;未清分&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;cleared&quot;</span><span class="p">,</span> <span class="s2">&quot;已清分&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;backed&quot;</span><span class="p">,</span> <span class="s2">&quot;已退回&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">finance_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;融资项目编号-系统生成&quot;</span>
+    <span class="p">)</span>
+    <span class="n">financing_annualized_interest_rate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;融资年化利率&quot;</span>
+    <span class="p">)</span>
+    <span class="n">financing_annualized_interest</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;预计融资利息（分）&quot;</span>
+    <span class="p">)</span>
+    <span class="n">technical_service_rate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;技术服务利率&quot;</span>
+    <span class="p">)</span>
+    <span class="n">technical_service</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;技术服务费（分）&quot;</span>
+    <span class="p">)</span>
+    <span class="n">information_consultation_rate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信息咨询费率&quot;</span>
+    <span class="p">)</span>
+    <span class="n">information_consultation</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信息咨询费（分）&quot;</span>
+    <span class="p">)</span>
+    <span class="n">punishment_rate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span>
+        <span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;罚息利率&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">sign_contract_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;保存类似下面的数据{&quot;file_name&quot;: &quot;文件原始名&quot;， &quot;url&quot;: &quot;文件OSS的url&quot;, &quot;md5sum&quot;:&quot;文件md5值&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;签约凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">loan_voucher_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;保存类似下面的数据{&quot;file_name&quot;: &quot;文件原始名&quot;， &quot;url&quot;: &quot;文件OSS的url&quot;, &quot;md5sum&quot;:&quot;文件md5值&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;放款凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">sign_contract_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;签约凭证上传时间&quot;</span>
+    <span class="p">)</span>
+    <span class="n">loan_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;放款凭证上传时间&quot;</span>
+    <span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;un_sign&quot;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">status_choices</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;融资项目状态&quot;</span>
+    <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">financing_amount_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算【预计融资净额:分】:</span>
+<span class="sd">            - 融资金额-预计融资利息-技术服务费-信息咨询费</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">amount</span> \
+            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">financing_annualized_interest</span> \
+            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">technical_service</span> \
+            <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">information_consultation</span>
+
+<div class="viewcode-block" id="FinanceProject.generate_financing_project_number"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject.generate_financing_project_number">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">generate_financing_project_number</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        生成【融资项目编号】：</span>
+<span class="sd">            - {RZ}+{年月日}+{4位流水}</span>
+<span class="sd">                - 例: RZ202001010001</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">year_month_day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">number_prefix</span> <span class="o">=</span> <span class="n">FINANCEPROJECTNUMBER_PREFIX</span> <span class="o">+</span> <span class="n">year_month_day</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="s2">&quot;0001&quot;</span>
+        <span class="n">last_project</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">last_project</span> <span class="ow">and</span> <span class="n">last_project</span><span class="o">.</span><span class="n">finance_number</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="n">number_prefix</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">last_project</span><span class="o">.</span><span class="n">finance_number</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number_prefix</span> <span class="o">+</span> <span class="n">index</span></div>
+
+<div class="viewcode-block" id="FinanceProject.get_loan_days_estimated"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject.get_loan_days_estimated">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_loan_days_estimated</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算【预计融资期限：天】：</span>
+<span class="sd">            - X信承诺付款日 － 预计放款日期（预计融资申请日3个自然日后，以实际放款日期为准）</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">promise_pay_at</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">days</span></div>
+
+<div class="viewcode-block" id="FinanceProject.get_financing_annualized_interest"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject.get_financing_annualized_interest">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_financing_annualized_interest</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算【预计融资利息：分】：</span>
+<span class="sd">            - 融资金额 ＊ 融资年化利率(年化 )＊ 预计融资期限／ 360</span>
+<span class="sd">            - 舍弃两位小数点之后的数据</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">days_on</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_loan_days_estimated</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">fee</span> <span class="o">=</span> <span class="n">amount</span> <span class="o">*</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">financing_annualized_interest_rate</span> <span class="o">/</span> <span class="n">PERCENTAGE_NUM</span><span class="p">)</span> <span class="o">*</span> <span class="n">days_on</span> <span class="o">/</span> <span class="n">DAYS_PER_YEAR</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">fee</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProject.get_technical_service"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject.get_technical_service">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_technical_service</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算【技术服务费：分】：</span>
+<span class="sd">            - 3.3% (技术服务费率)／ 360 ＊ 融资金额 ＊ 预计融资期限</span>
+<span class="sd">            - 舍弃两位小数点之后的数据</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">days_on</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_loan_days_estimated</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">fee</span> <span class="o">=</span> <span class="n">amount</span> <span class="o">*</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">technical_service_rate</span> <span class="o">/</span> <span class="n">PERCENTAGE_NUM</span><span class="p">)</span> <span class="o">*</span> <span class="n">days_on</span> <span class="o">/</span> <span class="n">DAYS_PER_YEAR</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">fee</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProject.get_information_consultation"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.FinanceProject.get_information_consultation">[文档]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_information_consultation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">amount</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算【信息咨询费：分】：</span>
+<span class="sd">            - 4.4%(信息咨询费率) ／ 360 ＊ 融资金额 ＊ 预计融资期限</span>
+<span class="sd">            - 舍弃两位小数点之后的数据</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">days_on</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_loan_days_estimated</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+        <span class="n">fee</span> <span class="o">=</span> <span class="n">amount</span> <span class="o">*</span> <span class="n">Decimal</span><span class="p">(</span><span class="n">parent</span><span class="o">.</span><span class="n">credit</span><span class="o">.</span><span class="n">information_consultation_rate</span> <span class="o">/</span> <span class="n">PERCENTAGE_NUM</span><span class="p">)</span> <span class="o">*</span> <span class="n">days_on</span> <span class="o">/</span> <span class="n">DAYS_PER_YEAR</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">fee</span><span class="p">)</span></div>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;finance_project&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证-融资项目&quot;</span></div>
+
+
+<div class="viewcode-block" id="CreditCertificateEnclosure"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCertificateEnclosure">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateEnclosure</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;credit_certificate_enclosures&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_no</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同编号&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同金额,单位分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同附件&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_sign_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;合同签署时间&quot;</span>
+    <span class="p">)</span>
+    <span class="n">invoice_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;发票附件&quot;</span>
+    <span class="p">)</span>
+    <span class="n">other_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;其他附件&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate_receive_time_limit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditCertificateReceiveTimeLimit</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接收时限&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_certificate_enclosure&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证附件&quot;</span></div>
+
+
+<div class="viewcode-block" id="WorkFlow"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.WorkFlow">[文档]</a><span class="k">class</span> <span class="nc">WorkFlow</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;任务流标题&quot;</span>
+    <span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;编号-英文代号&quot;</span>
+    <span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;编号-英文代号&quot;</span>
+        <span class="p">),</span>
+        <span class="n">default</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
+        <span class="n">blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;节点路径&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;work_flow&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;工作流&quot;</span></div>
+
+
+<div class="viewcode-block" id="WorkFlowBusinessMap"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.WorkFlowBusinessMap">[文档]</a><span class="k">class</span> <span class="nc">WorkFlowBusinessMap</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">start_work_flow</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">WorkFlow</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;start_work_flow_business_maps&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;起始工作流&quot;</span>
+    <span class="p">)</span>
+    <span class="n">end_work_flow</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">WorkFlow</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 由于迁移导致</span>
+        <span class="n">related_name</span><span class="o">=</span><span class="s2">&quot;end_work_flow_business_maps&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;结束工作流&quot;</span>
+    <span class="p">)</span>
+    <span class="n">business</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">Business</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证业务类型&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;work_flow_business_map&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;工作流与业务关系表&quot;</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;start_work_flow&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">,</span> <span class="s2">&quot;end_work_flow&quot;</span><span class="p">]</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="CreditCurrentNode"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditCurrentNode">[文档]</a><span class="k">class</span> <span class="nc">CreditCurrentNode</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">work_flow</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">WorkFlow</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;工作流&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow</span><span class="o">.</span><span class="n">title</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_current_node&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证当前审批节点记录表&quot;</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span> <span class="s2">&quot;work_flow&quot;</span><span class="p">]</span>
+        <span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ReviewLog"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.ReviewLog">[文档]</a><span class="k">class</span> <span class="nc">ReviewLog</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">status_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;undo&quot;</span><span class="p">,</span> <span class="s2">&quot;未处理&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;done&quot;</span><span class="p">,</span> <span class="s2">&quot;已处理&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">result_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;undo&quot;</span><span class="p">,</span> <span class="s2">&quot;未审核&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;pass&quot;</span><span class="p">,</span> <span class="s2">&quot;审核通过&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;reject&quot;</span><span class="p">,</span> <span class="s2">&quot;审核拒绝&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">opinion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;审批意见&quot;</span>
+    <span class="p">)</span>
+    <span class="n">enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;附件&quot;</span>
+    <span class="p">)</span>
+    <span class="n">data_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;数据ID&quot;</span><span class="p">,</span>
+        <span class="n">db_index</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">data_table</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;数据来源的表名,与data_id配合 来确定是哪个表的ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">result_choices</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;处理结果&quot;</span>
+    <span class="p">)</span>
+    <span class="n">handle_status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">status_choices</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;处理状态&quot;</span>
+    <span class="p">)</span>
+    <span class="n">review_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;审核时间&quot;</span>
+    <span class="p">)</span>
+    <span class="n">s1_user_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;操作人ID&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;审核节点&quot;</span>
+    <span class="p">)</span>
+    <span class="n">work_flow</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">WorkFlow</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;工作流&quot;</span>
+    <span class="p">)</span>
+    <span class="n">snapshot</span> <span class="o">=</span> <span class="n">JSONField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;审批快照&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;review_log&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;审批记录&quot;</span></div>
+
+
+<div class="viewcode-block" id="CreditClear"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditClear">[文档]</a><span class="k">class</span> <span class="nc">CreditClear</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">is_clear</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;是否已清分，默认未清分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">s1_user_id</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;还款操作人&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_enclosure</span> <span class="o">=</span> <span class="n">ArrayField</span><span class="p">(</span>
+        <span class="n">JSONField</span><span class="p">(</span>
+            <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;{&quot;file_name&quot;: &quot;文件原始名&quot;, &quot;url&quot;: &quot;文件网址&quot;}&#39;</span>
+        <span class="p">),</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;付款凭证&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;上传付款凭证完成点击支付按钮的时间&quot;</span><span class="p">,</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">pay_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;支付金额: 单位分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">amount_payable</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;应付金额: 单位分&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_clear&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;信用凭证清分记录&quot;</span></div>
+
+
+<div class="viewcode-block" id="CreditClearDetail"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.CreditClearDetail">[文档]</a><span class="k">class</span> <span class="nc">CreditClearDetail</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">status_choices</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;unclear&quot;</span><span class="p">,</span> <span class="s2">&quot;未清分&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;cleared&quot;</span><span class="p">,</span> <span class="s2">&quot;已清分&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">OneToOneField</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">company_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;企业名称&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit_clear</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditClear</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;关联的清分ID&quot;</span>
+    <span class="p">)</span>
+    <span class="n">credit_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;企业信用代码&quot;</span>
+    <span class="p">)</span>
+    <span class="n">total_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;某信金额: 单位分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;某信余额: 单位分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">transfer_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;转出金额&quot;</span>
+    <span class="p">)</span>
+    <span class="n">financing_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;融资金额&quot;</span>
+    <span class="p">)</span>
+    <span class="n">clear_principal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;清分本金&quot;</span>
+    <span class="p">)</span>
+    <span class="n">penalty_interest_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;罚息金额&quot;</span>
+    <span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="n">status_choices</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;cleared&quot;</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;清分状态&quot;</span>
+    <span class="p">)</span>
+    <span class="n">entry_principal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;需入账金额&quot;</span>
+    <span class="p">)</span>
+    <span class="n">out_principal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s1">&#39;需出账金额&#39;</span>
+    <span class="p">)</span>
+    <span class="n">net_amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;净额&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;credit_clear_detail&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;清分记录详情表&quot;</span></div>
+
+
+<div class="viewcode-block" id="TransferLog"><a class="viewcode-back" href="../../../client/client.models.html#client.models.credit_certificate.TransferLog">[文档]</a><span class="k">class</span> <span class="nc">TransferLog</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">credit_certificate</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span>
+        <span class="n">CreditCertificate</span><span class="p">,</span>
+        <span class="n">on_delete</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CASCADE</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;信用凭证关联&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_company_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;支付企业&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_company_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;支付企业社会统一信用代码&quot;</span>
+    <span class="p">)</span>
+    <span class="n">receive_company_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接收企业&quot;</span>
+    <span class="p">)</span>
+    <span class="n">receive_company_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;接收企业社会统一信用代码&quot;</span>
+    <span class="p">)</span>
+    <span class="n">open_company_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;原始开立企业&quot;</span>
+    <span class="p">)</span>
+    <span class="n">open_company_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;原始开立企业社会统一信用代码&quot;</span>
+    <span class="p">)</span>
+    <span class="n">contract_number</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;付款承诺函协议编号&quot;</span>
+    <span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BigIntegerField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;智信金额，单位:分&quot;</span>
+    <span class="p">)</span>
+    <span class="n">promise_pay_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;承诺付款日&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_reviewer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;支付方审批人(多人情况下用|连接)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pay_handler</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+        <span class="n">verbose_name</span><span class="o">=</span><span class="s2">&quot;支付方经办人(多人情况下用|连接)&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s2">&quot;transfer_log&quot;</span>
+        <span class="n">verbose_name</span> <span class="o">=</span> <span class="s2">&quot;智信流转单&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

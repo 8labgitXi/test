@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.credit_clear &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.credit_clear</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.credit_clear 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : credit_clear.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/3/14 15:37</span>
+<span class="sd">@Description : 信用凭证清分相关接口</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework.generics</span> <span class="kn">import</span> <span class="n">RetrieveAPIView</span><span class="p">,</span> <span class="n">ListAPIView</span><span class="p">,</span> <span class="n">UpdateAPIView</span>
+<span class="kn">from</span> <span class="nn">rest_framework.response</span> <span class="kn">import</span> <span class="n">Response</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">transaction</span>
+
+<span class="kn">from</span> <span class="nn">client.client_permissions</span> <span class="kn">import</span> <span class="n">XLetterClearPaymentPermission</span>
+<span class="kn">from</span> <span class="nn">utils.drf.paginations</span> <span class="kn">import</span> <span class="n">MyPageNumberPagination</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credit_clear</span> <span class="kn">import</span> <span class="n">CreditClearUndoSerializer</span><span class="p">,</span> <span class="n">CreditClearDoneSerializer</span><span class="p">,</span> \
+    <span class="n">CreditClearExecuteSerializer</span>
+<span class="kn">from</span> <span class="nn">client.filters.credit_clear</span> <span class="kn">import</span> <span class="n">CreditClearUndoFilter</span><span class="p">,</span> <span class="n">CreditClearDoneFilter</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditClear</span><span class="p">,</span> <span class="n">CreditClearDetail</span><span class="p">,</span> <span class="n">FinanceProject</span>
+<span class="kn">from</span> <span class="nn">client.serializers.credit_clear</span> <span class="kn">import</span> <span class="n">CreditCertificateClearSerializer</span><span class="p">,</span> <span class="n">CreditCertificateClearListSerializer</span><span class="p">,</span> \
+    <span class="n">CreditCertificateClearDetailListSerializer</span><span class="p">,</span> <span class="n">CreditCertificateClearListStoreSerializer</span>
+<span class="kn">from</span> <span class="nn">utils.fen_and_yuan</span> <span class="kn">import</span> <span class="n">fen_to_yuan</span><span class="p">,</span> <span class="n">yuan_to_fen</span>
+<span class="kn">from</span> <span class="nn">utils.number_2_chinese</span> <span class="kn">import</span> <span class="n">cncurrency</span>
+<span class="kn">from</span> <span class="nn">client.apis.v1.base_node</span> <span class="kn">import</span> <span class="n">FINANCING</span>
+
+
+<div class="viewcode-block" id="CreditClearRetrieveAPIView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearRetrieveAPIView">[文档]</a><span class="k">class</span> <span class="nc">CreditClearRetrieveAPIView</span><span class="p">(</span><span class="n">RetrieveAPIView</span><span class="p">):</span>
+    <span class="c1"># X信 - 清分应付 - 清分应付</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterClearPaymentPermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CreditClearRetrieveAPIView.get_object"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearRetrieveAPIView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">CreditClear</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">credit_certificate_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="CreditClearRetrieveAPIView.retrieve"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearRetrieveAPIView.retrieve">[文档]</a>    <span class="k">def</span> <span class="nf">retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写详情</span>
+<span class="sd">        @param request:</span>
+<span class="sd">        @param args:</span>
+<span class="sd">        @param kwargs:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="n">detail_serializer</span> <span class="o">=</span> <span class="n">CreditCertificateClearSerializer</span><span class="p">(</span><span class="n">instance</span><span class="o">.</span><span class="n">credit_certificate</span><span class="p">)</span>
+        <span class="n">is_done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">query_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;is_done&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_done</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+            <span class="c1"># 已经支付 取历史记录</span>
+            <span class="n">credit_certificate_details</span> <span class="o">=</span> <span class="n">CreditClearDetail</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">credit_clear__credit_certificate_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">&quot;cleared&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">select_related</span><span class="p">(</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">)</span>
+            <span class="n">list_serializer</span> <span class="o">=</span> <span class="n">CreditCertificateClearDetailListSerializer</span><span class="p">(</span>
+                <span class="n">credit_certificate_details</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 没有支付 要实时计算</span>
+            <span class="n">list_serializer</span> <span class="o">=</span> <span class="n">CreditCertificateClearListSerializer</span><span class="p">(</span>
+                <span class="n">instance</span><span class="o">.</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">get_preorder_traversal</span><span class="p">,</span> <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="c1"># 开立票据的清分金额累积求和</span>
+        <span class="n">clear_amount_sum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">list_data</span> <span class="o">=</span> <span class="n">list_serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="n">detail_serializer</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_data</span><span class="p">:</span>
+            <span class="n">clear_amount_sum</span> <span class="o">+=</span> <span class="n">yuan_to_fen</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;net_amount&quot;</span><span class="p">)))</span>
+        <span class="n">detail</span><span class="p">[</span><span class="s2">&quot;clear_amount&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fen_to_yuan</span><span class="p">(</span><span class="n">clear_amount_sum</span><span class="p">)</span>
+        <span class="n">detail</span><span class="p">[</span><span class="s2">&quot;clear_amount_big&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cncurrency</span><span class="p">(</span><span class="n">detail</span><span class="p">[</span><span class="s2">&quot;clear_amount&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">({</span>
+            <span class="s2">&quot;detail&quot;</span><span class="p">:</span> <span class="n">detail</span><span class="p">,</span>
+            <span class="s2">&quot;list&quot;</span><span class="p">:</span> <span class="n">list_data</span><span class="p">,</span>
+        <span class="p">})</span></div></div>
+
+
+<div class="viewcode-block" id="CreditClearUndoListView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearUndoListView">[文档]</a><span class="k">class</span> <span class="nc">CreditClearUndoListView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 清分管理-未清分 &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditClearUndoSerializer</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditClearUndoFilter</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="c1"># X信 - 清分应付 - 清分应付</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterClearPaymentPermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CreditClearUndoListView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearUndoListView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CreditClear</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">is_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">credit_certificate__credit__receive_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-id&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CreditClearDoneListView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearDoneListView">[文档]</a><span class="k">class</span> <span class="nc">CreditClearDoneListView</span><span class="p">(</span><span class="n">ListAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 清分管理 - 已清分 &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditClearDoneSerializer</span>
+    <span class="n">filterset_class</span> <span class="o">=</span> <span class="n">CreditClearDoneFilter</span>
+    <span class="n">pagination_class</span> <span class="o">=</span> <span class="n">MyPageNumberPagination</span>
+    <span class="c1"># X信 - 清分应付 - 清分应付</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterClearPaymentPermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CreditClearDoneListView.get_queryset"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearDoneListView.get_queryset">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CreditClear</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">is_clear</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="n">credit_certificate__credit__receive_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-id&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CreditClearExecuteView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearExecuteView">[文档]</a><span class="k">class</span> <span class="nc">CreditClearExecuteView</span><span class="p">(</span><span class="n">UpdateAPIView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 清分支付 &quot;&quot;&quot;</span>
+    <span class="n">serializer_class</span> <span class="o">=</span> <span class="n">CreditClearExecuteSerializer</span>
+    <span class="c1"># X信 - 清分应付 - 清分应付</span>
+    <span class="n">permission_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">XLetterClearPaymentPermission</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CreditClearExecuteView.get_object"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearExecuteView.get_object">[文档]</a>    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">CreditClear</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">is_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">credit_certificate__credit__receive_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">credit_certificate_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pk&quot;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">record</span></div>
+
+<div class="viewcode-block" id="CreditClearExecuteView.update"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.credit_clear.CreditClearExecuteView.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">partial</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;partial&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;此信用凭证不需要清分！&quot;</span><span class="p">)</span>
+        <span class="c1"># 清分详情记录</span>
+        <span class="n">detail_records</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">credit_certificate</span><span class="o">.</span><span class="n">get_preorder_traversal</span>
+        <span class="c1"># 应付金额</span>
+        <span class="n">ap</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">e</span><span class="o">.</span><span class="n">entry_principal</span><span class="o">-</span><span class="n">e</span><span class="o">.</span><span class="n">out_principal</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">detail_records</span><span class="p">)</span>
+        <span class="n">extra_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pay_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+            <span class="s2">&quot;is_clear&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;pay_amount&quot;</span><span class="p">:</span> <span class="n">ap</span><span class="p">,</span>
+            <span class="s2">&quot;amount_payable&quot;</span><span class="p">:</span> <span class="n">ap</span><span class="p">,</span>
+            <span class="s2">&quot;s1_user_id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+        <span class="p">}</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_data</span><span class="p">)</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_serializer</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="n">partial</span><span class="p">)</span>
+        <span class="n">serializer</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">raise_exception</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">perform_update</span><span class="p">(</span><span class="n">serializer</span><span class="p">)</span>
+
+            <span class="c1"># 存储清分记录</span>
+            <span class="n">records</span> <span class="o">=</span> <span class="n">CreditCertificateClearListStoreSerializer</span><span class="p">(</span>
+                <span class="n">detail_records</span><span class="p">,</span>
+                <span class="n">many</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">data</span>
+            <span class="c1"># 整理清分记录为需要的结构</span>
+            <span class="n">in_records</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rec</span> <span class="ow">in</span> <span class="n">records</span><span class="p">:</span>
+                <span class="n">tmp_dic</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;credit_certificate_id&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;company_name&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;company_name&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;credit_clear_id&quot;</span><span class="p">:</span> <span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s2">&quot;credit_code&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;credit_code&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;total_amount&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;total_amount&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;balance&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;transfer_amount&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;transfer_amount&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;financing_amount&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;financing_amount&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;clear_principal&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;clear_principal&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;penalty_interest_amount&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;penalty_interest_amount&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;entry_principal&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;entry_principal&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;out_principal&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;out_principal&#39;</span><span class="p">],</span>
+                        <span class="s2">&quot;net_amount&quot;</span><span class="p">:</span> <span class="n">rec</span><span class="p">[</span><span class="s1">&#39;net_amount&#39;</span><span class="p">],</span>
+                    <span class="p">}</span>
+                <span class="n">in_records</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">CreditClearDetail</span><span class="p">(</span><span class="o">**</span><span class="n">tmp_dic</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">CreditClearDetail</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">in_records</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+            <span class="c1"># 查找融资的智信</span>
+            <span class="n">finance_cc</span> <span class="o">=</span> <span class="p">[</span><span class="n">cc</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">cc</span> <span class="ow">in</span> <span class="n">detail_records</span> <span class="k">if</span> <span class="n">cc</span><span class="o">.</span><span class="n">business</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">FINANCING</span> <span class="ow">and</span> <span class="n">cc</span><span class="o">.</span><span class="n">review_status</span> <span class="o">==</span> <span class="s1">&#39;pass&#39;</span><span class="p">]</span>
+            <span class="c1"># 更新这些融资智信的状态为已清分</span>
+            <span class="n">FinanceProject</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate_id__in</span><span class="o">=</span><span class="n">finance_cc</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">status</span><span class="o">=</span><span class="s1">&#39;cleared&#39;</span><span class="p">,</span> <span class="n">updated_at</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s1">&#39;_prefetched_objects_cache&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># If &#39;prefetch_related&#39; has been applied to a queryset, we need to</span>
+            <span class="c1"># forcibly invalidate the prefetch cache on the instance.</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">_prefetched_objects_cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">Response</span><span class="p">(</span><span class="n">serializer</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

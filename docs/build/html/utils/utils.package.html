@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. 工具包 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="prev" title="1. drf" href="utils.drf.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="utils.html">utils 工具包</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="utils.drf.html">1. drf</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2. 工具包</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.captcha_utils">2.1. 验证图片验证码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.chuanglan_services">2.2. 创蓝OCR识别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.data_2_chain">2.3. 区块链上链</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.date_and_time">2.4. 时间工具</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.db_util">2.5. 月度账单缓存程序工具</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.decrypted">2.6. 字符串解密</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.fen_and_yuan">2.7. 金钱转换</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.generate_pdf">2.8. html源代码生成pdf文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.get_s1_application_open">2.9. s1交互</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.is_allowed_join">2.10. 平台许可</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.jwt_util">2.11. jwt 工具函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#init">2.12. 获取包名下所有非__init__的模块名</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.notice_helpers">2.13. 消息管理级别</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.number_2_chinese">2.14. 阿拉伯数字转汉字</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.oss_util">2.15. 阿里云oss上传文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.permission_menu">2.16. 获取权限菜单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.phone_and_email_re">2.17. 校验工具</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.pwd_check">2.18. 校验登陆密码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils.sms">2.19. 短信验证码</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-utils">2.20. Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="utils.html">utils 工具包</a> &raquo;</li>
+      <li><span class="section-number">2. </span>工具包</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/utils/utils.package.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">2. </span>工具包<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="module-utils.captcha_utils">
+<span id="id2"></span><h2><span class="section-number">2.1. </span>验证图片验证码<a class="headerlink" href="#module-utils.captcha_utils" title="永久链接至标题"></a></h2>
+<p>&#64;File        : captcha_utils.py
+&#64;Author      : liuda
+&#64;Time        : 2021/9/26 15:24
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.captcha_utils.check">
+<span class="sig-prename descclassname"><span class="pre">utils.captcha_utils.</span></span><span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_cptch_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/utils/captcha_utils.html#check"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.captcha_utils.check" title="永久链接至目标"></a></dt>
+<dd><p>验证图片验证码</p>
+<dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_input</strong> (<em>str</em>) -- 用户输入验证码</p></li>
+<li><p><strong>new_cptch_key</strong> (<em>str</em>) -- 验证码key</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return bool</dt>
+<dd class="field-even"><p>是否成功</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.captcha_utils.get_captcha">
+<span class="sig-prename descclassname"><span class="pre">utils.captcha_utils.</span></span><span class="sig-name descname"><span class="pre">get_captcha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/captcha_utils.html#get_captcha"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.captcha_utils.get_captcha" title="永久链接至目标"></a></dt>
+<dd><p>获取验证码</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.captcha_utils.is_number">
+<span class="sig-prename descclassname"><span class="pre">utils.captcha_utils.</span></span><span class="sig-name descname"><span class="pre">is_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/captcha_utils.html#is_number"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.captcha_utils.is_number" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-utils.chuanglan_services">
+<span id="ocr"></span><h2><span class="section-number">2.2. </span>创蓝OCR识别<a class="headerlink" href="#module-utils.chuanglan_services" title="永久链接至标题"></a></h2>
+<p>&#64;File        : chuanglan_services.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/4/1 10:50 上午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.chuanglan_services.OcrRecognition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.chuanglan_services.</span></span><span class="sig-name descname"><span class="pre">OcrRecognition</span></span><a class="reference internal" href="../_modules/utils/chuanglan_services.html#OcrRecognition"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.chuanglan_services.OcrRecognition" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>ocr识别</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.chuanglan_services.OcrRecognition.business_four_auth">
+<span class="sig-name descname"><span class="pre">business_four_auth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">company_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legal_per_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credit_code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/utils/chuanglan_services.html#OcrRecognition.business_four_auth"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.chuanglan_services.OcrRecognition.business_four_auth" title="永久链接至目标"></a></dt>
+<dd><p>企业工商四要素
+&#64;param company_name: 企业姓名
+&#64;param legal_per_name: 法人姓名
+&#64;param credit_code: 统一信用代码
+&#64;param id_num: 法人身份证
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.chuanglan_services.OcrRecognition.business_license">
+<span class="sig-name descname"><span class="pre">business_license</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base64_image</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/utils/chuanglan_services.html#OcrRecognition.business_license"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.chuanglan_services.OcrRecognition.business_license" title="永久链接至目标"></a></dt>
+<dd><p>营业执照
+&#64;param base64_image:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.chuanglan_services.OcrRecognition.id_card">
+<span class="sig-name descname"><span class="pre">id_card</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base64_image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ocr_type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/utils/chuanglan_services.html#OcrRecognition.id_card"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.chuanglan_services.OcrRecognition.id_card" title="永久链接至目标"></a></dt>
+<dd><p>身份证
+&#64;param base64_image:
+&#64;param ocr_type:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.chuanglan_services.OcrRecognition.is_success_request">
+<span class="sig-name descname"><span class="pre">is_success_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">res</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/chuanglan_services.html#OcrRecognition.is_success_request"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.chuanglan_services.OcrRecognition.is_success_request" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.data_2_chain">
+<span id="id3"></span><h2><span class="section-number">2.3. </span>区块链上链<a class="headerlink" href="#module-utils.data_2_chain" title="永久链接至标题"></a></h2>
+<p>&#64;File        : data_2_chain.py
+&#64;Author      : liuda
+&#64;Time        : 2022/2/11 13:45
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.data_2_chain.ChainUtil">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.data_2_chain.</span></span><span class="sig-name descname"><span class="pre">ChainUtil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bdb_root_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'http://101.251.211.202:9984'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/data_2_chain.html#ChainUtil"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.data_2_chain.ChainUtil" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>实例化
+:param bdb_root_url:</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.data_2_chain.ChainUtil.get_block_by_tx_hash">
+<span class="sig-name descname"><span class="pre">get_block_by_tx_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_hash</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/data_2_chain.html#ChainUtil.get_block_by_tx_hash"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.data_2_chain.ChainUtil.get_block_by_tx_hash" title="永久链接至目标"></a></dt>
+<dd><p>通过哈希获取所在块高
+:param tx_hash:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.data_2_chain.ChainUtil.get_tx_by_hash">
+<span class="sig-name descname"><span class="pre">get_tx_by_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tx_hash</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/data_2_chain.html#ChainUtil.get_tx_by_hash"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.data_2_chain.ChainUtil.get_tx_by_hash" title="永久链接至目标"></a></dt>
+<dd><p>通过哈希获取交易详情
+:param tx_hash:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.data_2_chain.ChainUtil.transfer">
+<span class="sig-name descname"><span class="pre">transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">public_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'6eFWqVEwFvcZsVjjCQgoDDg3rGkGvSmPByhuRdrbBMSg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">private_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'6y2wV633VBdFppzw46rcCJwZoWtQmByHbVuP1wZFMfi'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/data_2_chain.html#ChainUtil.transfer"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.data_2_chain.ChainUtil.transfer" title="永久链接至目标"></a></dt>
+<dd><p>将数据上链
+:param data:
+:param public_key:
+:param private_key:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.date_and_time">
+<span id="id4"></span><h2><span class="section-number">2.4. </span>时间工具<a class="headerlink" href="#module-utils.date_and_time" title="永久链接至标题"></a></h2>
+<p>&#64;File        : date_and_time.py
+&#64;Author      : niuxingjie
+&#64;Time        : 2022/3/7 11:23
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.get_period">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">get_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#get_period"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.get_period" title="永久链接至目标"></a></dt>
+<dd><p>获取月份的开始日期和结束日期</p>
+<p>&#64;param month: 月份，如 2022-04
+&#64;return: 此月的开始日期和结束日期，如（2022-04-01, 2022-04-31）</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.n_days_later">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">n_days_later</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">days</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#n_days_later"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.n_days_later" title="永久链接至目标"></a></dt>
+<dd><p>计算start时间days天后的时间</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.n_hours_later">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">n_hours_later</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hours</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#n_hours_later"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.n_hours_later" title="永久链接至目标"></a></dt>
+<dd><p>计算start时间hours小时后的时间</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.n_minutes_later">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">n_minutes_later</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#n_minutes_later"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.n_minutes_later" title="永久链接至目标"></a></dt>
+<dd><p>计算start时间mins分钟后的时间</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.n_months_later">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">n_months_later</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">months</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#n_months_later"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.n_months_later" title="永久链接至目标"></a></dt>
+<dd><dl class="simple">
+<dt>计算start时间months月后的时间:</dt><dd><ul class="simple">
+<li><p>某月的31日不存在时，会变成次月的最后一天</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.date_and_time.n_years_later">
+<span class="sig-prename descclassname"><span class="pre">utils.date_and_time.</span></span><span class="sig-name descname"><span class="pre">n_years_later</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/date_and_time.html#n_years_later"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.date_and_time.n_years_later" title="永久链接至目标"></a></dt>
+<dd><dl class="simple">
+<dt>计算start时间years年后的时间:</dt><dd><ul class="simple">
+<li><p>闰年2月29日在非闰年会变成2月28日</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.db_util">
+<span id="id5"></span><h2><span class="section-number">2.5. </span>月度账单缓存程序工具<a class="headerlink" href="#module-utils.db_util" title="永久链接至标题"></a></h2>
+<p>&#64;File        : db_util.py
+&#64;Author      : wst
+&#64;Time        : 2022/4/7 下午6:22
+&#64;Description : 数据库相关的函数</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.db_util.GroupConcat">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.db_util.</span></span><span class="sig-name descname"><span class="pre">GroupConcat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/db_util.html#GroupConcat"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.db_util.GroupConcat" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.aggregates.Aggregate</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.db_util.GroupConcat.function">
+<span class="sig-name descname"><span class="pre">function</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'array_agg'</span></em><a class="headerlink" href="#utils.db_util.GroupConcat.function" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.db_util.GroupConcat.template">
+<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'%(function)s(%(expressions)s)'</span></em><a class="headerlink" href="#utils.db_util.GroupConcat.template" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.decrypted">
+<span id="id6"></span><h2><span class="section-number">2.6. </span>字符串解密<a class="headerlink" href="#module-utils.decrypted" title="永久链接至标题"></a></h2>
+<p>&#64;File        : decrypted.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/28 11:59 上午
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.decrypted.des_decrypt">
+<span class="sig-prename descclassname"><span class="pre">utils.decrypted.</span></span><span class="sig-name descname"><span class="pre">des_decrypt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secret_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'$c1&amp;md&amp;d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/decrypted.html#des_decrypt"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.decrypted.des_decrypt" title="永久链接至目标"></a></dt>
+<dd><p>解密
+:param s: 加密后的字符串，16进制
+:param secret_key: 加密后的字符串，16进制
+:return:  解密后的字符串</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.fen_and_yuan">
+<span id="id7"></span><h2><span class="section-number">2.7. </span>金钱转换<a class="headerlink" href="#module-utils.fen_and_yuan" title="永久链接至标题"></a></h2>
+<p>&#64;File        : fen_and_yuan.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/14 3:00 下午
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.fen_and_yuan.fen_to_yuan">
+<span class="sig-prename descclassname"><span class="pre">utils.fen_and_yuan.</span></span><span class="sig-name descname"><span class="pre">fen_to_yuan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fen</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/fen_and_yuan.html#fen_to_yuan"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.fen_and_yuan.fen_to_yuan" title="永久链接至目标"></a></dt>
+<dd><p>分转换成元
+&#64;param fen:   分
+&#64;return:   浮点数类型的元</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.fen_and_yuan.yuan2fen">
+<span class="sig-prename descclassname"><span class="pre">utils.fen_and_yuan.</span></span><span class="sig-name descname"><span class="pre">yuan2fen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/fen_and_yuan.html#yuan2fen"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.fen_and_yuan.yuan2fen" title="永久链接至目标"></a></dt>
+<dd><p>字符串的元转整型的分</p>
+<p>&#64;param val: 字符串的元
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.fen_and_yuan.yuan_to_fen">
+<span class="sig-prename descclassname"><span class="pre">utils.fen_and_yuan.</span></span><span class="sig-name descname"><span class="pre">yuan_to_fen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yuan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/fen_and_yuan.html#yuan_to_fen"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.fen_and_yuan.yuan_to_fen" title="永久链接至目标"></a></dt>
+<dd><dl class="simple">
+<dt>元转换为分:</dt><dd><ul class="simple">
+<li><p>如果元是浮点数，分后的将被舍弃</p></li>
+<li><p>如果</p></li>
+</ul>
+</dd>
+</dl>
+<p>&#64;param yuan:   元
+&#64;return:   分</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.generate_pdf">
+<span id="htmlpdf"></span><h2><span class="section-number">2.8. </span>html源代码生成pdf文件<a class="headerlink" href="#module-utils.generate_pdf" title="永久链接至标题"></a></h2>
+<p>&#64;File        : generate_pdf.py
+&#64;Author      : niuxingjie
+&#64;Time        : 2022/4/13 15:42
+&#64;Description :</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><dl class="simple">
+<dt>使用的生成pdf的第三方包：weasyprint</dt><dd><ul class="simple">
+<li><p>[系统依赖](<a class="reference external" href="https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#linux">https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#linux</a>)</p></li>
+<li><p>[python-api](<a class="reference external" href="https://doc.courtbouillon.org/weasyprint/stable/api_reference.html#python-api">https://doc.courtbouillon.org/weasyprint/stable/api_reference.html#python-api</a>)</p></li>
+<li><dl class="simple">
+<dt>[Fonts](<a class="reference external" href="https://doc.courtbouillon.org/weasyprint/stable/api_reference.html#fonts">https://doc.courtbouillon.org/weasyprint/stable/api_reference.html#fonts</a>)</dt><dd><ul>
+<li><p>系统需要安装好合适的中文字体（Ubuntu可以用apt-get install ttf-wqy-microhei）</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.generate_pdf.generate_pdf_from_html">
+<span class="sig-prename descclassname"><span class="pre">utils.generate_pdf.</span></span><span class="sig-name descname"><span class="pre">generate_pdf_from_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">html</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/generate_pdf.html#generate_pdf_from_html"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.generate_pdf.generate_pdf_from_html" title="永久链接至目标"></a></dt>
+<dd><p>html源代码生成pdf文件</p>
+<p>&#64;param html: html源代码
+&#64;param filename: pdf文件名（路径）
+&#64;return:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>filename为None时，返回bytes类型的文件内容对象</p></li>
+<li><p>filename为文件名时，生成文件，返回None</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-utils.get_s1_application_open">
+<span id="s1"></span><h2><span class="section-number">2.9. </span>s1交互<a class="headerlink" href="#module-utils.get_s1_application_open" title="永久链接至标题"></a></h2>
+<p>&#64;File        : get_s1_application_open.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/17 2:34 下午
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.get_s1_application_open.s1_application_open">
+<span class="sig-prename descclassname"><span class="pre">utils.get_s1_application_open.</span></span><span class="sig-name descname"><span class="pre">s1_application_open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/get_s1_application_open.html#s1_application_open"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.get_s1_application_open.s1_application_open" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-utils.is_allowed_join">
+<span id="id8"></span><h2><span class="section-number">2.10. </span>平台许可<a class="headerlink" href="#module-utils.is_allowed_join" title="永久链接至标题"></a></h2>
+<p>&#64;File        : is_allowed_join.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/30 10:16 上午
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.is_allowed_join.is_had_permission">
+<span class="sig-prename descclassname"><span class="pre">utils.is_allowed_join.</span></span><span class="sig-name descname"><span class="pre">is_had_permission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">platform_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/is_allowed_join.html#is_had_permission"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.is_allowed_join.is_had_permission" title="永久链接至目标"></a></dt>
+<dd><p>&#64;param user_id: 用户id
+&#64;param platform_id: 平台id
+&#64;param token: token
+&#64;return:</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.jwt_util">
+<span id="jwt"></span><h2><span class="section-number">2.11. </span>jwt 工具函数<a class="headerlink" href="#module-utils.jwt_util" title="永久链接至标题"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.jwt_util.token_2_user_info">
+<span class="sig-prename descclassname"><span class="pre">utils.jwt_util.</span></span><span class="sig-name descname"><span class="pre">token_2_user_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/utils/jwt_util.html#token_2_user_info"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.jwt_util.token_2_user_info" title="永久链接至目标"></a></dt>
+<dd><p>jwt token 转成user信息
+:param token: jwt token
+:return: 用户信息或None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.jwt_util.user_info_2_token">
+<span class="sig-prename descclassname"><span class="pre">utils.jwt_util.</span></span><span class="sig-name descname"><span class="pre">user_info_2_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expire_days</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/utils/jwt_util.html#user_info_2_token"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.jwt_util.user_info_2_token" title="永久链接至目标"></a></dt>
+<dd><p>获取jwt token
+:param user_info: 用户信息
+:param expire_days: 过期天数，默认一天
+:return: jwt token</p>
+</dd></dl>
+
+</section>
+<section id="init">
+<h2><span class="section-number">2.12. </span>获取包名下所有非__init__的模块名<a class="headerlink" href="#init" title="永久链接至标题"></a></h2>
+<span class="target" id="module-utils.module"></span><p>&#64;Summary : 获取包名下所有非__init__的模块名
+&#64;Author  : Da Liu
+&#64;Time    : 2020-06 -08 15:44
+&#64;Log     :</p>
+<blockquote>
+<div><p>author datetime(DESC) summary</p>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.module.get_modules">
+<span class="sig-prename descclassname"><span class="pre">utils.module.</span></span><span class="sig-name descname"><span class="pre">get_modules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/module.html#get_modules"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.module.get_modules" title="永久链接至目标"></a></dt>
+<dd><p>获取包名下所有非__init__的模块名
+:param app_name: app名字
+:param file_path: 包路径
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.notice_helpers">
+<span id="id9"></span><h2><span class="section-number">2.13. </span>消息管理级别<a class="headerlink" href="#module-utils.notice_helpers" title="永久链接至标题"></a></h2>
+<p>&#64;Summary : docstr
+&#64;Author  : Rey
+&#64;Time    : 2022-04-06 09:48:38</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.notice_helpers.ScfGetAllowedViewTypes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.notice_helpers.</span></span><span class="sig-name descname"><span class="pre">ScfGetAllowedViewTypes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receiver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">company_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/notice_helpers.html#ScfGetAllowedViewTypes"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.notice_helpers.ScfGetAllowedViewTypes" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">notice.helpers.BaseGetAllowedTypes</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.notice_helpers.ScfGetAllowedViewTypes.judge_notice_receiver_types">
+<span class="sig-name descname"><span class="pre">judge_notice_receiver_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/utils/notice_helpers.html#ScfGetAllowedViewTypes.judge_notice_receiver_types"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.notice_helpers.ScfGetAllowedViewTypes.judge_notice_receiver_types" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.notice_helpers.ScfGetAllowedViewTypes.judge_notice_types">
+<span class="sig-name descname"><span class="pre">judge_notice_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../_modules/utils/notice_helpers.html#ScfGetAllowedViewTypes.judge_notice_types"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.notice_helpers.ScfGetAllowedViewTypes.judge_notice_types" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-utils.number_2_chinese">
+<span id="id10"></span><h2><span class="section-number">2.14. </span>阿拉伯数字转汉字<a class="headerlink" href="#module-utils.number_2_chinese" title="永久链接至标题"></a></h2>
+<p>&#64;File        : number_2_chinese.py
+&#64;Author      : liuda
+&#64;Time        : 2022/2/26 11:11
+&#64;Description : 阿拉伯数字转汉字</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.number_2_chinese.cncurrency">
+<span class="sig-prename descclassname"><span class="pre">utils.number_2_chinese.</span></span><span class="sig-name descname"><span class="pre">cncurrency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capital</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/number_2_chinese.html#cncurrency"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.number_2_chinese.cncurrency" title="永久链接至目标"></a></dt>
+<dd><p>参数:
+capital:    True   大写汉字金额</p>
+<blockquote>
+<div><p>False  一般汉字金额</p>
+</div></blockquote>
+<dl class="simple">
+<dt>classical:  True   元</dt><dd><p>False  圆</p>
+</dd>
+<dt>prefix:     True   以'人民币'开头</dt><dd><p>False, 无开头</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-utils.oss_util">
+<span id="oss"></span><h2><span class="section-number">2.15. </span>阿里云oss上传文件<a class="headerlink" href="#module-utils.oss_util" title="永久链接至标题"></a></h2>
+<p>&#64;File        : oss_util.py
+&#64;Author      : liuda
+&#64;Time        : 2021/9/29 11:24
+&#64;Description :</p>
+<blockquote>
+<div><dl class="simple">
+<dt>注意：</dt><dd><ul class="simple">
+<li><p>阿里云oss在同一文件夹下使用put_object上传相同的文件，会直接覆盖已有文件。</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.oss_util.upload_oss_file">
+<span class="sig-prename descclassname"><span class="pre">utils.oss_util.</span></span><span class="sig-name descname"><span class="pre">upload_oss_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/utils/oss_util.html#upload_oss_file"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.oss_util.upload_oss_file" title="永久链接至目标"></a></dt>
+<dd><p>上传文件到OSS
+&#64;param file_name:   上传到oss的文件名
+&#64;param file_folder: 上传到oss的文件路径
+&#64;param content:     文件内容
+&#64;return:            oss的URL</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.permission_menu">
+<span id="id11"></span><h2><span class="section-number">2.16. </span>获取权限菜单<a class="headerlink" href="#module-utils.permission_menu" title="永久链接至标题"></a></h2>
+<p>&#64;File        : permission_menu.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/8 10:06 上午
+&#64;Description :</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.permission_menu.get_permission_menu">
+<span class="sig-prename descclassname"><span class="pre">utils.permission_menu.</span></span><span class="sig-name descname"><span class="pre">get_permission_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">platform_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_menu_obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/permission_menu.html#get_permission_menu"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.permission_menu.get_permission_menu" title="永久链接至目标"></a></dt>
+<dd><p>获取权限菜单
+使用方法:</p>
+<blockquote>
+<div><p>如果需要获取全部权限,</p>
+</div></blockquote>
+<p>&#64;param platform_id: 平台id
+&#64;param first_menu_obj: 一级菜单的queryset(区分详情页和登录后的权限菜单, 通过一级菜单查询到后面子级的菜单.)
+&#64;param selected_list: 选中权限的列表  [&quot;code1&quot;, &quot;code2&quot;]
+&#64;param is_all: 是否获取全部权限(区分详情页和登录后的权限.详情页返回全部权限, 登录后只返回用户角色对应的权限)
+&#64;return:</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.phone_and_email_re">
+<span id="id12"></span><h2><span class="section-number">2.17. </span>校验工具<a class="headerlink" href="#module-utils.phone_and_email_re" title="永久链接至标题"></a></h2>
+<p>&#64;File        : phone_and_email_re.py
+&#64;Author      : liuda
+&#64;Time        : 2021/9/29 10:22
+&#64;Description : 校验工具</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.phone_and_email_re.identifier_validator">
+<span class="sig-prename descclassname"><span class="pre">utils.phone_and_email_re.</span></span><span class="sig-name descname"><span class="pre">identifier_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/phone_and_email_re.html#identifier_validator"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.phone_and_email_re.identifier_validator" title="永久链接至目标"></a></dt>
+<dd><p>检验用于变量的标识符
+&#64;param string:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.phone_and_email_re.phone_validator">
+<span class="sig-prename descclassname"><span class="pre">utils.phone_and_email_re.</span></span><span class="sig-name descname"><span class="pre">phone_validator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/utils/phone_and_email_re.html#phone_validator"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.phone_and_email_re.phone_validator" title="永久链接至目标"></a></dt>
+<dd><p>手机号验证
+&#64;param phone:
+&#64;return:</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.pwd_check">
+<span id="id13"></span><h2><span class="section-number">2.18. </span>校验登陆密码<a class="headerlink" href="#module-utils.pwd_check" title="永久链接至标题"></a></h2>
+<p>&#64;File:pwd_check.py
+&#64;DateTime:2022/4/7 17:55
+&#64;Author:xixiaoyu
+&#64;Desc:</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.pwd_check.validate_pwd">
+<span class="sig-prename descclassname"><span class="pre">utils.pwd_check.</span></span><span class="sig-name descname"><span class="pre">validate_pwd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/pwd_check.html#validate_pwd"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.pwd_check.validate_pwd" title="永久链接至目标"></a></dt>
+<dd><p>校验密码 包含英文大小写及数字组合的密码
+:param value:
+:return:</p>
+</dd></dl>
+
+</section>
+<section id="module-utils.sms">
+<span id="id14"></span><h2><span class="section-number">2.19. </span>短信验证码<a class="headerlink" href="#module-utils.sms" title="永久链接至标题"></a></h2>
+<p>&#64;File        : sms.py
+&#64;Author      : liuda
+&#64;Time        : 2021/10/8 10:42
+&#64;Description : 发送短信验证码</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="utils.sms.PhoneCodeLauncher">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">PhoneCodeLauncher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#PhoneCodeLauncher"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.PhoneCodeLauncher" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="simple">
+<dt>短信验证码功能点:</dt><dd><ul class="simple">
+<li><p>1 平台名称可配置。</p></li>
+<li><p>2 cache存储与检索各种数据。</p></li>
+<li><p>3 不同用途的验证码，文案，计算单独处理。</p></li>
+<li><p>4 较为精准的结果返回</p></li>
+</ul>
+</dd>
+<dt>调试用例：</dt><dd><p>from utils.sms import PhoneCodeLauncher
+launcher = PhoneCodeLauncher(&quot;18163959268&quot;, &quot;login&quot;)
+launcher.send(&quot;【可信数据服务平台】尊敬的客户，本次操作的验证码为:{code}，5分钟内有效。如非您本人操作，请忽略该短信&quot;)
+launcher.validate(1245)</p>
+</dd>
+<dt>几个数值说明：</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>1 短信验证码【累计次数】:</dt><dd><ul>
+<li><p>当天</p></li>
+<li><p>同一手机</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>2 【错误次数】；</dt><dd><ul>
+<li><p>当天</p></li>
+<li><p>同一手机</p></li>
+<li><p>同一种用途</p></li>
+<li><p>错误的和过期的次数</p></li>
+<li><p>连续错误次数</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>&#64;param phone: 手机号
+&#64;param action: 用途代码，如：login，pay</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="utils.sms.PhoneCodeLauncher.KEY_COMMON_TIMEOUT">
+<span class="sig-name descname"><span class="pre">KEY_COMMON_TIMEOUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">86400</span></em><a class="headerlink" href="#utils.sms.PhoneCodeLauncher.KEY_COMMON_TIMEOUT" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.sms.PhoneCodeLauncher.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg_temp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#PhoneCodeLauncher.send"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.PhoneCodeLauncher.send" title="永久链接至目标"></a></dt>
+<dd><p>&#64;param msg_temp: 短信模板
+&#64;return:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>发送验证码的三种结果：</dt><dd><ul>
+<li><dl class="simple">
+<dt>error</dt><dd><ul>
+<li><p>发送失败</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>success</dt><dd><ul>
+<li><p>发送成功</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>overload</dt><dd><ul>
+<li><p>超出【累计次数】</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>locked</dt><dd><ul>
+<li><p>超出【错误次数】</p></li>
+<li><p>某种用途被锁住</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="utils.sms.PhoneCodeLauncher.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#PhoneCodeLauncher.validate"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.PhoneCodeLauncher.validate" title="永久链接至目标"></a></dt>
+<dd><p>&#64;param code_input: 验证码
+&#64;return:</p>
+<blockquote>
+<div><ul class="simple">
+<li><dl class="simple">
+<dt>校验验证码的四种结果：</dt><dd><ul>
+<li><p>locked</p></li>
+<li><p>expired</p></li>
+<li><p>wrong</p></li>
+<li><p>success</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.send_login_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">send_login_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#send_login_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.send_login_code" title="永久链接至目标"></a></dt>
+<dd><p>发送登录验证码
+&#64;param phone: 手机号
+&#64;return: 发送结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.send_pay_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">send_pay_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#send_pay_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.send_pay_code" title="永久链接至目标"></a></dt>
+<dd><p>发送支付验证码
+&#64;param phone: 手机号
+&#64;return: 发送结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.send_phone_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">send_phone_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/utils/sms.html#send_phone_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.send_phone_code" title="永久链接至目标"></a></dt>
+<dd><p>发送短信验证码
+&#64;param phone: 手机号
+&#64;param code: 验证码
+&#64;return: 发送结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.send_reset_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">send_reset_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#send_reset_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.send_reset_code" title="永久链接至目标"></a></dt>
+<dd><p>修改密码，忘记密码--发送手机验证码
+&#64;param phone: 手机号
+&#64;return: 发送结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.validate_login_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">validate_login_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#validate_login_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.validate_login_code" title="永久链接至目标"></a></dt>
+<dd><p>校验支付验证码
+&#64;param phone: 手机号
+&#64;param code: 验证码
+&#64;return: 校验结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.validate_pay_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">validate_pay_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#validate_pay_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.validate_pay_code" title="永久链接至目标"></a></dt>
+<dd><p>校验支付验证码
+&#64;param phone: 手机号
+&#64;param code: 验证码
+&#64;return: 校验结果</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.sms.validate_reset_code">
+<span class="sig-prename descclassname"><span class="pre">utils.sms.</span></span><span class="sig-name descname"><span class="pre">validate_reset_code</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils/sms.html#validate_reset_code"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#utils.sms.validate_reset_code" title="永久链接至目标"></a></dt>
+<dd><p>校验修改、忘记密码--手机验证码
+&#64;param phone: 手机号
+&#64;param code: 验证码
+&#64;return: 校验结果</p>
+</dd></dl>
+
+</section>
+<section id="module-utils">
+<span id="module-contents"></span><h2><span class="section-number">2.20. </span>Module contents<a class="headerlink" href="#module-utils" title="永久链接至标题"></a></h2>
+<p>&#64;File        : __init__.py.py
+&#64;Author      : liuda
+&#64;Time        : 2022/2/6 12:39
+&#64;Description :</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="utils.drf.html" class="btn btn-neutral float-left" title="1. drf" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

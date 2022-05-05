@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.sms &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>utils.sms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>utils.sms 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : sms.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2021/10/8 10:42</span>
+<span class="sd">@Description : 发送短信验证码</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">getLogger</span>
+
+<span class="kn">from</span> <span class="nn">django.core.cache</span> <span class="kn">import</span> <span class="n">cache</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+
+<span class="kn">from</span> <span class="nn">client.models.sms</span> <span class="kn">import</span> <span class="n">PhoneVerifyCode</span>
+<span class="kn">from</span> <span class="nn">consts.sms</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SMS_URL</span><span class="p">,</span>
+    <span class="n">MAX_ERROR_TIMES</span><span class="p">,</span>
+    <span class="n">ONE_DAY_MAX_TIME</span><span class="p">,</span>
+    <span class="n">CODE_SOURCE</span><span class="p">,</span>
+    <span class="n">CODE_LENGTH</span><span class="p">,</span>
+    <span class="n">EXPIRE_TIMES</span><span class="p">,</span>
+    <span class="n">SMS_KEY_COMMON_TIMEOUT</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">scf_project.settings</span> <span class="kn">import</span> <span class="n">sms_config</span>
+<span class="kn">from</span> <span class="nn">utils.date_and_time</span> <span class="kn">import</span> <span class="n">n_minutes_later</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;django&#39;</span><span class="p">)</span>
+
+
+<span class="n">SMS_CONTENT_TEMPLATE</span> <span class="o">=</span> <span class="n">sms_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;content_template&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="send_phone_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.send_phone_code">[文档]</a><span class="k">def</span> <span class="nf">send_phone_code</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发送短信验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @param code: 验证码</span>
+<span class="sd">    @return: 发送结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">code</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">is_ok</span><span class="p">,</span> <span class="n">code</span> <span class="o">=</span> <span class="n">PhoneVerifyCode</span><span class="o">.</span><span class="n">create_phone_code</span><span class="p">(</span><span class="n">phone</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_ok</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span>
+    <span class="p">}</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="n">sms_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;account&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">sms_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;【可信数据服务平台】尊敬的客户，本次操作的验证码为:</span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2">，5分钟内有效。如非您本人操作，请忽略该短信&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="n">phone</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">SMS_URL</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">phone</span><span class="si">}</span><span class="s2">错误信息:</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;errorMsg&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="PhoneCodeLauncher"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.PhoneCodeLauncher">[文档]</a><span class="k">class</span> <span class="nc">PhoneCodeLauncher</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    短信验证码功能点:</span>
+<span class="sd">        - 1 平台名称可配置。</span>
+<span class="sd">        - 2 cache存储与检索各种数据。</span>
+<span class="sd">        - 3 不同用途的验证码，文案，计算单独处理。</span>
+<span class="sd">        - 4 较为精准的结果返回</span>
+
+<span class="sd">    调试用例：</span>
+<span class="sd">        from utils.sms import PhoneCodeLauncher</span>
+<span class="sd">        launcher = PhoneCodeLauncher(&quot;18163959268&quot;, &quot;login&quot;)</span>
+<span class="sd">        launcher.send(&quot;【可信数据服务平台】尊敬的客户，本次操作的验证码为:{code}，5分钟内有效。如非您本人操作，请忽略该短信&quot;)</span>
+<span class="sd">        launcher.validate(1245)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># key存储默认存活24小时</span>
+    <span class="n">KEY_COMMON_TIMEOUT</span> <span class="o">=</span> <span class="n">SMS_KEY_COMMON_TIMEOUT</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        几个数值说明：</span>
+<span class="sd">            - 1 短信验证码【累计次数】:</span>
+<span class="sd">                - 当天</span>
+<span class="sd">                - 同一手机</span>
+<span class="sd">            - 2 【错误次数】；</span>
+<span class="sd">                - 当天</span>
+<span class="sd">                - 同一手机</span>
+<span class="sd">                - 同一种用途</span>
+<span class="sd">                - 错误的和过期的次数</span>
+<span class="sd">                - 连续错误次数</span>
+<span class="sd">        @param phone: 手机号</span>
+<span class="sd">        @param action: 用途代码，如：login，pay</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 当天累计短信验证码次数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_times_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sms:</span><span class="si">{</span><span class="n">phone</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">:total&quot;</span>
+
+        <span class="c1"># 某种用途当天验证码错误次数key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sms:</span><span class="si">{</span><span class="n">phone</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">day</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">:error&quot;</span>
+
+        <span class="c1"># 同一种用途的验证码的key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone_code_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sms:</span><span class="si">{</span><span class="n">phone</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">:code&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">=</span> <span class="n">action</span>
+
+<div class="viewcode-block" id="PhoneCodeLauncher.validate"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.PhoneCodeLauncher.validate">[文档]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_input</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @param code_input: 验证码</span>
+<span class="sd">        @return:</span>
+<span class="sd">            - 校验验证码的四种结果：</span>
+<span class="sd">                - locked</span>
+<span class="sd">                - expired</span>
+<span class="sd">                - wrong</span>
+<span class="sd">                - success</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">code</span><span class="p">,</span> <span class="n">expire_at</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_or_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone_code_key</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+        <span class="n">error_times</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_or_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+
+        <span class="c1"># 超出【错误次数】</span>
+        <span class="k">if</span> <span class="n">error_times</span> <span class="o">&gt;=</span> <span class="n">MAX_ERROR_TIMES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;locked&quot;</span>
+
+        <span class="c1"># 通过</span>
+        <span class="k">if</span> <span class="n">code</span> <span class="o">==</span> <span class="n">code_input</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">expire_at</span> <span class="o">&lt;</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">():</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;expired&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># 验证成功后，销毁code,错误次数清0</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone_code_key</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+                <span class="k">return</span> <span class="s2">&quot;success&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;wrong&quot;</span></div>
+
+<div class="viewcode-block" id="PhoneCodeLauncher.send"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.PhoneCodeLauncher.send">[文档]</a>    <span class="k">def</span> <span class="nf">send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_temp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @param msg_temp: 短信模板</span>
+<span class="sd">        @return:</span>
+<span class="sd">            - 发送验证码的三种结果：</span>
+<span class="sd">                - error</span>
+<span class="sd">                    - 发送失败</span>
+<span class="sd">                - success</span>
+<span class="sd">                    - 发送成功</span>
+<span class="sd">                - overload</span>
+<span class="sd">                    - 超出【累计次数】</span>
+<span class="sd">                - locked</span>
+<span class="sd">                    - 超出【错误次数】</span>
+<span class="sd">                    - 某种用途被锁住</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">total_times</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_or_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_times_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+        <span class="n">error_times</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get_or_set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">error_times_key</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+
+        <span class="c1"># 超出【累计次数】</span>
+        <span class="k">if</span> <span class="n">total_times</span> <span class="o">&gt;</span> <span class="n">ONE_DAY_MAX_TIME</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;overload&quot;</span>
+
+        <span class="c1"># 超出【错误次数】</span>
+        <span class="k">if</span> <span class="n">error_times</span> <span class="o">&gt;</span> <span class="n">MAX_ERROR_TIMES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;locked&quot;</span>
+
+        <span class="c1"># 生成code调用api发送短信</span>
+        <span class="n">code</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">CODE_SOURCE</span><span class="p">,</span> <span class="n">CODE_LENGTH</span><span class="p">))</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span><span class="p">}</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;account&quot;</span><span class="p">:</span> <span class="n">sms_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;account&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;password&quot;</span><span class="p">:</span> <span class="n">sms_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;msg&quot;</span><span class="p">:</span> <span class="n">msg_temp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="n">code</span><span class="p">),</span>
+            <span class="s2">&quot;phone&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">phone</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">SMS_URL</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">))</span>
+        <span class="n">status_code</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">result_code</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+
+        <span class="c1"># 发送短信成功</span>
+        <span class="k">if</span> <span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span> <span class="ow">and</span> <span class="n">result_code</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span><span class="p">:</span>
+            <span class="n">expire_at</span> <span class="o">=</span> <span class="n">n_minutes_later</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">EXPIRE_TIMES</span><span class="p">)</span>
+            <span class="c1"># 过期时间记录在value里，才能够判断出过期状态。</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phone_code_key</span><span class="p">,</span> <span class="p">[</span><span class="n">code</span><span class="p">,</span> <span class="n">expire_at</span><span class="p">],</span>  <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">KEY_COMMON_TIMEOUT</span><span class="p">)</span>
+            <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_times_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;success&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">phone</span><span class="si">}</span><span class="s2">错误信息:</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;errorMsg&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;error&quot;</span></div></div>
+
+
+<span class="c1"># 支付验证码相关</span>
+<div class="viewcode-block" id="send_pay_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.send_pay_code">[文档]</a><span class="k">def</span> <span class="nf">send_pay_code</span><span class="p">(</span><span class="n">phone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发送支付验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @return: 发送结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送失败，请稍后再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;overload&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;overload&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;今日发送次数超过了限制,明日再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您的短信支付验证码已经频繁错误，当日无法继续支付，次日解锁。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;pay&quot;</span>
+    <span class="n">msg_temp</span> <span class="o">=</span> <span class="n">SMS_CONTENT_TEMPLATE</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg_temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="validate_pay_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.validate_pay_code">[文档]</a><span class="k">def</span> <span class="nf">validate_pay_code</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    校验支付验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @param code: 验证码</span>
+<span class="sd">    @return: 校验结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;expired&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;expired&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您的短信支付验证码已经过期，是否重新发送？&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;wrong&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;wrong&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证码错误，请输入正确的支付验证码！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您的短信支付验证码已经频繁错误，当日无法继续支付，次日解锁。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;pay&quot;</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<span class="c1"># 登录验证码相关</span>
+<div class="viewcode-block" id="send_login_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.send_login_code">[文档]</a><span class="k">def</span> <span class="nf">send_login_code</span><span class="p">(</span><span class="n">phone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    发送登录验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @return: 发送结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送失败，请稍后再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;overload&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;overload&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;今日发送次数超过了限制,明日再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您频繁多次验证码录入错误，当天已禁止您用短信验证码登录，次日解锁。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;login&quot;</span>
+    <span class="n">msg_temp</span> <span class="o">=</span> <span class="n">SMS_CONTENT_TEMPLATE</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg_temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="validate_login_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.validate_login_code">[文档]</a><span class="k">def</span> <span class="nf">validate_login_code</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    校验支付验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @param code: 验证码</span>
+<span class="sd">    @return: 校验结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;expired&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;expired&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您的短信验证码已过有效期！&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;wrong&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;wrong&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证码错误，请输入正确的支付验证码！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您频繁多次验证码录入错误，当天已禁止您用短信验证码登录，次日解锁。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;login&quot;</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<span class="c1"># 修改密码相关</span>
+<div class="viewcode-block" id="send_reset_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.send_reset_code">[文档]</a><span class="k">def</span> <span class="nf">send_reset_code</span><span class="p">(</span><span class="n">phone</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    修改密码，忘记密码--发送手机验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @return: 发送结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送失败，请稍后再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;发送成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;overload&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;overload&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;今日发送次数超过了限制,明日再试！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您频繁多次验证码录入错误，当天已禁止密码修改，次日解锁。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;reset_forget_pwd&quot;</span>
+    <span class="n">msg_temp</span> <span class="o">=</span> <span class="n">SMS_CONTENT_TEMPLATE</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg_temp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="validate_reset_code"><a class="viewcode-back" href="../../utils/utils.package.html#utils.sms.validate_reset_code">[文档]</a><span class="k">def</span> <span class="nf">validate_reset_code</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    校验修改、忘记密码--手机验证码</span>
+<span class="sd">    @param phone: 手机号</span>
+<span class="sd">    @param code: 验证码</span>
+<span class="sd">    @return: 校验结果</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">STATUS_AND_TIPS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;expired&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;expired&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您的短信验证码已过有效期！&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;wrong&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;wrong&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证码错误，请输入正确的验证码！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;success&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;验证成功！&quot;</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;locked&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;locked&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;tips&quot;</span><span class="p">:</span> <span class="s2">&quot;您频繁多次验证码录入错误，当天已禁止密码修改，明天再试。&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;reset_forget_pwd&quot;</span>
+    <span class="n">launcher</span> <span class="o">=</span> <span class="n">PhoneCodeLauncher</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">STATUS_AND_TIPS</span><span class="p">[</span><span class="n">result</span><span class="p">]</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">send_phone_code</span><span class="p">(</span><span class="s2">&quot;13366026441&quot;</span><span class="p">,</span> <span class="s2">&quot;2332&quot;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

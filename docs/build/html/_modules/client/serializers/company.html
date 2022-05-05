@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.serializers.company &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.serializers.company</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.serializers.company 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : company.py</span>
+<span class="sd">@Author      : liuda</span>
+<span class="sd">@Time        : 2022/3/3 15:05</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">transaction</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">serializers</span>
+<span class="kn">from</span> <span class="nn">rest_framework.exceptions</span> <span class="kn">import</span> <span class="n">APIException</span>
+<span class="kn">import</span> <span class="nn">shortuuid</span>
+<span class="kn">from</span> <span class="nn">rest_framework.utils</span> <span class="kn">import</span> <span class="n">model_meta</span>
+
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span><span class="p">,</span> <span class="n">CompanyFile</span><span class="p">,</span> <span class="n">CompanyReviewLog</span><span class="p">,</span> <span class="n">CompanyType</span><span class="p">,</span> <span class="n">S1UserCompanyMap</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">DATE_FORMAT</span>
+<span class="kn">from</span> <span class="nn">utils.chuanglan_services</span> <span class="kn">import</span> <span class="n">OcrRecognition</span>
+
+
+<div class="viewcode-block" id="CompanyCreateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyCreateSerializer">[文档]</a><span class="k">class</span> <span class="nc">CompanyCreateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_type_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">county_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">management_detail_address</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">establish_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">DATE_FORMAT</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">registered_capital</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">paid_in_capital</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">management_range</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">registered_address</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">credit_code</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_type</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;company_type.name&quot;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># TODO(Rey): 这个字段可以删掉, 创建公司之后因为没有创建公司审批日志, 所以返回的都是None</span>
+    <span class="n">company_status</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;companyreviewlog.status&quot;</span><span class="p">,</span> <span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">uid</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">bank_account_number</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_open_sub_branch</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_city_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">business_license_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span>
+    <span class="n">legal_person_positive_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">legal_person_unpositive_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">write_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">legal_person_id_card</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">legal_person_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CompanyCreateSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyCreateSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写创建函数</span>
+<span class="sd">        :param validated_data:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_code</span><span class="o">=</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;credit_code&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="s2">&quot;该企业已经存在！&quot;</span><span class="p">)</span>
+        <span class="c1"># 企业四要素校验 TODO 测试时再打开</span>
+        <span class="c1"># ocr = OcrRecognition()</span>
+        <span class="c1"># if not ocr.business_four_auth(</span>
+        <span class="c1">#     validated_data.get(&quot;name&quot;), validated_data.get(&quot;legal_person_name&quot;),</span>
+        <span class="c1">#     validated_data.get(&quot;credit_code&quot;), validated_data.get(&quot;legal_person_id_card&quot;),</span>
+        <span class="c1"># ):</span>
+        <span class="c1">#     raise APIException(&quot;企业四要素校验失败，请核查&quot;)</span>
+
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="n">legal_person_positive_url</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;legal_person_positive_url&quot;</span><span class="p">)</span>
+            <span class="n">legal_person_unpositive_url</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;legal_person_unpositive_url&quot;</span><span class="p">)</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_id&quot;</span><span class="p">),</span>
+                <span class="n">uid</span><span class="o">=</span><span class="n">shortuuid</span><span class="o">.</span><span class="n">uuid</span><span class="p">(),</span>
+                <span class="o">**</span><span class="n">validated_data</span>
+            <span class="p">)</span>
+            <span class="c1"># 创建用户与企业的关联关系</span>
+            <span class="n">S1UserCompanyMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">company</span><span class="o">=</span><span class="n">instance</span><span class="p">,</span>
+                <span class="n">s1_user_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">s1_user_id</span>
+            <span class="p">)</span>
+            <span class="c1"># 创建企业附件</span>
+            <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">company</span><span class="o">=</span><span class="n">instance</span><span class="p">,</span>
+                <span class="n">legal_person_positive_url</span><span class="o">=</span><span class="n">legal_person_positive_url</span><span class="p">,</span>
+                <span class="n">legal_person_unpositive_url</span><span class="o">=</span><span class="n">legal_person_unpositive_url</span>
+            <span class="p">)</span>
+            <span class="c1"># 创建企业审核数据，当前状态是待申请打款</span>
+            <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">status</span><span class="o">=</span><span class="s2">&quot;apply_pay&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="CompanyCreateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyCreateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Company</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company_type_id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;establish_at&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;registered_capital&quot;</span><span class="p">,</span> <span class="s2">&quot;registered_address&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;management_detail_address&quot;</span><span class="p">,</span> <span class="s2">&quot;county_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;paid_in_capital&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;management_range&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;company_type&quot;</span><span class="p">,</span> <span class="s2">&quot;company_status&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bank_account_number&quot;</span><span class="p">,</span> <span class="s2">&quot;bank_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bank_open_sub_branch&quot;</span><span class="p">,</span> <span class="s2">&quot;bank_city_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;business_license_url&quot;</span><span class="p">,</span> <span class="s2">&quot;legal_person_positive_url&quot;</span><span class="p">,</span> <span class="s2">&quot;legal_person_unpositive_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;legal_person_id_card&quot;</span><span class="p">,</span> <span class="s2">&quot;legal_person_name&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyFileCreateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileCreateSerializer">[文档]</a><span class="k">class</span> <span class="nc">CompanyFileCreateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="n">logo_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;company.logo_url&quot;</span><span class="p">,</span> <span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">legal_person_certificate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">()</span>
+    <span class="n">authorized_by_operator</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">()</span>
+    <span class="n">special_industries_license</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">env_protection_approval</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">audit_report</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">financial_statements</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">constitution</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CompanyFileCreateSerializer.validate_legal_person_certificate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileCreateSerializer.validate_legal_person_certificate">[文档]</a>    <span class="k">def</span> <span class="nf">validate_legal_person_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;legal_person_certificate字段中的url为正确格式</span>
+
+<span class="sd">        :param _type_ value: 输入</span>
+<span class="sd">        :return _type_: 经过url校验的输出</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span><span class="o">.</span><span class="n">run_validation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="CompanyFileCreateSerializer.validate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileCreateSerializer.validate">[文档]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;校验json字段中的url为正确格式</span>
+
+<span class="sd">        :param dict attrs: 输入</span>
+<span class="sd">        :return _type_: 经过url校验的输出</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;authorized_by_operator&#39;</span><span class="p">,</span> <span class="s1">&#39;special_industries_license&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;env_protection_approval&#39;</span><span class="p">,</span> <span class="s1">&#39;audit_report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;financial_statements&#39;</span><span class="p">,</span> <span class="s1">&#39;constitution&#39;</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span><span class="o">.</span><span class="n">run_validation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">attrs</span></div>
+
+<div class="viewcode-block" id="CompanyFileCreateSerializer.create"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileCreateSerializer.create">[文档]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        重写创建逻辑</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r_log</span> <span class="o">=</span> <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;company_id&quot;</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">only</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">r_log</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="s2">&quot;un_upload&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;当前状态是:</span><span class="si">{</span><span class="n">r_log</span><span class="o">.</span><span class="n">get_status_display</span><span class="p">()</span><span class="si">}</span><span class="s2">无法上传附件&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="n">company</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;company&quot;</span><span class="p">)</span>
+            <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;company_id&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">company</span>
+            <span class="p">)</span>
+            <span class="c1"># 更新企业附件数据</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;company_id&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">validated_data</span><span class="p">)</span>
+            <span class="c1"># 更新企业审核状态变成待审批</span>
+            <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="n">validated_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;company_id&quot;</span><span class="p">)</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">&quot;undo&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CompanyFileCreateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileCreateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CompanyFile</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;logo_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;legal_person_certificate&quot;</span><span class="p">,</span> <span class="s2">&quot;authorized_by_operator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;special_industries_license&quot;</span><span class="p">,</span> <span class="s2">&quot;env_protection_approval&quot;</span><span class="p">,</span> <span class="s2">&quot;audit_report&quot;</span><span class="p">,</span> <span class="s2">&quot;financial_statements&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constitution&quot;</span><span class="p">,</span> <span class="s2">&quot;company_id&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyTypeSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyTypeSerializer">[文档]</a><span class="k">class</span> <span class="nc">CompanyTypeSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CompanyTypeSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyTypeSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CompanyType</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;created_at&quot;</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyRetrieveUpdateSerializer">[文档]</a><span class="k">class</span> <span class="nc">CompanyRetrieveUpdateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_type_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">county_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">city_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;county.city.id&quot;</span><span class="p">)</span>
+    <span class="n">province_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;county.city.province.id&quot;</span><span class="p">)</span>
+    <span class="n">management_detail_address</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">establish_at</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">DATE_FORMAT</span><span class="p">)</span>
+    <span class="n">registered_capital</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">paid_in_capital</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">management_range</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">registered_address</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">business_license_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">logo_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">opinion</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">bank_account_number</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_open_sub_branch</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">bank_city_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">()</span>
+    <span class="n">bank_province_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s2">&quot;bank_city.province.id&quot;</span><span class="p">)</span>
+    <span class="n">business_license_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span>
+    <span class="n">legal_person_positive_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;companyfile.legal_person_positive_url&quot;</span><span class="p">)</span>
+    <span class="n">legal_person_unpositive_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;companyfile.legal_person_unpositive_url&quot;</span><span class="p">)</span>
+    <span class="n">legal_person_id_card</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+    <span class="n">legal_person_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">CharField</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateSerializer.get_opinion"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyRetrieveUpdateSerializer.get_opinion">[文档]</a>    <span class="k">def</span> <span class="nf">get_opinion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Company</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取审批意见</span>
+<span class="sd">        @param instance:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;companyreviewlog&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">companyreviewlog</span><span class="o">.</span><span class="n">opinion</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateSerializer.get_status"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyRetrieveUpdateSerializer.get_status">[文档]</a>    <span class="k">def</span> <span class="nf">get_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Company</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取</span>
+<span class="sd">        @param instance: </span>
+<span class="sd">        @return: </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s2">&quot;companyreviewlog&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">instance</span><span class="o">.</span><span class="n">companyreviewlog</span><span class="o">.</span><span class="n">status</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyRetrieveUpdateSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        更新逻辑</span>
+<span class="sd">        @param instance:</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 校验企业四要素 TODO 测试时打开</span>
+        <span class="c1"># ocr = OcrRecognition()</span>
+        <span class="c1"># if not ocr.business_four_auth(</span>
+        <span class="c1">#         validated_data.get(&quot;name&quot;), validated_data.get(&quot;legal_person_name&quot;),</span>
+        <span class="c1">#         validated_data.get(&quot;credit_code&quot;), validated_data.get(&quot;legal_person_id_card&quot;),</span>
+        <span class="c1"># ):</span>
+        <span class="c1">#     raise APIException(&quot;企业四要素校验失败，请核查&quot;)</span>
+        <span class="c1"># 获取企业文件</span>
+        <span class="n">company_file</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;companyfile&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="c1"># 更新企业基本信息</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">model_meta</span><span class="o">.</span><span class="n">get_field_info</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="n">m2m_fields</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">relations</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">relations</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">to_many</span><span class="p">:</span>
+                    <span class="n">m2m_fields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">m2m_fields</span><span class="p">:</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="c1"># 更新企业附件</span>
+            <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">company</span><span class="o">=</span><span class="n">instance</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">company_file</span><span class="p">)</span>
+            <span class="c1"># 更新企业审核数据，修改为 待申请打款</span>
+            <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">company_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">id</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s2">&quot;apply_pay&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="CompanyRetrieveUpdateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyRetrieveUpdateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Company</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;company_type_id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;credit_code&quot;</span><span class="p">,</span> <span class="s2">&quot;establish_at&quot;</span><span class="p">,</span> <span class="s2">&quot;city_id&quot;</span><span class="p">,</span> <span class="s2">&quot;province_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;registered_capital&quot;</span><span class="p">,</span> <span class="s2">&quot;registered_address&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;management_detail_address&quot;</span><span class="p">,</span> <span class="s2">&quot;county_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;paid_in_capital&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">,</span> <span class="s2">&quot;management_range&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;logo_url&quot;</span><span class="p">,</span> <span class="s2">&quot;business_license_url&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;opinion&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bank_account_number&quot;</span><span class="p">,</span> <span class="s2">&quot;bank_name&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;bank_open_sub_branch&quot;</span><span class="p">,</span> <span class="s2">&quot;bank_city_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;business_license_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;legal_person_positive_url&quot;</span><span class="p">,</span> <span class="s2">&quot;legal_person_unpositive_url&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;legal_person_id_card&quot;</span><span class="p">,</span> <span class="s2">&quot;legal_person_name&quot;</span><span class="p">,</span> <span class="s2">&quot;bank_province_id&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateSerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileRetrieveUpdateSerializer">[文档]</a><span class="k">class</span> <span class="nc">CompanyFileRetrieveUpdateSerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="n">logo_url</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="s2">&quot;company.logo_url&quot;</span><span class="p">,</span> <span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">legal_person_certificate</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">()</span>
+    <span class="n">authorized_by_operator</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">special_industries_license</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">env_protection_approval</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">audit_report</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">financial_statements</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">constitution</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">JSONField</span><span class="p">(</span><span class="n">allow_null</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_id</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateSerializer.validate_legal_person_certificate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileRetrieveUpdateSerializer.validate_legal_person_certificate">[文档]</a>    <span class="k">def</span> <span class="nf">validate_legal_person_certificate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;legal_person_certificate字段中的url为正确格式</span>
+<span class="sd">        :param _type_ value: 输入</span>
+<span class="sd">        :return _type_: 经过url校验的输出</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+            <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span><span class="o">.</span><span class="n">run_validation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateSerializer.validate"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileRetrieveUpdateSerializer.validate">[文档]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        校验json字段中的url为正确格式</span>
+<span class="sd">        :param dict attrs: 输入</span>
+<span class="sd">        :return _type_: 经过url校验的输出</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;authorized_by_operator&#39;</span><span class="p">,</span> <span class="s1">&#39;special_industries_license&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;env_protection_approval&#39;</span><span class="p">,</span> <span class="s1">&#39;audit_report&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;financial_statements&#39;</span><span class="p">,</span> <span class="s1">&#39;constitution&#39;</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+                <span class="n">serializers</span><span class="o">.</span><span class="n">URLField</span><span class="p">()</span><span class="o">.</span><span class="n">run_validation</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;url&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">attrs</span></div>
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateSerializer.update"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileRetrieveUpdateSerializer.update">[文档]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">CompanyFile</span><span class="p">,</span> <span class="n">validated_data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @param instance:</span>
+<span class="sd">        @param validated_data:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">instance</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">companyreviewlog</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="s2">&quot;un_upload&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">APIException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;当前状态是:</span><span class="si">{</span><span class="n">instance</span><span class="o">.</span><span class="n">company</span><span class="o">.</span><span class="n">companyreviewlog</span><span class="o">.</span><span class="n">get_status_display</span><span class="p">()</span><span class="si">}</span><span class="s2">无法更新附件&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">transaction</span><span class="o">.</span><span class="n">atomic</span><span class="p">():</span>
+            <span class="c1"># 更新企业信息</span>
+            <span class="n">company</span> <span class="o">=</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;company&#39;</span><span class="p">)</span>
+            <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">company_id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">company</span>
+            <span class="p">)</span>
+            <span class="c1"># 更新企业修改的附件</span>
+            <span class="n">info</span> <span class="o">=</span> <span class="n">model_meta</span><span class="o">.</span><span class="n">get_field_info</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="n">m2m_fields</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">validated_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">info</span><span class="o">.</span><span class="n">relations</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">relations</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">to_many</span><span class="p">:</span>
+                    <span class="n">m2m_fields</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">m2m_fields</span><span class="p">:</span>
+                <span class="n">field</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="n">field</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+            <span class="c1"># 更新审批日志</span>
+            <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">company_id</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="s1">&#39;undo&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">instance</span></div>
+
+<div class="viewcode-block" id="CompanyFileRetrieveUpdateSerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.CompanyFileRetrieveUpdateSerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CompanyFile</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;logo_url&quot;</span><span class="p">,</span>  <span class="s2">&quot;legal_person_certificate&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;authorized_by_operator&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;special_industries_license&quot;</span><span class="p">,</span> <span class="s2">&quot;env_protection_approval&quot;</span><span class="p">,</span> <span class="s2">&quot;audit_report&quot;</span><span class="p">,</span> <span class="s2">&quot;financial_statements&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constitution&quot;</span><span class="p">,</span> <span class="s2">&quot;company_id&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="UserCompanySerializer"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.UserCompanySerializer">[文档]</a><span class="k">class</span> <span class="nc">UserCompanySerializer</span><span class="p">(</span><span class="n">serializers</span><span class="o">.</span><span class="n">ModelSerializer</span><span class="p">):</span>
+    <span class="n">company_type_name</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">company_review_status</span> <span class="o">=</span> <span class="n">serializers</span><span class="o">.</span><span class="n">SerializerMethodField</span><span class="p">(</span><span class="n">read_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UserCompanySerializer.get_company_type_name"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.UserCompanySerializer.get_company_type_name">[文档]</a>    <span class="k">def</span> <span class="nf">get_company_type_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取企业类型名称</span>
+<span class="sd">        @param obj:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">company_type</span><span class="o">.</span><span class="n">name</span></div>
+
+<div class="viewcode-block" id="UserCompanySerializer.get_company_review_status"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.UserCompanySerializer.get_company_review_status">[文档]</a>    <span class="k">def</span> <span class="nf">get_company_review_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取企业审核状态</span>
+<span class="sd">        @param obj:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">company_review_status</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">companyreviewlog</span><span class="o">.</span><span class="n">status</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">&quot;companyreviewlog&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">company_review_status</span></div>
+
+<div class="viewcode-block" id="UserCompanySerializer.Meta"><a class="viewcode-back" href="../../../client/client.serializers.html#client.serializers.company.UserCompanySerializer.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Company</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;company_review_status&quot;</span><span class="p">,</span> <span class="s2">&quot;company_type_name&quot;</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">,</span> <span class="s2">&quot;logo_url&quot;</span>
+        <span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

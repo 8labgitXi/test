@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.date_and_time &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>utils.date_and_time</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>utils.date_and_time 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : date_and_time.py</span>
+<span class="sd">@Author      : niuxingjie</span>
+<span class="sd">@Time        : 2022/3/7 11:23</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">arrow</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">calendar</span>
+
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">DATE_FORMAT</span>
+
+
+<div class="viewcode-block" id="n_years_later"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.n_years_later">[文档]</a><span class="k">def</span> <span class="nf">n_years_later</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">years</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算start时间years年后的时间:</span>
+<span class="sd">        - 闰年2月29日在非闰年会变成2月28日</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">start</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">years</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">start</span><span class="o">.</span><span class="n">year</span> <span class="o">+</span> <span class="n">years</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">28</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="n_months_later"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.n_months_later">[文档]</a><span class="k">def</span> <span class="nf">n_months_later</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">months</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算start时间months月后的时间:</span>
+<span class="sd">        - 某月的31日不存在时，会变成次月的最后一天</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">arrow</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">months</span><span class="o">=+</span><span class="n">months</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="n_days_later"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.n_days_later">[文档]</a><span class="k">def</span> <span class="nf">n_days_later</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">days</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算start时间days天后的时间</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timedelta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span>
+    <span class="k">return</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="n_hours_later"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.n_hours_later">[文档]</a><span class="k">def</span> <span class="nf">n_hours_later</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">hours</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算start时间hours小时后的时间</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">arrow</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="n">hours</span><span class="o">=+</span><span class="n">hours</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="n_minutes_later"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.n_minutes_later">[文档]</a><span class="k">def</span> <span class="nf">n_minutes_later</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">mins</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算start时间mins分钟后的时间</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timedelta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">mins</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">timedelta</span>
+    <span class="k">return</span> <span class="n">end</span></div>
+
+
+<div class="viewcode-block" id="get_period"><a class="viewcode-back" href="../../utils/utils.package.html#utils.date_and_time.get_period">[文档]</a><span class="k">def</span> <span class="nf">get_period</span><span class="p">(</span><span class="n">month</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;获取月份的开始日期和结束日期</span>
+
+<span class="sd">    @param month: 月份，如 2022-04</span>
+<span class="sd">    @return: 此月的开始日期和结束日期，如（2022-04-01, 2022-04-31）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">DATE_FORMAT</span><span class="p">)</span>
+    <span class="n">week_days</span><span class="p">,</span> <span class="n">month_days</span> <span class="o">=</span> <span class="n">calendar</span><span class="o">.</span><span class="n">monthrange</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">)</span>
+    <span class="n">start_day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">end_day</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> <span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="n">month_days</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">start_day</span><span class="p">,</span> <span class="n">end_day</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

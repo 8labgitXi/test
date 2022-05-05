@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>management.filters.credit_certificate_filter &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>management.filters.credit_certificate_filter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>management.filters.credit_certificate_filter 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : credit_certificate_filter.py</span>
+<span class="sd">@Author      : duanluhui</span>
+<span class="sd">@Time        : 3/7/22 14:46</span>
+<span class="sd">@Description : 信用凭证管理相关过滤接口, 具体过滤规则需要查看 prd 文档(5.6.1 X 信 平台审批列表);</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">from</span> <span class="nn">django_filters</span> <span class="kn">import</span> <span class="n">rest_framework</span> <span class="k">as</span> <span class="n">filters</span>
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">FinanceProject</span>
+
+
+<div class="viewcode-block" id="CreditCertificateFilter"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.CreditCertificateFilter">[文档]</a><span class="k">class</span> <span class="nc">CreditCertificateFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="c1"># status = filters.CharFilter(field_name=&quot;review_status&quot;)  # 开立状态</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>  <span class="c1"># X信编号</span>
+    <span class="n">original_open_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_receive_company&quot;</span><span class="p">)</span>  <span class="c1"># 原始开立企业</span>
+    <span class="n">transfer_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_transfer_company&quot;</span><span class="p">)</span>  <span class="c1"># 转让企业</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_capital_company&quot;</span><span class="p">)</span>  <span class="c1"># 资金机构</span>
+    <span class="n">open_start_date</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>  <span class="c1"># 开立申请开始日期</span>
+    <span class="n">open_end_date</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>  <span class="c1"># 开立申请结束日期</span>
+    <span class="n">promise_pay_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;promise_pay_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>  <span class="c1"># 承诺付款日开始日期</span>
+    <span class="n">promise_pay_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;promise_pay_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>  <span class="c1"># 承诺付款日结束日期</span>
+
+<div class="viewcode-block" id="CreditCertificateFilter.filter_receive_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_receive_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_receive_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;原始开立企业--即:过滤授信表里 被授信企业名称&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit__receive_company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditCertificateFilter.filter_transfer_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_transfer_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_transfer_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;过滤转让企业&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">from_company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditCertificateFilter.filter_capital_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_capital_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_capital_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;过滤资金机构名称&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit__capital_company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="CreditCertificateFilter.Meta"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.CreditCertificateFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;original_open_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transfer_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;open_start_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;open_end_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;promise_pay_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;promise_pay_end&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="FinanceCertificateFilter"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceCertificateFilter">[文档]</a><span class="k">class</span> <span class="nc">FinanceCertificateFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;管理端-融资审批列表页过滤器&quot;&quot;&quot;</span>
+
+    <span class="n">number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;number&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>  <span class="c1"># X信编号</span>
+    <span class="n">finance_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_finance_company&quot;</span><span class="p">)</span>  <span class="c1"># 融资企业</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_capital_company&quot;</span><span class="p">)</span>  <span class="c1"># 资金机构</span>
+    <span class="n">finance_start_date</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>  <span class="c1"># 开立申请开始日期</span>
+    <span class="n">finance_end_date</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">DateFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>  <span class="c1"># 开立申请结束日期</span>
+
+<div class="viewcode-block" id="FinanceCertificateFilter.filter_finance_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_finance_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_finance_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;原始开立企业--即:过滤授信表里 被授信企业名称&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceCertificateFilter.filter_capital_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_capital_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_capital_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&quot;过滤资金机构名称&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit__capital_company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceCertificateFilter.Meta"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_start_date&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_end_date&quot;</span><span class="p">,</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="FinanceProjectFilter"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter">[文档]</a><span class="k">class</span> <span class="nc">FinanceProjectFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    融资项目列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">finance_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">lookup_expr</span><span class="o">=</span><span class="s2">&quot;icontains&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;finance_number&quot;</span><span class="p">)</span>  <span class="c1"># 融资项目编号</span>
+    <span class="n">finance_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_finance_company&quot;</span><span class="p">)</span>  <span class="c1"># 融资企业</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_capital_company&quot;</span><span class="p">)</span>  <span class="c1"># 资金机构</span>
+    <span class="n">cc_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_cc_number&quot;</span><span class="p">)</span>  <span class="c1"># 智信编号</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_status&quot;</span><span class="p">)</span>  <span class="c1"># 过滤状态</span>
+    <span class="n">finance_sign_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_finance_sign_start&quot;</span><span class="p">)</span>  <span class="c1"># 融资申请开始时间</span>
+    <span class="n">finance_sign_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;filter_finance_sign_end&quot;</span><span class="p">)</span>  <span class="c1"># 融资申请结束时间</span>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_finance_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_finance_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        过滤融资企业</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate__credit__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_capital_company"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_capital_company">[文档]</a>    <span class="k">def</span> <span class="nf">filter_capital_company</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        过滤资金机构</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate__credit__capital_company__name__contains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_cc_number"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_cc_number">[文档]</a>    <span class="k">def</span> <span class="nf">filter_cc_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        过滤智信编号</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">credit_certificate__number__icontains</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_status"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_status">[文档]</a>    <span class="k">def</span> <span class="nf">filter_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        根据状态过滤</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">querset</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_finance_sign_start"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_start">[文档]</a>    <span class="k">def</span> <span class="nf">filter_finance_sign_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        过滤融资申请开始时间</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sign_contract_at__gt</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.filter_finance_sign_end"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_end">[文档]</a>    <span class="k">def</span> <span class="nf">filter_finance_sign_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        融资申请开始时间</span>
+<span class="sd">        :param querset:</span>
+<span class="sd">        :param name:</span>
+<span class="sd">        :param value:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">querset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">sign_contract_at__lt</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinanceProjectFilter.Meta"><a class="viewcode-back" href="../../../management/management.filters.html#management.filters.credit_certificate_filter.FinanceProjectFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">FinanceProject</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;finance_number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;cc_number&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_sign_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;finance_sign_end&quot;</span>
+        <span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

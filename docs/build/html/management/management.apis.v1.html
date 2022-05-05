@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>1.1.1. apis.v1.0视图 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">1.1.1. </span>apis.v1.0视图</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/management/management.apis.v1.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="apis-v1-0">
+<h1><span class="section-number">1.1.1. </span>apis.v1.0视图<a class="headerlink" href="#apis-v1-0" title="永久链接至标题"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="management.apis.v1.tests.html">1.1.1.1. v1.0测试</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="management.apis.v1.tests.html#module-management.apis.v1.tests.test_cc_approval_history_detail">1.1.1.1.1. 测试管理端获取某信审批快照</a></li>
+<li class="toctree-l2"><a class="reference internal" href="management.apis.v1.tests.html#module-management.apis.v1.tests.test_common_cc_approval">1.1.1.1.2. 测试通用审批</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="module-management.apis.v1.credit_certificate_manage">
+<span id="id1"></span><h2><span class="section-number">1.1.1.2. </span>信用凭证管理<a class="headerlink" href="#module-management.apis.v1.credit_certificate_manage" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_certificate_manage.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/7/22 14:28
+&#64;Description : 信用凭证管理-(开立审批,融资项目审批相关接口)(5.6 X信平台审批节点,7.4 X 信融资平台审批节点)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">ApprovalHistoryDetialView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#ApprovalHistoryDetialView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取X信历史审批记录详情</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#ApprovalHistoryDetialView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView.get" title="永久链接至目标"></a></dt>
+<dd><p>获取某个数据</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageOpenFinancingCheck'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.ApprovalHistoryDetialView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">CommonCreditCertificateDetailView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CommonCreditCertificateDetailView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveAPIView</span></code></p>
+<p>通用的X信最新详情页</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CommonCreditCertificateDetailView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_serializer_class">
+<span class="sig-name descname"><span class="pre">get_serializer_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CommonCreditCertificateDetailView.get_serializer_class"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.get_serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>Return the class to use for the serializer.
+Defaults to using <cite>self.serializer_class</cite>.</p>
+<p>You may want to override this if you need to provide different
+serializations depending on the incoming request.</p>
+<p>(Eg. admins get full serialization, others get basic serialization)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageOpenFinancingCheck'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CommonCreditCertificateDetailView.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CommonCreditCertificateDetailView.retrieve" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">CreditCerAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CreditCerAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>开立审批-列表页接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id2"><span class="problematic" id="id3">`</span></a>management.filters.credit_certificate_filter.CreditCertificateFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CreditCerAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id4"><span class="problematic" id="id5">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageOpenCheckPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;CreditCertificate:</span> <span class="pre">451:</span> <span class="pre">XYPZ202204290015&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">449:</span> <span class="pre">XYPZ202204290014&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">448:</span> <span class="pre">XYPZ202204290013&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">444:</span> <span class="pre">XYPZ202204290012&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">443:</span> <span class="pre">XYPZ202204290011&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">442:</span> <span class="pre">XYPZ202204290010&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">441:</span> <span class="pre">XYPZ202204290009&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">440:</span> <span class="pre">XYPZ202204290008&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">439:</span> <span class="pre">XYPZ202204290007&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">438:</span> <span class="pre">XYPZ202204290006&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">437:</span> <span class="pre">XYPZ202204290005&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">436:</span> <span class="pre">XYPZ202204290004&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">435:</span> <span class="pre">XYPZ202204290003&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">434:</span> <span class="pre">XYPZ202204290002&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">433:</span> <span class="pre">XYPZ202204290001&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">432:</span> <span class="pre">XYPZ202204280034&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">431:</span> <span class="pre">XYPZ202204280033&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">430:</span> <span class="pre">XYPZ202204280032&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">429:</span> <span class="pre">XYPZ202204280031&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">428:</span> <span class="pre">XYPZ202204280030&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id6"><span class="problematic" id="id7">`</span></a>management.serializers.credit_certificate_manage.CreditCertificateSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">CreditCerDetailAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CreditCerDetailAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveAPIView</span></code></p>
+<p>信用凭证审批详情页,编辑接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CreditCerDetailAPIView.get_object"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.get_object" title="永久链接至目标"></a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>You may want to override this if you need to provide non-standard
+queryset lookups.  Eg if objects are referenced using multiple
+keyword arguments in the url conf.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageOpenCheckPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#CreditCerDetailAPIView.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.retrieve" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.CreditCerDetailAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id8"><span class="problematic" id="id9">`</span></a>management.serializers.credit_certificate_manage.CreditApprovalDetailSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">FinanceApprovalAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#FinanceApprovalAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>融资平台审批-列表页接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id10"><span class="problematic" id="id11">`</span></a>management.filters.credit_certificate_filter.FinanceCertificateFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#FinanceApprovalAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id12"><span class="problematic" id="id13">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageFinancingCheckPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;CreditCertificate:</span> <span class="pre">450:</span> <span class="pre">XYPZ202204270036-R02&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">447:</span> <span class="pre">XYPZ202204270036-R01&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">248:</span> <span class="pre">XYPZ202204010009-01-R02&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">238:</span> <span class="pre">XYPZ202204020001-01-R01&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">235:</span> <span class="pre">XYPZ202204010009-01-R01&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">226:</span> <span class="pre">XYPZ202204010004-02-R01&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">210:</span> <span class="pre">XYPZ202203310002-R02&gt;,</span> <span class="pre">&lt;CreditCertificate:</span> <span class="pre">209:</span> <span class="pre">XYPZ202203310002-R01&gt;]&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceApprovalAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id14"><span class="problematic" id="id15">`</span></a>management.serializers.credit_certificate_manage.FinanceApprovalSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceDetailAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_certificate_manage.</span></span><span class="sig-name descname"><span class="pre">FinanceDetailAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#FinanceDetailAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveAPIView</span></code></p>
+<p>融资审批详情页接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#FinanceDetailAPIView.get_object"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.get_object" title="永久链接至目标"></a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>You may want to override this if you need to provide non-standard
+queryset lookups.  Eg if objects are referenced using multiple
+keyword arguments in the url conf.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.XLetterManageFinancingCheckPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_certificate_manage.html#FinanceDetailAPIView.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.retrieve" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_certificate_manage.FinanceDetailAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id16"><span class="problematic" id="id17">`</span></a>management.serializers.credit_certificate_manage.FinanceApprovalDetailSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.credit_management">
+<span id="id18"></span><h2><span class="section-number">1.1.1.3. </span>客户管理-授信管理<a class="headerlink" href="#module-management.apis.v1.credit_management" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_management.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/4/22 10:13
+&#64;Description : 客户管理-授信管理(新增授信,授信审批等相关接口)</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ClearTypeAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">ClearTypeAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#ClearTypeAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.ClearTypeAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取清分方式</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ClearTypeAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#ClearTypeAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.ClearTypeAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CompanyApprovalAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyApprovalAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>企业认证列表页接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyApprovalAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id19"><span class="problematic" id="id20">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageCertificationApprovePermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Company:</span> <span class="pre">天津八分量数字科技有限公司&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-二级供应商&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">werwe&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">23&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">134234&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">12234234afjajefealjwjfiewfliwefiweflewkfljewaewjfjwejlwaeiwwalenrlknwelrewaknrlaerjhkwejarkwe&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-资金机构&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-一般企业&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-核心企业&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">sada&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">122221&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">r&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">12&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">222&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">7&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">0000000&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">00&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">666&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">14&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">1111&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id21"><span class="problematic" id="id22">`</span></a>management.serializers.credit_manage.CompanyApprovalListSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalDetailAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CompanyApprovalDetailAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyApprovalDetailAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalDetailAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveUpdateAPIView</span></code></p>
+<p>企业审核详情页接口</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalDetailAPIView.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyApprovalDetailAPIView.get_object"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalDetailAPIView.get_object" title="永久链接至目标"></a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>You may want to override this if you need to provide non-standard
+queryset lookups.  Eg if objects are referenced using multiple
+keyword arguments in the url conf.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalDetailAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalDetailAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id23"><span class="problematic" id="id24">`</span></a>management.serializers.credit_manage.CompanyApprovalDetailSerializer`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyApprovalDetailAPIView.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyApprovalDetailAPIView.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyApprovalDetailAPIView.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyDetailSnapshotAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CompanyDetailSnapshotAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyDetailSnapshotAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyDetailSnapshotAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>获取企业详情-快照版</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyDetailSnapshotAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyDetailSnapshotAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyDetailSnapshotAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyDetailSnapshotAPIView.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyDetailSnapshotAPIView.get_object"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyDetailSnapshotAPIView.get_object" title="永久链接至目标"></a></dt>
+<dd><p>Returns the object the view is displaying.</p>
+<p>You may want to override this if you need to provide non-standard
+queryset lookups.  Eg if objects are referenced using multiple
+keyword arguments in the url conf.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CompanyListAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyListAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>客户管理-企业列表页</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id25"><span class="problematic" id="id26">`</span></a>management.filters.credit_filter.CompanyFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyListAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id27"><span class="problematic" id="id28">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageCustomerPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Company:</span> <span class="pre">天津八分量数字科技有限公司&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-二级供应商&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">werwe&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">23&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">134234&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">12234234afjajefealjwjfiewfliwefiweflewkfljewaewjfjwejlwaeiwwalenrlknwelrewaknrlaerjhkwejarkwe&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-资金机构&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-一般企业&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">cxf-核心企业&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">sada&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">122221&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">r&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">12&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">222&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">7&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">0000000&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">00&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">666&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">14&gt;,</span> <span class="pre">&lt;Company:</span> <span class="pre">1111&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyListAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CompanyListAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id29"><span class="problematic" id="id30">`</span></a>management.serializers.credit_manage.CompanyListSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyTypeAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CompanyTypeAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyTypeAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyTypeAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取企业类型</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CompanyTypeAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CompanyTypeAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CompanyTypeAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditCompanyAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditCompanyAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditCompanyAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditCompanyAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取被授信企业</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditCompanyAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditCompanyAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditCompanyAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditExamineCreateAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditExamineCreateAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditExamineCreateAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditExamineCreateAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.UpdateAPIView</span></code></p>
+<p>授信审批</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditExamineCreateAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageCreditApprovalPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditExamineCreateAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditExamineCreateAPI.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditExamineCreateAPI.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditExamineCreateAPI.post" title="永久链接至目标"></a></dt>
+<dd><ul class="simple">
+<li><p>修改 Credit表的状态</p></li>
+<li><p>创建 ReviewLog表数据</p></li>
+</ul>
+<p>&#64;param request:
+&#64;param args:
+&#64;param kwargs:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditExamineCreateAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Credit:</span> <span class="pre">SX202203310001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310006&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310005&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310004&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310007&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204050001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200005&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200004&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200002&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditExamineCreateAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditExamineCreateAPI.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CreditExamineCreateAPI.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id31"><span class="problematic" id="id32">`</span></a>management.serializers.credit_manage.CreditExamineSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditListCreateAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditListCreateAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListCreateAPIView</span></code></p>
+<p>授信列表页及新增授信</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditListCreateAPIView.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.create" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id33"><span class="problematic" id="id34">`</span></a>management.filters.credit_filter.CreditFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.gen_credit_number">
+<span class="sig-name descname"><span class="pre">gen_credit_number</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditListCreateAPIView.gen_credit_number"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.gen_credit_number" title="永久链接至目标"></a></dt>
+<dd><p>生成编号,编号规则SX+年月日+4位流水(例如：SX202101010001)
+:param request:
+:return: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditListCreateAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>根据status进行过滤
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id35"><span class="problematic" id="id36">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageAddCreditPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Credit:</span> <span class="pre">SX202204260001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200005&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200004&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204190001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204050001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310007&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310006&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditListCreateAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.CreditListCreateAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id37"><span class="problematic" id="id38">`</span></a>management.serializers.credit_manage.CreditListSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditRetrieveUpdateAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditRetrieveUpdateAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditRetrieveUpdateAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditRetrieveUpdateAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveUpdateAPIView</span></code></p>
+<p>授信管理详情页
+授信管理修改</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditRetrieveUpdateAPI.get_serializer_class">
+<span class="sig-name descname"><span class="pre">get_serializer_class</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditRetrieveUpdateAPI.get_serializer_class"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditRetrieveUpdateAPI.get_serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>Return the class to use for the serializer.
+Defaults to using <cite>self.serializer_class</cite>.</p>
+<p>You may want to override this if you need to provide different
+serializations depending on the incoming request.</p>
+<p>(Eg. admins get full serialization, others get basic serialization)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditRetrieveUpdateAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageCreditApprovalPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditRetrieveUpdateAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditRetrieveUpdateAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Credit:</span> <span class="pre">SX202204260001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200005&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200004&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204190001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204050001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310007&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310006&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditRetrieveUpdateAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditRetrieveUpdateAPI.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditRetrieveUpdateAPI.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditRetrieveUpdateAPI.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditSnapshotRetrieveAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditSnapshotRetrieveAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditSnapshotRetrieveAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditSnapshotRetrieveAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveAPIView</span></code></p>
+<p>已审批的授信详情  获取快照详情</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.CustomerManageCreditApprovalPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Credit:</span> <span class="pre">SX202204260001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204210001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200005&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200004&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204200001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204190001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204080001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204050001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204020001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010003&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010002&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202204010001&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310007&gt;,</span> <span class="pre">&lt;Credit:</span> <span class="pre">SX202203310006&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditSnapshotRetrieveAPI.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditSnapshotRetrieveAPI.retrieve" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditTypeAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">CreditTypeAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditTypeAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditTypeAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取授信类型</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.CreditTypeAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#CreditTypeAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.CreditTypeAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.FinancialAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">FinancialAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#FinancialAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.FinancialAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>获取资金机构</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.FinancialAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#FinancialAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.FinancialAPIView.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ReviewLogListAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.credit_management.</span></span><span class="sig-name descname"><span class="pre">ReviewLogListAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#ReviewLogListAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.ReviewLogListAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>授信审批日志</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ReviewLogListAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/credit_management.html#ReviewLogListAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.credit_management.ReviewLogListAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>重写获取审批日志逻辑
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ReviewLogListAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.ReviewLogListAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id39"><span class="problematic" id="id40">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.credit_management.ReviewLogListAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.credit_management.ReviewLogListAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id41"><span class="problematic" id="id42">`</span></a>management.serializers.credit_manage.CreditReviewLogSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.examine">
+<span id="id43"></span><h2><span class="section-number">1.1.1.4. </span>审批相关<a class="headerlink" href="#module-management.apis.v1.examine" title="永久链接至标题"></a></h2>
+<p>&#64;File        : examine.py
+&#64;Author      : liuda
+&#64;Time        : 2022/3/7 09:45
+&#64;Description : 审批相关</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.examine.CreditCertificateReviewUpdateAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.examine.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateReviewUpdateAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/examine.html#CreditCertificateReviewUpdateAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.examine.CreditCertificateReviewUpdateAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.UpdateAPIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/examine.html#CreditCertificateReviewUpdateAPIView.get_object"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.get_object" title="永久链接至目标"></a></dt>
+<dd><p>获取信用凭证
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id44"><span class="problematic" id="id45">`</span></a>management.serializers.examine.CreditCertificateReviewSerializer`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/examine.html#CreditCertificateReviewUpdateAPIView.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.examine.CreditCertificateReviewUpdateAPIView.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.examine.ReviewLogListAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.examine.</span></span><span class="sig-name descname"><span class="pre">ReviewLogListAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/examine.html#ReviewLogListAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.examine.ReviewLogListAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.examine.ReviewLogListAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/examine.html#ReviewLogListAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.examine.ReviewLogListAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>重写获取审批日志逻辑
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.examine.ReviewLogListAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.examine.ReviewLogListAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id46"><span class="problematic" id="id47">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.examine.ReviewLogListAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.examine.ReviewLogListAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id48"><span class="problematic" id="id49">`</span></a>management.serializers.examine.ReviewLogSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.files">
+<span id="id50"></span><h2><span class="section-number">1.1.1.5. </span>文件上传类<a class="headerlink" href="#module-management.apis.v1.files" title="永久链接至标题"></a></h2>
+<p>&#64;File        : files.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/31 11:31 上午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.files.UploadFileAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.files.</span></span><span class="sig-name descname"><span class="pre">UploadFileAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/files.html#UploadFileAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.files.UploadFileAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>文件上传类</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.files.UploadFileAPIView.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/files.html#UploadFileAPIView.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.files.UploadFileAPIView.post" title="永久链接至目标"></a></dt>
+<dd><p>上传文件
+&#64;param request:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.roles">
+<span id="id51"></span><h2><span class="section-number">1.1.1.6. </span>角色<a class="headerlink" href="#module-management.apis.v1.roles" title="永久链接至标题"></a></h2>
+<p>&#64;File        : roles.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/3 3:47 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.roles.PermissionListAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.roles.</span></span><span class="sig-name descname"><span class="pre">PermissionListAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#PermissionListAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.PermissionListAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>获取权限</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.PermissionListAPI.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#PermissionListAPI.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.PermissionListAPI.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.PermissionListAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(1)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(2)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(3)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(4)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(5)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(6)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(7)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(8)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(9)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(10)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(11)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(12)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(13)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(14)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(15)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(16)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(17)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(18)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(19)&gt;,</span> <span class="pre">&lt;AppMenus:</span> <span class="pre">AppMenus</span> <span class="pre">object</span> <span class="pre">(20)&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.roles.PermissionListAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.PermissionListAPI.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.roles.PermissionListAPI.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id52"><span class="problematic" id="id53">`</span></a>management.serializers.roles.PermissionSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.roles.</span></span><span class="sig-name descname"><span class="pre">RoleCreateListAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleCreateListAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListCreateAPIView</span></code></p>
+<p>角色列表页
+创建角色</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleCreateListAPIView.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.create" title="永久链接至目标"></a></dt>
+<dd><p>重写创建逻辑
+&#64;param request:
+&#64;param args:
+&#64;param kwargs:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id54"><span class="problematic" id="id55">`</span></a>management.filters.role_filter.RoleFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleCreateListAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id56"><span class="problematic" id="id57">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.RoleManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleCreateListAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.roles.RoleCreateListAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id58"><span class="problematic" id="id59">`</span></a>management.serializers.roles.RoleCreateListSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.roles.</span></span><span class="sig-name descname"><span class="pre">RoleDetailAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleDetailAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveUpdateAPIView</span></code></p>
+<p>角色详情
+编辑角色</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.RoleManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleDetailAPIView.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView.retrieve" title="永久链接至目标"></a></dt>
+<dd><p>重写获取逻辑
+:param request:
+:param args:
+:param kwargs:
+:return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id60"><span class="problematic" id="id61">`</span></a>management.serializers.roles.RoleDetailSerializer`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleDetailAPIView.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleDetailAPIView.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleDetailAPIView.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleListAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.roles.</span></span><span class="sig-name descname"><span class="pre">RoleListAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleListAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleListAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListAPIView</span></code></p>
+<p>不带分页的角色列表</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleListAPIView.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleListAPIView.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleListAPIView.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleListAPIView.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleListAPIView.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleListAPIView.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.roles.RoleListAPIView.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id62"><span class="problematic" id="id63">`</span></a>management.serializers.roles.RoleCreateListSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleStatusUpdateAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.roles.</span></span><span class="sig-name descname"><span class="pre">RoleStatusUpdateAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleStatusUpdateAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleStatusUpdateAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.UpdateAPIView</span></code></p>
+<p>修改角色状态</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleStatusUpdateAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.RoleManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleStatusUpdateAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleStatusUpdateAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">notice_admin&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">reviewer&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">handler&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">administrator&gt;,</span> <span class="pre">&lt;Role:</span> <span class="pre">founder&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.roles.RoleStatusUpdateAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.roles.RoleStatusUpdateAPI.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/roles.html#RoleStatusUpdateAPI.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.roles.RoleStatusUpdateAPI.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.apis.v1.user">
+<span id="id64"></span><h2><span class="section-number">1.1.1.7. </span>登陆注册<a class="headerlink" href="#module-management.apis.v1.user" title="永久链接至标题"></a></h2>
+<p>&#64;File        : user.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/4 9:42 上午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.ImageCodeView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">ImageCodeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#ImageCodeView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.ImageCodeView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.ImageCodeView.authentication_classes">
+<span class="sig-name descname"><span class="pre">authentication_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#management.apis.v1.user.ImageCodeView.authentication_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.ImageCodeView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#ImageCodeView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.ImageCodeView.get" title="永久链接至目标"></a></dt>
+<dd><p>获取图片验证码码
+&#64;param request:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.LoginViewSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">LoginViewSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#LoginViewSet"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.LoginViewSet" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.LoginViewSet.authentication_classes">
+<span class="sig-name descname"><span class="pre">authentication_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#management.apis.v1.user.LoginViewSet.authentication_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.LoginViewSet.post">
+<span class="sig-name descname"><span class="pre">post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#LoginViewSet.post"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.LoginViewSet.post" title="永久链接至目标"></a></dt>
+<dd><p>登陆逻辑
+&#64;param request:
+&#64;return:</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.RedirectRoles">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">RedirectRoles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#RedirectRoles"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.RedirectRoles" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.RedirectRoles.authentication_classes">
+<span class="sig-name descname"><span class="pre">authentication_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#management.apis.v1.user.RedirectRoles.authentication_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.RedirectRoles.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#RedirectRoles.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.RedirectRoles.get" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserInfoRefreshAPIView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">UserInfoRefreshAPIView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UserInfoRefreshAPIView"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UserInfoRefreshAPIView" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.views.APIView</span></code></p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserInfoRefreshAPIView.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UserInfoRefreshAPIView.get"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UserInfoRefreshAPIView.get" title="永久链接至目标"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">参数</dt>
+<dd class="field-odd"><p><strong>request</strong> -- </p>
+</dd>
+<dt class="field-even">返回</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserStatusUpdateAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">UserStatusUpdateAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UserStatusUpdateAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UserStatusUpdateAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.UpdateAPIView</span></code></p>
+<p>修改用户状态</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserStatusUpdateAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.UserManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.user.UserStatusUpdateAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserStatusUpdateAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;S1User:</span> <span class="pre">ywy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lyy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">ywwwy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl3&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl1&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">ywwy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">user002&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yangjanglin&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">test1&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl44&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lu&#64;163.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lab8&#64;8lab.cn&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">xiaoming&#64;example.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">test&#64;example.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklcompany&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">cc3569&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">user001&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">cc356&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl41&#64;qq.com&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.user.UserStatusUpdateAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UserStatusUpdateAPI.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UserStatusUpdateAPI.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UserStatusUpdateAPI.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">UsersDetailAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersDetailAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.RetrieveUpdateAPIView</span></code></p>
+<p>用户详情
+编辑用户</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.UserManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI.queryset">
+<span class="sig-name descname"><span class="pre">queryset</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;QuerySet</span> <span class="pre">[&lt;S1User:</span> <span class="pre">ywy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lyy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">ywwwy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl3&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl1&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">ywwy&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">user002&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yangjanglin&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">test1&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl44&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lu&#64;163.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">lab8&#64;8lab.cn&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">xiaoming&#64;example.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">test&#64;example.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklcompany&#64;qq.com&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">cc3569&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">user001&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">cc356&gt;,</span> <span class="pre">&lt;S1User:</span> <span class="pre">yklykl41&#64;qq.com&gt;,</span> <span class="pre">'...(remaining</span> <span class="pre">elements</span> <span class="pre">truncated)...']&gt;</span></em><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI.queryset" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI.retrieve">
+<span class="sig-name descname"><span class="pre">retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersDetailAPI.retrieve"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI.retrieve" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id65"><span class="problematic" id="id66">`</span></a>management.serializers.user.UserDetailSerializer`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersDetailAPI.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersDetailAPI.update"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersDetailAPI.update" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.apis.v1.user.</span></span><span class="sig-name descname"><span class="pre">UsersListCreateAPI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersListCreateAPI"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.generics.ListCreateAPIView</span></code></p>
+<p>用户列表  创建用户</p>
+<p>Constructor. Called in the URLconf; can contain helpful extra
+keyword arguments, and other things.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersListCreateAPI.create"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.create" title="永久链接至目标"></a></dt>
+<dd><p>重写创建函数
+&#64;param request:
+&#64;param args:
+&#64;param kwargs:
+&#64;return:</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.filterset_class">
+<span class="sig-name descname"><span class="pre">filterset_class</span></span><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.filterset_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id67"><span class="problematic" id="id68">`</span></a>management.filters.user_filter.S1UserFilter`的别名</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.get_queryset">
+<span class="sig-name descname"><span class="pre">get_queryset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/apis/v1/user.html#UsersListCreateAPI.get_queryset"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.get_queryset" title="永久链接至目标"></a></dt>
+<dd><p>Get the list of items for this view.
+This must be an iterable, and may be a queryset.
+Defaults to using <cite>self.queryset</cite>.</p>
+<p>This method should always be used rather than accessing <cite>self.queryset</cite>
+directly, as <cite>self.queryset</cite> gets evaluated only once, and those results
+are cached for all subsequent requests.</p>
+<p>You may want to override this if you need to provide different
+querysets depending on the incoming request.</p>
+<p>(Eg. return a list of items that is specific to the user)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.pagination_class">
+<span class="sig-name descname"><span class="pre">pagination_class</span></span><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.pagination_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id69"><span class="problematic" id="id70">`</span></a>utils.drf.paginations.MyPageNumberPagination`的别名</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.permission_classes">
+<span class="sig-name descname"><span class="pre">permission_classes</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[&lt;class</span> <span class="pre">'management.management_permissions.UserManageListPermission'&gt;]</span></em><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.permission_classes" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.apis.v1.user.UsersListCreateAPI.serializer_class">
+<span class="sig-name descname"><span class="pre">serializer_class</span></span><a class="headerlink" href="#management.apis.v1.user.UsersListCreateAPI.serializer_class" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id71"><span class="problematic" id="id72">`</span></a>management.serializers.user.UserListCreateSerializer`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

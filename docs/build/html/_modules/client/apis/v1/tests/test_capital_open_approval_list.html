@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_capital_open_approval_list &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_capital_open_approval_list</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_capital_open_approval_list 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试获取资金机构开立审批列表</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-03-09 14:26:20</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_capital_open_approval_list  -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">create_user</span><span class="p">,</span> <span class="n">action_cache</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+<div class="viewcode-block" id="CapitalOpenApprovalListTests"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests">[文档]</a><span class="k">class</span> <span class="nc">CapitalOpenApprovalListTests</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;测试获取资金机构开立审批列表&quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;const_company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_credit.json&#39;</span><span class="p">,</span> <span class="s1">&#39;location.json&#39;</span><span class="p">,</span> <span class="s1">&#39;business.json&#39;</span><span class="p">,</span> <span class="s1">&#39;work_flow.json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;capital_open_approval_list.json&#39;</span><span class="p">,</span> <span class="s1">&#39;const_platform.json&#39;</span>
+    <span class="p">]</span>
+
+<div class="viewcode-block" id="CapitalOpenApprovalListTests.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests.client_request">[文档]</a>    <span class="nd">@action_cache</span>
+    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">company_uid</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求&quot;&quot;&quot;</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;/api/v1/scf/client/capital/credit_certificates/&#39;</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">url</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">HTTP_ELAB_COMPANY</span><span class="o">=</span><span class="n">company_uid</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CapitalOpenApprovalListTests.test_unknown_status"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests.test_unknown_status">[文档]</a>    <span class="k">def</span> <span class="nf">test_unknown_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试status not in (undo, done)&quot;&quot;&quot;</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;lalal&#39;</span>
+        <span class="p">)</span>
+        <span class="c1"># {&#39;code&#39;: 500, &#39;msg&#39;: &#39;invalid status!&#39;, &#39;data&#39;: None}</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">resp_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="mi">500</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="s2">&quot;invalid status!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="CapitalOpenApprovalListTests.test_default_status_undo"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests.test_default_status_undo">[文档]</a>    <span class="k">def</span> <span class="nf">test_default_status_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试不传status时, status=undo&quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span>
+        <span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">]</span>
+        <span class="n">data_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data_ids</span><span class="p">,</span> <span class="p">[</span><span class="mi">21</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="CapitalOpenApprovalListTests.test_success_done"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests.test_success_done">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        测试成功获取已审批的列表: 已审批过的均可以获取到</span>
+<span class="sd">        credit_certificate_id= 1: 无驳回 存在当前节点审批日志: true</span>
+<span class="sd">        credit_certificate_id= 4: 无驳回 不存在当前节点审批日志: false</span>
+<span class="sd">        credit_certificate_id= 2: 有驳回 在当前节点被驳回 又一轮没到当前节点: true</span>
+<span class="sd">        credit_certificate_id= 3: 有驳回 在当前节点被驳回 又一轮到当前节点: true</span>
+<span class="sd">        credit_certificate_id= 5: 有驳回 在当前节点被驳回 无后续: true</span>
+<span class="sd">        credit_certificate_id= 6: 有驳回 非当前节点被驳回 无后续: false</span>
+<span class="sd">        credit_certificate_id= 7: 有驳回 非当前节点被驳回 又一轮没到当前节点: false</span>
+<span class="sd">        credit_certificate_id= 8: 有驳回 非当前节点被驳回 又一轮到当前节点: true</span>
+<span class="sd">        credit_certificate_id=20: credit_certificate.is_valid=false: true</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;done&#39;</span>
+        <span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">]</span>
+        <span class="n">data_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+
+        <span class="c1"># 包含is_valid=False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="n">data_ids</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data_ids</span><span class="p">,</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">cc</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;number&#39;</span><span class="p">],</span> <span class="s1">&#39;2022030301-01&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;from_company&#39;</span><span class="p">],</span> <span class="s1">&#39;im core&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;company&#39;</span><span class="p">],</span> <span class="s1">&#39;im normal 1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;amount&#39;</span><span class="p">],</span> <span class="s1">&#39;1000.00&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;created_at&#39;</span><span class="p">],</span> <span class="s1">&#39;2022-03-01&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">],</span> <span class="s1">&#39;2023-03-03&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cc</span><span class="p">[</span><span class="s1">&#39;s1_user&#39;</span><span class="p">],</span> <span class="s1">&#39;username1&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="CapitalOpenApprovalListTests.test_success_undo"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_capital_open_approval_list.CapitalOpenApprovalListTests.test_success_undo">[文档]</a>    <span class="k">def</span> <span class="nf">test_success_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        测试成功获取待审批的列表</span>
+<span class="sd">        credit_certificate_id=40: credit_certificate.is_valid=false: false</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">company_uid</span><span class="o">=</span><span class="s1">&#39;nLT5cTjGxFGLjNfmFhKnYw&#39;</span><span class="p">,</span> <span class="n">page</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;undo&#39;</span>
+        <span class="p">)</span>
+        <span class="n">data_list</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;list&#39;</span><span class="p">]</span>
+        <span class="n">data_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data_list</span><span class="p">]</span>
+
+        <span class="c1"># 不包含is_valid=False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="n">data_ids</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data_ids</span><span class="p">,</span> <span class="p">[</span><span class="mi">21</span><span class="p">])</span></div></div>
+
+    
+    <span class="c1"># def test_from_company_is_null(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;测试credit_certificate.from_company=null&quot;&quot;&quot;</span>
+    <span class="c1">#     # credit_certificate.from_company_id，业务上是不会有空的</span>
+    <span class="c1">#     pass</span>
+
+    <span class="c1"># def test_promise_pay_at_is_null(self):</span>
+    <span class="c1">#     &quot;&quot;&quot;承诺付款时间为空的&quot;&quot;&quot;</span>
+    <span class="c1">#     # credit_certificate.promise_pay_at，业务上是不会有空的</span>
+    <span class="c1">#     pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

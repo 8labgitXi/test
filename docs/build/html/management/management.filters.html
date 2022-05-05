@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. 过滤器 &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><span class="section-number">2. </span>过滤器</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/management/management.filters.rst.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">2. </span>过滤器<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="module-management.filters.bill">
+<span id="id2"></span><h2><span class="section-number">2.1. </span>对账单<a class="headerlink" href="#module-management.filters.bill" title="永久链接至标题"></a></h2>
+<p>&#64;File        : bill.py
+&#64;Author      : wst
+&#64;Time        : 2022/4/11 上午9:38
+&#64;Description : 管理端对账单 过滤器</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.bill.</span></span><span class="sig-name descname"><span class="pre">ManageMonthBillFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/bill.html#ManageMonthBillFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/bill.html#ManageMonthBillFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['start_month',</span> <span class="pre">'end_month',</span> <span class="pre">'company_name']</span></em><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id3"><span class="problematic" id="id4">`</span></a>client.models.data_summary.HistoryMonthBill`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'company_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_month':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_month':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.bill.ManageMonthBillFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'company_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_month':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_month':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.bill.ManageMonthBillFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.filters.credit_certificate_filter">
+<span id="id5"></span><h2><span class="section-number">2.2. </span>信用凭证管理相关过滤接口<a class="headerlink" href="#module-management.filters.credit_certificate_filter" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_certificate_filter.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/7/22 14:46
+&#64;Description : 信用凭证管理相关过滤接口, 具体过滤规则需要查看 prd 文档(5.6.1 X 信 平台审批列表);</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_certificate_filter.</span></span><span class="sig-name descname"><span class="pre">CreditCertificateFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#CreditCertificateFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#CreditCertificateFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['number',</span> <span class="pre">'original_open_company',</span> <span class="pre">'transfer_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'open_start_date',</span> <span class="pre">'open_end_date',</span> <span class="pre">'promise_pay_start',</span> <span class="pre">'promise_pay_end']</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id6"><span class="problematic" id="id7">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'open_end_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'open_start_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'original_open_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'promise_pay_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'promise_pay_start':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'transfer_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'open_end_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'open_start_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'original_open_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'promise_pay_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'promise_pay_start':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'transfer_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.filter_capital_company">
+<span class="sig-name descname"><span class="pre">filter_capital_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#CreditCertificateFilter.filter_capital_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_capital_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤资金机构名称</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.filter_receive_company">
+<span class="sig-name descname"><span class="pre">filter_receive_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#CreditCertificateFilter.filter_receive_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_receive_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;原始开立企业--即:过滤授信表里 被授信企业名称</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.CreditCertificateFilter.filter_transfer_company">
+<span class="sig-name descname"><span class="pre">filter_transfer_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#CreditCertificateFilter.filter_transfer_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.CreditCertificateFilter.filter_transfer_company" title="永久链接至目标"></a></dt>
+<dd><p>过滤转让企业</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_certificate_filter.</span></span><span class="sig-name descname"><span class="pre">FinanceCertificateFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceCertificateFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<p>管理端-融资审批列表页过滤器</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceCertificateFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['number',</span> <span class="pre">'finance_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'finance_start_date',</span> <span class="pre">'finance_end_date']</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id8"><span class="problematic" id="id9">`</span></a>client.models.credit_certificate.CreditCertificate`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_end_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_start_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_end_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_start_date':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_capital_company">
+<span class="sig-name descname"><span class="pre">filter_capital_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceCertificateFilter.filter_capital_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_capital_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤资金机构名称</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_finance_company">
+<span class="sig-name descname"><span class="pre">filter_finance_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceCertificateFilter.filter_finance_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceCertificateFilter.filter_finance_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;原始开立企业--即:过滤授信表里 被授信企业名称</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_certificate_filter.</span></span><span class="sig-name descname"><span class="pre">FinanceProjectFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<p>融资项目列表页过滤器</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['finance_number',</span> <span class="pre">'finance_company',</span> <span class="pre">'capital_company',</span> <span class="pre">'cc_number',</span> <span class="pre">'finance_sign_start',</span> <span class="pre">'finance_sign_end']</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id10"><span class="problematic" id="id11">`</span></a>client.models.credit_certificate.FinanceProject`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'cc_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_sign_end':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_sign_start':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'status':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'cc_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_sign_end':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'finance_sign_start':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'status':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_capital_company">
+<span class="sig-name descname"><span class="pre">filter_capital_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_capital_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_capital_company" title="永久链接至目标"></a></dt>
+<dd><p>过滤资金机构
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_cc_number">
+<span class="sig-name descname"><span class="pre">filter_cc_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_cc_number"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_cc_number" title="永久链接至目标"></a></dt>
+<dd><p>过滤智信编号
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_company">
+<span class="sig-name descname"><span class="pre">filter_finance_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_finance_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_company" title="永久链接至目标"></a></dt>
+<dd><p>过滤融资企业
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_end">
+<span class="sig-name descname"><span class="pre">filter_finance_sign_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_finance_sign_end"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_end" title="永久链接至目标"></a></dt>
+<dd><p>融资申请开始时间
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_start">
+<span class="sig-name descname"><span class="pre">filter_finance_sign_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_finance_sign_start"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_finance_sign_start" title="永久链接至目标"></a></dt>
+<dd><p>过滤融资申请开始时间
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_certificate_filter.FinanceProjectFilter.filter_status">
+<span class="sig-name descname"><span class="pre">filter_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_certificate_filter.html#FinanceProjectFilter.filter_status"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_certificate_filter.FinanceProjectFilter.filter_status" title="永久链接至目标"></a></dt>
+<dd><p>根据状态过滤
+:param querset:
+:param name:
+:param value:
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.filters.credit_filter">
+<span id="id12"></span><h2><span class="section-number">2.3. </span>授信列表页相关过滤<a class="headerlink" href="#module-management.filters.credit_filter" title="永久链接至标题"></a></h2>
+<p>&#64;File        : credit_filter.py
+&#64;Author      : duanluhui
+&#64;Time        : 3/7/22 10:59
+&#64;Description : 授信列表页相关过滤</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_filter.</span></span><span class="sig-name descname"><span class="pre">CompanyFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CompanyFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<p>客户管理-企业列表</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CompanyFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['phone',</span> <span class="pre">'name',</span> <span class="pre">'company_type',</span> <span class="pre">'register_start_time',</span> <span class="pre">'register_end_time']</span></em><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id13"><span class="problematic" id="id14">`</span></a>client.models.company.Company`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'company_type':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'phone':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'register_end_time':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'register_start_time':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'company_type':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'phone':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'register_end_time':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'register_start_time':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.filter_company_type">
+<span class="sig-name descname"><span class="pre">filter_company_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CompanyFilter.filter_company_type"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.filter_company_type" title="永久链接至目标"></a></dt>
+<dd><p>过滤企业类型</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CompanyFilter.filter_phone">
+<span class="sig-name descname"><span class="pre">filter_phone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CompanyFilter.filter_phone"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CompanyFilter.filter_phone" title="永久链接至目标"></a></dt>
+<dd><p>过滤手机号</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_filter.</span></span><span class="sig-name descname"><span class="pre">CreditFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['credit_number',</span> <span class="pre">'capital_company',</span> <span class="pre">'receive_company',</span> <span class="pre">'start_time_begin',</span> <span class="pre">'start_time_end',</span> <span class="pre">'end_time_begin',</span> <span class="pre">'end_time_end']</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id15"><span class="problematic" id="id16">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'credit_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_time_begin':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_time_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'receive_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_time_begin':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_time_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'credit_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_time_begin':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'end_time_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'receive_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_time_begin':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'start_time_end':</span> <span class="pre">&lt;django_filters.filters.DateFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.filter_capital_company">
+<span class="sig-name descname"><span class="pre">filter_capital_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditFilter.filter_capital_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.filter_capital_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤资金机构名称</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditFilter.filter_receive_company">
+<span class="sig-name descname"><span class="pre">filter_receive_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditFilter.filter_receive_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditFilter.filter_receive_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤被授信企业名称</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.credit_filter.</span></span><span class="sig-name descname"><span class="pre">CreditManageFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditManageFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditManageFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['credit_number',</span> <span class="pre">'agreement_no',</span> <span class="pre">'capital_company',</span> <span class="pre">'receive_company']</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id17"><span class="problematic" id="id18">`</span></a>client.models.credit.Credit`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'agreement_no':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'credit_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'receive_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'agreement_no':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'capital_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'credit_number':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'receive_company':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.filter_capital_company">
+<span class="sig-name descname"><span class="pre">filter_capital_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditManageFilter.filter_capital_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.filter_capital_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤资金机构名称</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.credit_filter.CreditManageFilter.filter_receive_company">
+<span class="sig-name descname"><span class="pre">filter_receive_company</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/credit_filter.html#CreditManageFilter.filter_receive_company"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.credit_filter.CreditManageFilter.filter_receive_company" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤被授信企业名称</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.filters.role_filter">
+<span id="id19"></span><h2><span class="section-number">2.4. </span>角色过滤<a class="headerlink" href="#module-management.filters.role_filter" title="永久链接至标题"></a></h2>
+<p>&#64;File        : role_filter.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/3 5:56 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.role_filter.</span></span><span class="sig-name descname"><span class="pre">RoleFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/role_filter.html#RoleFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.role_filter.RoleFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/role_filter.html#RoleFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.role_filter.RoleFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['is_deleted',</span> <span class="pre">'role_name']</span></em><a class="headerlink" href="#management.filters.role_filter.RoleFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.role_filter.RoleFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id20"><span class="problematic" id="id21">`</span></a>client.models.role.Role`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'disable':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'is_deleted':</span> <span class="pre">&lt;django_filters.rest_framework.filters.BooleanFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'role_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.role_filter.RoleFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'disable':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'role_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.role_filter.RoleFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="management.filters.role_filter.RoleFilter.filter_disable">
+<span class="sig-name descname"><span class="pre">filter_disable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">querset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/role_filter.html#RoleFilter.filter_disable"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.role_filter.RoleFilter.filter_disable" title="永久链接至目标"></a></dt>
+<dd><p>&quot;过滤角色状态</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-management.filters.user_filter">
+<span id="id22"></span><h2><span class="section-number">2.5. </span>用户过滤<a class="headerlink" href="#module-management.filters.user_filter" title="永久链接至标题"></a></h2>
+<p>&#64;File        : user_filter.py
+&#64;Author      : yu wen yang
+&#64;Time        : 2022/3/4 3:15 下午
+&#64;Description :</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">management.filters.user_filter.</span></span><span class="sig-name descname"><span class="pre">S1UserFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queryset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/management/filters/user_filter.html#S1UserFilter"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.user_filter.S1UserFilter" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">django_filters.rest_framework.filterset.FilterSet</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter.Meta">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Meta</span></span><a class="reference internal" href="../_modules/management/filters/user_filter.html#S1UserFilter.Meta"><span class="viewcode-link"><span class="pre">[源代码]</span></span></a><a class="headerlink" href="#management.filters.user_filter.S1UserFilter.Meta" title="永久链接至目标"></a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter.Meta.fields">
+<span class="sig-name descname"><span class="pre">fields</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['nick_name',</span> <span class="pre">'is_active',</span> <span class="pre">'phone']</span></em><a class="headerlink" href="#management.filters.user_filter.S1UserFilter.Meta.fields" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter.Meta.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#management.filters.user_filter.S1UserFilter.Meta.model" title="永久链接至目标"></a></dt>
+<dd><p>:py:class:<a href="#id23"><span class="problematic" id="id24">`</span></a>client.models.user.S1User`的别名</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter.base_filters">
+<span class="sig-name descname"><span class="pre">base_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'is_active':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'nick_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'phone':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.user_filter.S1UserFilter.base_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="management.filters.user_filter.S1UserFilter.declared_filters">
+<span class="sig-name descname"><span class="pre">declared_filters</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'is_active':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'nick_name':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;,</span> <span class="pre">'phone':</span> <span class="pre">&lt;django_filters.filters.CharFilter</span> <span class="pre">object&gt;}</span></em><a class="headerlink" href="#management.filters.user_filter.S1UserFilter.declared_filters" title="永久链接至目标"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

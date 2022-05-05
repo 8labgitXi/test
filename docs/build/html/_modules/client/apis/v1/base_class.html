@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.base_class &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.base_class</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.base_class 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : base_class.py</span>
+<span class="sd">@Author      : wst</span>
+<span class="sd">@Time        : 2022/3/11 下午5:22</span>
+<span class="sd">@Description : 定义各种工具类</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Max</span>
+
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">ReviewLog</span><span class="p">,</span> <span class="n">CreditCurrentNode</span>
+
+
+<div class="viewcode-block" id="BaseApprovalView"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView">[文档]</a><span class="k">class</span> <span class="nc">BaseApprovalView</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; 审批列表基础类</span>
+<span class="sd">    使用方法（调用之前记得鉴权）：</span>
+<span class="sd">    1. 直接使用返回结果列表；</span>
+<span class="sd">    2. 如果返回结果字段不一样，继承此类并并重写函数get_queryset_done/get_queryset_undo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">business_name</span><span class="p">,</span> <span class="n">company_id</span><span class="p">,</span> <span class="n">work_flow_node</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 初始化参数列表</span>
+<span class="sd">        @param business_name: 业务名称，如：open(开立),transfer(转让),financing(融资)</span>
+<span class="sd">        @param company_id: 企业id</span>
+<span class="sd">        @param work_flow_node: 当前审批节点(工作流节点),如：open_examine(内部审批)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">=</span> <span class="n">business_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">company_id</span> <span class="o">=</span> <span class="n">company_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">=</span> <span class="n">work_flow_node</span>
+
+<div class="viewcode-block" id="BaseApprovalView.get_credit_certificates_done"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_credit_certificates_done">[文档]</a>    <span class="k">def</span> <span class="nf">get_credit_certificates_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;   初步获取x信id列表-已审批   &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;open&quot;</span><span class="p">:</span>  <span class="c1"># 开立业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_examine&quot;</span><span class="p">:</span>  <span class="c1"># 内部审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_receive_confirm&quot;</span><span class="p">:</span>  <span class="c1"># 接收审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_platform_review&quot;</span><span class="p">:</span>  <span class="c1"># 平台审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;approval_review&quot;</span><span class="p">:</span>  <span class="c1"># 资金方审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">credit__capital_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[开立业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;transfer&quot;</span><span class="p">:</span>  <span class="c1"># 转让业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;transfer_examine&quot;</span><span class="p">:</span>  <span class="c1"># 内部审核</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;receive_confirm&quot;</span><span class="p">:</span>  <span class="c1"># 接收审核</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[转让业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;financing&quot;</span><span class="p">:</span>  <span class="c1"># 融资业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;finance_review&quot;</span><span class="p">:</span>  <span class="c1"># 内部审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;finance_platform&quot;</span><span class="p">:</span>  <span class="c1"># 平台审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;reviewing&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;fin_fund_side_review&quot;</span><span class="p">:</span>  <span class="c1"># 资金方审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">credit__capital_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">review_status__in</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;reject&#39;</span><span class="p">,</span> <span class="s1">&#39;pass&#39;</span><span class="p">],</span>
+                    <span class="n">business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[融资业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cc</span></div>
+
+<div class="viewcode-block" id="BaseApprovalView.get_credit_certificateds_undo"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_credit_certificateds_undo">[文档]</a>    <span class="k">def</span> <span class="nf">get_credit_certificateds_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;   初步获取x信id列表-待审批  &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;open&quot;</span><span class="p">:</span>  <span class="c1"># 开立业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_examine&quot;</span><span class="p">:</span>  <span class="c1"># 内部审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_receive_confirm&quot;</span><span class="p">:</span>  <span class="c1"># 接收审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;open_platform_review&quot;</span><span class="p">:</span>  <span class="c1"># 平台审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;approval_review&quot;</span><span class="p">:</span>  <span class="c1"># 资金方审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__credit__capital_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[开立业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;transfer&quot;</span><span class="p">:</span>  <span class="c1"># 转让业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;transfer_examine&quot;</span><span class="p">:</span>  <span class="c1"># 内部审核</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;receive_confirm&quot;</span><span class="p">:</span>  <span class="c1"># 接收审核</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[转让业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">business_name</span> <span class="o">==</span> <span class="s2">&quot;financing&quot;</span><span class="p">:</span>  <span class="c1"># 融资业务</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;finance_review&quot;</span><span class="p">:</span>  <span class="c1"># 内部审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__from_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;finance_platform&quot;</span><span class="p">:</span>  <span class="c1"># 平台审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="o">==</span> <span class="s2">&quot;fin_fund_side_review&quot;</span><span class="p">:</span>  <span class="c1"># 资金方审批</span>
+                <span class="n">cc</span> <span class="o">=</span> <span class="n">CreditCurrentNode</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">,</span>
+                    <span class="n">credit_certificate__is_valid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">credit_certificate__credit__capital_company_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">company_id</span><span class="p">,</span>
+                    <span class="n">credit_certificate__review_status</span><span class="o">=</span><span class="s2">&quot;reviewing&quot;</span><span class="p">,</span>
+                    <span class="n">credit_certificate__business__name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">business_name</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;credit_certificate_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;请传入[融资业务中]正确的审批节点代码&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;此业务类型不存在！&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cc</span></div>
+
+<div class="viewcode-block" id="BaseApprovalView.get_logs"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_logs">[文档]</a>    <span class="k">def</span> <span class="nf">get_logs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cc_ids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 根据x信id获取最新的驳回日志id&quot;&quot;&quot;</span>
+        <span class="n">reject_logs</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">cc_ids</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">result__exact</span><span class="o">=</span><span class="s2">&quot;reject&quot;</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;data_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">log_id</span><span class="o">=</span><span class="n">Max</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">reject_logs</span></div>
+
+<div class="viewcode-block" id="BaseApprovalView.get_cc_done"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_cc_done">[文档]</a>    <span class="k">def</span> <span class="nf">get_cc_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        获取已审批的x信id列表:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 获得初筛结果</span>
+        <span class="n">cc_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_credit_certificates_done</span><span class="p">()</span>
+        <span class="n">aim_cc_ids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># 有驳回日志的记录</span>
+        <span class="n">reject_logs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_logs</span><span class="p">(</span><span class="n">cc_ids</span><span class="p">)</span>
+        <span class="c1"># 无驳回日志的记录</span>
+        <span class="n">common_cc_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">cc_ids</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">i</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">reject_logs</span><span class="p">)</span>
+
+        <span class="c1"># 有驳回记录的x信</span>
+        <span class="k">for</span> <span class="n">cc_log</span> <span class="ow">in</span> <span class="n">reject_logs</span><span class="p">:</span>
+            <span class="n">node_in_log</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;log_id&#39;</span><span class="p">])</span>
+            <span class="c1"># 确定最新的驳回节点和当前节点的关系</span>
+            <span class="k">if</span> <span class="n">node_in_log</span><span class="o">.</span><span class="n">work_flow</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span><span class="p">:</span>
+                <span class="c1"># 有驳回记录且为当前节点，处理逻辑同无驳回记录的情况</span>
+                <span class="n">common_cc_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span> <span class="ow">in</span> <span class="n">node_in_log</span><span class="o">.</span><span class="n">work_flow</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+                <span class="c1"># 有驳回记录且大于当前节点，处理逻辑同无驳回记录的情况</span>
+                <span class="n">common_cc_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># 有驳回节点且不是当前节点的</span>
+                <span class="k">if</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">id__gt</span><span class="o">=</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;log_id&#39;</span><span class="p">],</span>
+                    <span class="n">data_id</span><span class="o">=</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">],</span>
+                    <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">aim_cc_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cc_log</span><span class="p">[</span><span class="s1">&#39;data_id&#39;</span><span class="p">])</span>
+        <span class="c1"># （无驳回记录情况下）检查当前节点审批记录是否存在</span>
+        <span class="n">new_records</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="n">CreditCertificate</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">db_table</span><span class="p">,</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">common_cc_ids</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">work_flow_node</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;data_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">aim_cc_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">new_records</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">aim_cc_ids</span></div>
+
+<div class="viewcode-block" id="BaseApprovalView.get_queryset_done"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_queryset_done">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取已审批数据集 &quot;&quot;&quot;</span>
+        <span class="c1"># 获取可用x信id列表</span>
+        <span class="n">cc_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cc_done</span><span class="p">()</span>
+        <span class="n">cc_records</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">cc_ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cc_records</span></div>
+
+<div class="viewcode-block" id="BaseApprovalView.get_queryset_undo"><a class="viewcode-back" href="../../../../client/client.apis.v1.html#client.apis.v1.base_class.BaseApprovalView.get_queryset_undo">[文档]</a>    <span class="k">def</span> <span class="nf">get_queryset_undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; 获取待审批数据集 &quot;&quot;&quot;</span>
+        <span class="n">cc_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_credit_certificateds_undo</span><span class="p">()</span>
+        <span class="n">cc_records</span> <span class="o">=</span> <span class="n">CreditCertificate</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">cc_ids</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cc_records</span></div></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

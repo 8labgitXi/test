@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>utils.chuanglan_services &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">模块代码</a> &raquo;</li>
+      <li>utils.chuanglan_services</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>utils.chuanglan_services 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@File        : chuanglan_services.py</span>
+<span class="sd">@Author      : yu wen yang</span>
+<span class="sd">@Time        : 2022/4/1 10:50 上午</span>
+<span class="sd">@Description :</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">SUCCESS_CODE</span>
+<span class="kn">from</span> <span class="nn">scf_project.settings</span> <span class="kn">import</span> <span class="n">chuanglan_config</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;supply_chain_app&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OcrRecognition"><a class="viewcode-back" href="../../utils/utils.package.html#utils.chuanglan_services.OcrRecognition">[文档]</a><span class="k">class</span> <span class="nc">OcrRecognition</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ocr识别</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_id</span> <span class="o">=</span> <span class="n">chuanglan_config</span><span class="p">[</span><span class="s2">&quot;app_id&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app_key</span> <span class="o">=</span> <span class="n">chuanglan_config</span><span class="p">[</span><span class="s2">&quot;app_key&quot;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="OcrRecognition.is_success_request"><a class="viewcode-back" href="../../utils/utils.package.html#utils.chuanglan_services.OcrRecognition.is_success_request">[文档]</a>    <span class="k">def</span> <span class="nf">is_success_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span> <span class="ow">and</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">SUCCESS_CODE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="OcrRecognition.business_license"><a class="viewcode-back" href="../../utils/utils.package.html#utils.chuanglan_services.OcrRecognition.business_license">[文档]</a>    <span class="k">def</span> <span class="nf">business_license</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base64_image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        营业执照</span>
+<span class="sd">        @param base64_image:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">chuanglan_config</span><span class="p">[</span><span class="s2">&quot;business_license_url&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;appId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_id</span><span class="p">,</span>
+                <span class="s2">&quot;appKey&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_key</span><span class="p">,</span>
+                <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">base64_image</span><span class="p">,</span>
+                <span class="s2">&quot;fixMode&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>  <span class="c1"># &quot;1&quot;修复模式; &quot;0&quot;不修复模式</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="n">const</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;社会信用代码&#39;</span><span class="p">:</span> <span class="s1">&#39;credit&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;经营范围&#39;</span><span class="p">:</span> <span class="s1">&#39;management_range&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;成立日期&#39;</span><span class="p">:</span> <span class="s1">&#39;establish_at&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;法人&#39;</span><span class="p">:</span> <span class="s1">&#39;legal_per_name&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;注册资本&#39;</span><span class="p">:</span> <span class="s1">&#39;registered_capital&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;地址&#39;</span><span class="p">:</span> <span class="s1">&#39;registered_address&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;单位名称&#39;</span><span class="p">:</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_success_request</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;words_result&quot;</span><span class="p">]</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="p">{</span><span class="n">const</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;words&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">resp</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">const</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)}</span>
+            <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;年&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;月&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+            <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;establish_at&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;日&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">registered_capital</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;registered_capital&quot;</span><span class="p">]</span>
+            <span class="n">regex</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\d+\.?\d*&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">registered_capital</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;request chuanglan [business_license] error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;registered_capital&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span>
+            <span class="k">return</span> <span class="n">resp</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;request chuanglan [business_license] error: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="OcrRecognition.id_card"><a class="viewcode-back" href="../../utils/utils.package.html#utils.chuanglan_services.OcrRecognition.id_card">[文档]</a>    <span class="k">def</span> <span class="nf">id_card</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base64_image</span><span class="p">,</span> <span class="n">ocr_type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        身份证</span>
+<span class="sd">        @param base64_image:</span>
+<span class="sd">        @param ocr_type:</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">chuanglan_config</span><span class="p">[</span><span class="s2">&quot;id_card_url&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;appId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_id</span><span class="p">,</span>
+                <span class="s2">&quot;appKey&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_key</span><span class="p">,</span>
+                <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">base64_image</span><span class="p">,</span>
+                <span class="s2">&quot;imageType&quot;</span><span class="p">:</span> <span class="s2">&quot;BASE64&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ocrType&quot;</span><span class="p">:</span> <span class="n">ocr_type</span><span class="p">,</span>  <span class="c1"># &quot;0&quot;正面; &quot;1&quot;反面</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_success_request</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;request chuanglan [id_card] error: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="OcrRecognition.business_four_auth"><a class="viewcode-back" href="../../utils/utils.package.html#utils.chuanglan_services.OcrRecognition.business_four_auth">[文档]</a>    <span class="k">def</span> <span class="nf">business_four_auth</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">company_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">legal_per_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">credit_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">id_num</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        企业工商四要素</span>
+<span class="sd">        @param company_name: 企业姓名</span>
+<span class="sd">        @param legal_per_name: 法人姓名</span>
+<span class="sd">        @param credit_code: 统一信用代码</span>
+<span class="sd">        @param id_num: 法人身份证</span>
+<span class="sd">        @return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url</span><span class="o">=</span><span class="n">chuanglan_config</span><span class="p">[</span><span class="s2">&quot;business_four_auth&quot;</span><span class="p">],</span>
+            <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;appId&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_id</span><span class="p">,</span>
+                <span class="s2">&quot;appKey&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">app_key</span><span class="p">,</span>
+                <span class="s2">&quot;entName&quot;</span><span class="p">:</span> <span class="n">company_name</span><span class="p">,</span>
+                <span class="s2">&quot;legalPerName&quot;</span><span class="p">:</span> <span class="n">legal_per_name</span><span class="p">,</span>
+                <span class="s2">&quot;creditCode&quot;</span><span class="p">:</span> <span class="n">credit_code</span><span class="p">,</span>
+                <span class="s2">&quot;idNum&quot;</span><span class="p">:</span> <span class="n">id_num</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_success_request</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span>
+            <span class="n">company_name_match</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;companyNameMatch&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+            <span class="n">credit_code_match</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;creditCodeMatch&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+            <span class="n">legal_per_name_match</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;legalPerNameMatch&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+            <span class="n">id_no_match</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;idNoMatch&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+            <span class="k">return</span> <span class="n">company_name_match</span> <span class="ow">and</span> <span class="n">credit_code_match</span> <span class="ow">and</span> <span class="n">legal_per_name_match</span> <span class="ow">and</span> <span class="n">id_no_match</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;request chuanglan [business_four_auth] error: </span><span class="si">{</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

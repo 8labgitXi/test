@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.apis.v1.tests.test_update_company_file &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
+        <script src="../../../../../_static/jquery.js"></script>
+        <script src="../../../../../_static/underscore.js"></script>
+        <script src="../../../../../_static/doctools.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../../index.html">模块代码</a> &raquo;</li>
+      <li>client.apis.v1.tests.test_update_company_file</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.apis.v1.tests.test_update_company_file 源代码</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: UTF-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">@Summary : 测试修改企业附件信息</span>
+<span class="sd">@Author  : Rey</span>
+<span class="sd">@Time    : 2022-03-24 13:16:32</span>
+<span class="sd">@Run     : python manage.py test client.apis.v1.tests.test_update_company_file  -v=3 --keepdb</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">rest_framework</span> <span class="kn">import</span> <span class="n">status</span>
+<span class="kn">from</span> <span class="nn">rest_framework.test</span> <span class="kn">import</span> <span class="n">APITestCase</span>
+
+<span class="kn">from</span> <span class="nn">client.apis.v1.tests.base</span> <span class="kn">import</span> <span class="n">create_user</span>
+<span class="kn">from</span> <span class="nn">client.models.company</span> <span class="kn">import</span> <span class="n">Company</span><span class="p">,</span> <span class="n">CompanyFile</span><span class="p">,</span> <span class="n">CompanyReviewLog</span>
+<span class="kn">from</span> <span class="nn">utils.jwt_util</span> <span class="kn">import</span> <span class="n">user_info_2_token</span>
+
+
+<div class="viewcode-block" id="TestUpdateCompanyFile"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile">[文档]</a><span class="k">class</span> <span class="nc">TestUpdateCompanyFile</span><span class="p">(</span><span class="n">APITestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;测试CompanyFileRetrieveUpdateAPIView.update&quot;&quot;&quot;</span>
+    <span class="n">databases</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="s1">&#39;credible_data&#39;</span><span class="p">}</span>
+    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;const_company.json&#39;</span><span class="p">,</span> <span class="s1">&#39;location.json&#39;</span><span class="p">,</span> <span class="s1">&#39;test_get_company_file.json&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.client_request"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.client_request">[文档]</a>    <span class="k">def</span> <span class="nf">client_request</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">company_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">logo_url</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">business_license_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">legal_person_positive_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">legal_person_unpositive_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">legal_person_certificate</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">authorized_by_operator</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">special_industries_license</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">env_protection_approval</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">audit_report</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">financial_statements</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+        <span class="n">constitution</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;封装请求</span>
+<span class="sd">        :param int uid: 用户id</span>
+<span class="sd">        :param int company_id: 公司id</span>
+<span class="sd">        :param Union[None, str] logo_url: 企业logo的URL</span>
+<span class="sd">        :param str business_license_url: 营业执照URL</span>
+<span class="sd">        :param str legal_person_positive_url: 法人正面身份证</span>
+<span class="sd">        :param str legal_person_unpositive_url: 法人反面身份证</span>
+<span class="sd">        :param str legal_person_certificate: 法人代表证明书</span>
+<span class="sd">        :param Union[None, list] authorized_by_operator: 经办人授权文件</span>
+<span class="sd">        :param Union[None, list] special_industries_license: 特殊行业经营许可</span>
+<span class="sd">        :param Union[None, list] env_protection_approval: 环保批文</span>
+<span class="sd">        :param Union[None, list] audit_report: 近3年审计报告</span>
+<span class="sd">        :param Union[None, list] financial_statements: 近一年财务报表</span>
+<span class="sd">        :param Union[None, list] constitution: 公司章程</span>
+<span class="sd">        :return _type_: repsonse</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">base_path</span> <span class="o">=</span> <span class="s1">&#39;/api/v1/scf/client/company_enclosure_info/</span><span class="si">{pk}</span><span class="s1">/&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;logo_url&#39;</span><span class="p">:</span> <span class="n">logo_url</span><span class="p">,</span>
+            <span class="s1">&#39;business_license_url&#39;</span><span class="p">:</span> <span class="n">business_license_url</span><span class="p">,</span>
+            <span class="s1">&#39;legal_person_positive_url&#39;</span><span class="p">:</span> <span class="n">legal_person_positive_url</span><span class="p">,</span>
+            <span class="s1">&#39;legal_person_unpositive_url&#39;</span><span class="p">:</span> <span class="n">legal_person_unpositive_url</span><span class="p">,</span>
+            <span class="s1">&#39;legal_person_certificate&#39;</span><span class="p">:</span> <span class="n">legal_person_certificate</span><span class="p">,</span>
+            <span class="s1">&#39;authorized_by_operator&#39;</span><span class="p">:</span> <span class="n">authorized_by_operator</span><span class="p">,</span>
+            <span class="s1">&#39;special_industries_license&#39;</span><span class="p">:</span> <span class="n">special_industries_license</span><span class="p">,</span>
+            <span class="s1">&#39;env_protection_approval&#39;</span><span class="p">:</span> <span class="n">env_protection_approval</span><span class="p">,</span>
+            <span class="s1">&#39;audit_report&#39;</span><span class="p">:</span> <span class="n">audit_report</span><span class="p">,</span>
+            <span class="s1">&#39;financial_statements&#39;</span><span class="p">:</span> <span class="n">financial_statements</span><span class="p">,</span>
+            <span class="s1">&#39;constitution&#39;</span><span class="p">:</span> <span class="n">constitution</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">user_info_2_token</span><span class="p">({</span><span class="s1">&#39;user_id&#39;</span><span class="p">:</span> <span class="n">uid</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">credentials</span><span class="p">(</span><span class="n">HTTP_AUTHORIZATION</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Bear </span><span class="si">{</span><span class="nb">bytes</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">token</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">base_path</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">company_id</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.assertAPIException"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.assertAPIException">[文档]</a>    <span class="k">def</span> <span class="nf">assertAPIException</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;断言AIPIException</span>
+
+<span class="sd">        :param _type resp: response</span>
+<span class="sd">        :param str msg: 错误信息</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_500_INTERNAL_SERVER_ERROR</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsNone</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.test_success"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.test_success">[文档]</a>    <span class="k">def</span> <span class="nf">test_success</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试成功&quot;&quot;&quot;</span>
+        <span class="n">create_user</span><span class="p">()</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">new_url</span> <span class="o">=</span> <span class="s1">&#39;http://test1.8lab.cn&#39;</span>
+        <span class="n">new_json</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">new_url</span><span class="p">}]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+            <span class="n">logo_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">business_license_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_positive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_unpositive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_certificate</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">authorized_by_operator</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">special_industries_license</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">env_protection_approval</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">audit_report</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">financial_statements</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">constitution</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+        <span class="n">resp_json</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">resp_json</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span> <span class="n">status</span><span class="o">.</span><span class="n">HTTP_200_OK</span><span class="p">)</span>
+
+        <span class="n">company</span><span class="p">:</span> <span class="n">Company</span> <span class="o">=</span> <span class="n">Company</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company</span><span class="o">.</span><span class="n">logo_url</span><span class="p">,</span> <span class="n">new_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company</span><span class="o">.</span><span class="n">business_license_url</span><span class="p">,</span> <span class="n">new_url</span><span class="p">)</span>
+
+        <span class="n">company_file</span><span class="p">:</span> <span class="n">CompanyFile</span> <span class="o">=</span> <span class="n">CompanyFile</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">legal_person_positive_url</span><span class="p">,</span> <span class="n">new_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">legal_person_unpositive_url</span><span class="p">,</span> <span class="n">new_url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">legal_person_certificate</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">authorized_by_operator</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">special_industries_license</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">env_protection_approval</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">audit_report</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">financial_statements</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">company_file</span><span class="o">.</span><span class="n">constitution</span><span class="p">,</span> <span class="n">new_json</span><span class="p">)</span>
+
+        <span class="n">review_log</span><span class="p">:</span> <span class="n">CompanyReviewLog</span> <span class="o">=</span> <span class="n">CompanyReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">review_log</span><span class="o">.</span><span class="n">status</span><span class="p">,</span> <span class="s1">&#39;undo&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.test_fail_other_company"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.test_fail_other_company">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_other_company</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 修改未知公司&quot;&quot;&quot;</span>
+        <span class="n">create_user</span><span class="p">()</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">new_url</span> <span class="o">=</span> <span class="s1">&#39;http://test1.8lab.cn&#39;</span>
+        <span class="n">new_json</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">new_url</span><span class="p">}]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+            <span class="n">logo_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">business_license_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_positive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_unpositive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_certificate</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">authorized_by_operator</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">special_industries_license</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">env_protection_approval</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">audit_report</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">financial_statements</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">constitution</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;not found company&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.test_fail_other_user"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.test_fail_other_user">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_other_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 其他用户不能修改&quot;&quot;&quot;</span>
+        <span class="n">create_user</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">new_url</span> <span class="o">=</span> <span class="s1">&#39;http://test1.8lab.cn&#39;</span>
+        <span class="n">new_json</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">new_url</span><span class="p">}]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+            <span class="n">logo_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">business_license_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_positive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_unpositive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_certificate</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">authorized_by_operator</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">special_industries_license</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">env_protection_approval</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">audit_report</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">financial_statements</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">constitution</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;not found company&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestUpdateCompanyFile.test_fail_no_company_file"><a class="viewcode-back" href="../../../../../client/client.apis.v1.tests.html#client.apis.v1.tests.test_update_company_file.TestUpdateCompanyFile.test_fail_no_company_file">[文档]</a>    <span class="k">def</span> <span class="nf">test_fail_no_company_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;测试失败: 还没有企业附件的&quot;&quot;&quot;</span>
+        <span class="n">create_user</span><span class="p">()</span>
+        <span class="n">company_id</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">new_url</span> <span class="o">=</span> <span class="s1">&#39;http://test1.8lab.cn&#39;</span>
+        <span class="n">new_json</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;file_name&#39;</span><span class="p">:</span> <span class="s1">&#39;file_name&#39;</span><span class="p">,</span> <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">new_url</span><span class="p">}]</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_request</span><span class="p">(</span>
+            <span class="n">uid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">company_id</span><span class="o">=</span><span class="n">company_id</span><span class="p">,</span>
+            <span class="n">logo_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">business_license_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_positive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_unpositive_url</span><span class="o">=</span><span class="n">new_url</span><span class="p">,</span>
+            <span class="n">legal_person_certificate</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">authorized_by_operator</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">special_industries_license</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">env_protection_approval</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">audit_report</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">financial_statements</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+            <span class="n">constitution</span><span class="o">=</span><span class="n">new_json</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAPIException</span><span class="p">(</span><span class="n">resp</span><span class="p">,</span> <span class="s1">&#39;not found company file&#39;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

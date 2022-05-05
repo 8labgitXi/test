@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CH" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>client.filters.credits &mdash; SupplyChainFinance 0.1.1 文档</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../genindex.html" />
+    <link rel="search" title="搜索" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> SupplyChainFinance
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">导航</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../utils/utils.html">utils 工具包</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">SupplyChainFinance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">模块代码</a> &raquo;</li>
+      <li>client.filters.credits</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>client.filters.credits 源代码</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">@File:credits.py</span>
+<span class="sd">@DateTime:2022/2/28 3:33 下午</span>
+<span class="sd">@Author:xixiaoyu</span>
+<span class="sd">@Desc:</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">django_filters</span> <span class="kn">import</span> <span class="n">rest_framework</span> <span class="k">as</span> <span class="n">filters</span>
+
+<span class="kn">from</span> <span class="nn">client.models.credit</span> <span class="kn">import</span> <span class="n">Credit</span>
+
+<span class="kn">from</span> <span class="nn">client.models.credit_certificate</span> <span class="kn">import</span> <span class="n">CreditCertificate</span><span class="p">,</span> <span class="n">ReviewLog</span>
+<span class="kn">from</span> <span class="nn">consts.common</span> <span class="kn">import</span> <span class="n">FINANCE_APPLY_CODE</span><span class="p">,</span> <span class="n">TRANSFER_APPLICATION_CODE</span><span class="p">,</span> <span class="n">OPEN_RECEIVE_CONFIRM_CODE</span><span class="p">,</span> \
+    <span class="n">RECEIVE_CONFIRM_CODE</span><span class="p">,</span> <span class="n">OPEN_APPLICATION_CODE</span>
+
+
+<div class="viewcode-block" id="CreditsFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditsFilter">[文档]</a><span class="k">class</span> <span class="nc">CreditsFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;授信管理列表页过滤器&quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">lookup_expr</span><span class="o">=</span><span class="s2">&quot;icontains&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;credit_number&quot;</span><span class="p">)</span>
+    <span class="n">agreement_no</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">lookup_expr</span><span class="o">=</span><span class="s2">&quot;icontains&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;agreement_no&quot;</span><span class="p">)</span>
+    <span class="n">receive_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">lookup_expr</span><span class="o">=</span><span class="s2">&quot;contains&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;receive_company__name&quot;</span><span class="p">)</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">lookup_expr</span><span class="o">=</span><span class="s2">&quot;contains&quot;</span><span class="p">,</span> <span class="n">field_name</span><span class="o">=</span><span class="s2">&quot;capital_company__name&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CreditsFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditsFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Credit</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;agreement_no&quot;</span><span class="p">,</span> <span class="s2">&quot;receive_company&quot;</span><span class="p">,</span> <span class="s2">&quot;capital_company&quot;</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CreditOpenFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditOpenFilter">[文档]</a><span class="k">class</span> <span class="nc">CreditOpenFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信开立列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">review_status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_status&#39;</span><span class="p">)</span>
+    <span class="n">company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;company__name&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>
+    <span class="n">created_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_created_start&#39;</span><span class="p">)</span>
+    <span class="n">created_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_created_end&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CreditOpenFilter.filter_status"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditOpenFilter.filter_status">[文档]</a>    <span class="k">def</span> <span class="nf">filter_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditOpenFilter.filter_created_start"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditOpenFilter.filter_created_start">[文档]</a>    <span class="k">def</span> <span class="nf">filter_created_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_APPLICATION_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__gte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CreditOpenFilter.filter_created_end"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditOpenFilter.filter_created_end">[文档]</a>    <span class="k">def</span> <span class="nf">filter_created_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_APPLICATION_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__lte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="CreditOpenFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditOpenFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;review_status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;created_start&quot;</span><span class="p">,</span> <span class="s2">&quot;created_end&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;promise_pay_end&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="CreditReceivesFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditReceivesFilter">[文档]</a><span class="k">class</span> <span class="nc">CreditReceivesFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信待接收-可用列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>
+    <span class="n">transfer_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>
+    <span class="n">receive_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_receive_start&#39;</span><span class="p">)</span>
+    <span class="n">receive_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_receive_end&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CreditReceivesFilter.filter_receive_start"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditReceivesFilter.filter_receive_start">[文档]</a>    <span class="k">def</span> <span class="nf">filter_receive_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">business</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">id_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">business</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;open&#39;</span><span class="p">:</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+                    <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_RECEIVE_CONFIRM_CODE</span><span class="p">,</span>
+                    <span class="n">created_at__date__gte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">id_lst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+                <span class="n">work_flow__code</span><span class="o">=</span><span class="n">RECEIVE_CONFIRM_CODE</span><span class="p">,</span>
+                <span class="n">created_at__date__gte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">id_lst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+        <span class="n">id_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">id_lst</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">id_lst</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditReceivesFilter.filter_receive_end"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditReceivesFilter.filter_receive_end">[文档]</a>    <span class="k">def</span> <span class="nf">filter_receive_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">business</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;business__name&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">id_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">business</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="s1">&#39;open&#39;</span><span class="p">:</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+                    <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+                    <span class="n">work_flow__code</span><span class="o">=</span><span class="n">OPEN_RECEIVE_CONFIRM_CODE</span><span class="p">,</span>
+                    <span class="n">created_at__date__lte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                    <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">id_lst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+                <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+                <span class="n">work_flow__code</span><span class="o">=</span><span class="n">RECEIVE_CONFIRM_CODE</span><span class="p">,</span>
+                <span class="n">created_at__date__lte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">id_lst</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span>
+        <span class="n">id_lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">id_lst</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">id_lst</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CreditReceivesFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.CreditReceivesFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;receive_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;receive_end&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;promise_pay_end&quot;</span><span class="p">,</span> <span class="s2">&quot;transfer_company&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="TransfersFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.TransfersFilter">[文档]</a><span class="k">class</span> <span class="nc">TransfersFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信转让列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_status&#39;</span><span class="p">)</span>
+    <span class="n">receive_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;company__name&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>
+    <span class="n">transfer_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_transfer_start&#39;</span><span class="p">)</span>
+    <span class="n">transfer_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_transfer_end&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TransfersFilter.filter_status"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.TransfersFilter.filter_status">[文档]</a>    <span class="k">def</span> <span class="nf">filter_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TransfersFilter.filter_transfer_start"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.TransfersFilter.filter_transfer_start">[文档]</a>    <span class="k">def</span> <span class="nf">filter_transfer_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">TRANSFER_APPLICATION_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__gte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TransfersFilter.filter_transfer_end"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.TransfersFilter.filter_transfer_end">[文档]</a>    <span class="k">def</span> <span class="nf">filter_transfer_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">TRANSFER_APPLICATION_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__lte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TransfersFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.TransfersFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;receive_company&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;transfer_start&quot;</span><span class="p">,</span> <span class="s2">&quot;transfer_end&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_start&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;promise_pay_end&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="FinancingsFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.FinancingsFilter">[文档]</a><span class="k">class</span> <span class="nc">FinancingsFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信融资列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_status&#39;</span><span class="p">)</span>
+    <span class="n">capital_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;credit__capital_company__name&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span><span class="p">)</span>
+    <span class="n">financing_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_financing_start&#39;</span><span class="p">)</span>
+    <span class="n">financing_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_financing_end&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FinancingsFilter.filter_status"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.FinancingsFilter.filter_status">[文档]</a>    <span class="k">def</span> <span class="nf">filter_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="s1">&#39;pass&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">review_status</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FinancingsFilter.filter_financing_start"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.FinancingsFilter.filter_financing_start">[文档]</a>    <span class="k">def</span> <span class="nf">filter_financing_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">FINANCE_APPLY_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__gte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FinancingsFilter.filter_financing_end"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.FinancingsFilter.filter_financing_end">[文档]</a>    <span class="k">def</span> <span class="nf">filter_financing_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">certificate_id</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">queryset</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ReviewLog</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_id__in</span><span class="o">=</span><span class="n">certificate_id</span><span class="p">,</span>
+            <span class="n">data_table</span><span class="o">=</span><span class="s2">&quot;credit_certificate&quot;</span><span class="p">,</span>
+            <span class="n">work_flow__code</span><span class="o">=</span><span class="n">FINANCE_APPLY_CODE</span><span class="p">,</span>
+            <span class="n">created_at__date__lte</span><span class="o">=</span><span class="n">value</span><span class="p">,</span>
+            <span class="n">result</span><span class="o">=</span><span class="s1">&#39;pass&#39;</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;data_id&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">ids</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="FinancingsFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.FinancingsFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;capital_company&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;financing_start&quot;</span><span class="p">,</span> <span class="s2">&quot;financing_end&quot;</span>
+        <span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="RetuensFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.RetuensFilter">[文档]</a><span class="k">class</span> <span class="nc">RetuensFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信已退回列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;is_valid&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">business</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_business&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RetuensFilter.filter_business"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.RetuensFilter.filter_business">[文档]</a>    <span class="k">def</span> <span class="nf">filter_business</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">business__id</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RetuensFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.RetuensFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;business&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="ExpiresFilter"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.ExpiresFilter">[文档]</a><span class="k">class</span> <span class="nc">ExpiresFilter</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">FilterSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    x信管理-x信到期列表页过滤器</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">credit_number</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;icontains&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_start</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;gte&#39;</span><span class="p">)</span>
+    <span class="n">promise_pay_end</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;promise_pay_at&#39;</span><span class="p">,</span> <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;lte&#39;</span><span class="p">)</span>
+    <span class="n">company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span>
+        <span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;credit__receive_company__name&#39;</span><span class="p">,</span>
+        <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span>
+    <span class="p">)</span>
+    <span class="n">transfer_company</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span>
+        <span class="n">field_name</span><span class="o">=</span><span class="s1">&#39;from_company__name&#39;</span><span class="p">,</span>
+        <span class="n">lookup_expr</span><span class="o">=</span><span class="s1">&#39;contains&#39;</span>
+    <span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">CharFilter</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;filter_status&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExpiresFilter.filter_status"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.ExpiresFilter.filter_status">[文档]</a>    <span class="k">def</span> <span class="nf">filter_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">creditclear__is_clear</span><span class="o">=</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExpiresFilter.Meta"><a class="viewcode-back" href="../../../client/client.filters.html#client.filters.credits.ExpiresFilter.Meta">[文档]</a>    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">CreditCertificate</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;credit_number&quot;</span><span class="p">,</span> <span class="s2">&quot;company&quot;</span><span class="p">,</span> <span class="s2">&quot;transfer_company&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_start&quot;</span><span class="p">,</span> <span class="s2">&quot;promise_pay_end&quot;</span>
+        <span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2022, xxy.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
