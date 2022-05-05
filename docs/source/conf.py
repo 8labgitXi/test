@@ -12,12 +12,13 @@
 #
 import os
 import sys
-import django  # 引入Django
-sys.path.insert(0, os.path.abspath('../../'))   # 找conf.py目录位置
-# 将 settings 加到环境变量上去，等一下启动的时候就会是用这个配置
-os.environ['DJANGO_SETTINGS_MODULE'] = 'scf_project.settings'
-# 关键，用这句加载模块和上下文
-django.setup()
+# import django  # 引入Django
+# sys.path.insert(0, os.path.abspath('../../'))   # 找conf.py目录位置
+# sys.path.insert(0, os.path.abspath('../'))   # 找conf.py目录位置
+# # 将 settings 加到环境变量上去，等一下启动的时候就会是用这个配置
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'scf_project.settings'
+# # 关键，用这句加载模块和上下文
+# django.setup()
 
 # -- Project information -----------------------------------------------------
 
